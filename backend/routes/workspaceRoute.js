@@ -3,7 +3,7 @@ const { Workspace } = require("../models/workspaceModel");
 
 const route = express();
 
-route.get("/:id", async (req, res) => {
+route.get("/", async (req, res) => {
   try {
     const newWorkspace = await Workspace.create({
       name: "somethign",
@@ -13,7 +13,7 @@ route.get("/:id", async (req, res) => {
     });
     res.status(200).json({ newWorkspace });
   } catch (err) {
-    res.send(500).send(err);
+    // res.send(500).send(err);
   }
 });
 
