@@ -1,16 +1,15 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const workspace = require("./routes/workspaceRoute");
 require("dotenv").config();
+const cors = require("cors");
 
-const db = require("./db")
-
+const db = require("./config/dbConnection");
 const app = express();
-
 
 const port = process.env.PORT || 5000;
 
-app.use("/api", workspace);
+app.use("/api/workspace", cors(),workspace);
+// app.use(cors());
 
 app.listen(port, () => {});
 
