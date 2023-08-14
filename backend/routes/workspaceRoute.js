@@ -1,7 +1,7 @@
 const express = require("express");
 const { Workspace } = require("../models/workspaceModel");
 
-const {getWorkspace} = require("../controllers/workspace/workspace")
+const {getWorkspace} = require("../controllers/workspaceControllers/workspaceController")
 
 const router = express();
 
