@@ -23,7 +23,9 @@ const App = () => {
   return (
     <div className="">
       <MainSkeleton >
-        hello there
+        <div className="w-10 h-10 ml-10 mt-10  bg-primary">  
+          this is a card
+        </div>
       </MainSkeleton>
     </div>
   );
