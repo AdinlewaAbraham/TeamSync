@@ -1,4 +1,9 @@
 import App from "@/components/App";
+import { GeneralContextProvider } from "@/context/GeneralContext";
 export default function Home() {
-  return <App />;
+  return (
+    <GeneralContextProvider>
+      <App />
+    </GeneralContextProvider>
+  );
 }
