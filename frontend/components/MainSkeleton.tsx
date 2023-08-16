@@ -10,7 +10,7 @@ const MainSkeleton = ({children}: {children: ReactNode}) => {
       </nav>
       <div className="flex">
         <Sidebar />
-        <main>
+        <main className="bg-bg-secondary h-[calc(100dvh-50px)] w-full ">
             {children}
         </main>
       </div>

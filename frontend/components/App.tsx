@@ -21,11 +21,9 @@ const App = () => {
   }, []);
 
   return (
-    <div className="">
+    <div className="bg-bg-secondary">
       <MainSkeleton >
-        <div className="w-10 h-10 ml-10 mt-10  bg-primary">  
-          this is a card
-        </div>
+        no cgild comp
       </MainSkeleton>
     </div>
   );

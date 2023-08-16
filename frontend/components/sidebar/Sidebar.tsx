@@ -2,6 +2,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/styles/globals.css";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 const Sidebar = () => {
   const { showSidebar } = useGlobalContext();
@@ -55,7 +56,7 @@ const Sidebar = () => {
           animate={{ width: sidebarWidth }}
           exit={{ width: 0 }}
           transition={{ duration: isResizing ? 0 : 0.15 }}
-          className="overflow-hidden bg-red-500 h-[calc(100vh-50px)] relative "
+          className="overflow-hidden bg-bg-primary h-[calc(100dvh-50px)] relative "
           style={{ width: sidebarWidth }}
         >
           <span
@@ -69,8 +70,16 @@ const Sidebar = () => {
               document.body.classList.remove("select-none");
             }}
             className="absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize"
-            style={{backgroundColor: isResizing? "blue":"transparent"}}
+            style={{ backgroundColor: isResizing ? "blue" : "transparent" }}
           />
+
+          <div className="p-4">
+            <div className="items-center flex">
+              <div className="w-10 h-10 rounded-full bg-slate-400 mr-2 "></div>
+              <h1>workspace1</h1>
+              <RiArrowDropDownLine size={30} />
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
