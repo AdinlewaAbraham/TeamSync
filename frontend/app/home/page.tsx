@@ -1,12 +1,9 @@
-import React from 'react'
+"use client";
+import MainSkeleton from "@/components/MainSkeleton";
+import React, { useEffect } from "react";
 
 const page = () => {
-  return (
-    <div>user home page 
+  return <MainSkeleton>shii</MainSkeleton>;
+};
 
-        welocome user blah blah blah 
-    </div>
-  )
-}
-
-export default page
+export default page;

@@ -7,13 +7,29 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      idle: { min: "800px", max: "1023px" },
+    },
     extend: {
       colors: {
         bg: {
           primary: "#161719",
           secondary: "#202125",
         },
-
+        menuItem: {
+          hover: "#242627",
+          active: "#323436",
+        },
+        muted: {
+          dark: "#a2a0a2",
+          light: "#d5d4d3",
+          border: "#a2a0a2"
+        },
       },
     },
   },

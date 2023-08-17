@@ -21,9 +21,8 @@ const App = () => {
   }, []);
 
   return (
-    <div className="bg-bg-secondary">
+    <div className="bg-bg-secondary ">
       <MainSkeleton >
-        no cgild comp
       </MainSkeleton>
     </div>
   );

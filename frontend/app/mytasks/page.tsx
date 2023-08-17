@@ -1,9 +1,9 @@
-import React from 'react'
+"use client"
+import MainSkeleton from "@/components/MainSkeleton";
+import React from "react";
 
 const page = () => {
-  return (
-    <div>probably just redirect to /board</div>
-  )
-}
+  return <MainSkeleton>tasks</MainSkeleton>;
+};
 
-export default page
+export default page;
