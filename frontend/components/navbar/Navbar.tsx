@@ -1,3 +1,4 @@
+"use client";
 import React, { useContext, useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -19,6 +20,7 @@ const Navbar = () => {
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
   useEffect(() => {
+    console.log("just rendered");
     const handleResize = () => {
       if (window.innerWidth <= 640) {
         console.log(window.innerWidth);
@@ -60,7 +62,7 @@ const Navbar = () => {
         <button
           data-after-sm="+"
           data-after-lg="Create"
-          className="bg-blue-500 rounded-md sm:p-1 px-3 py-1
+          className="accent-color rounded-md sm:p-1 px-3 py-1
          after:content-[attr(data-after-sm)] sm:after:content-[attr(data-after-lg)] "
           onClick={() => console.log("Button clicked")}
         />

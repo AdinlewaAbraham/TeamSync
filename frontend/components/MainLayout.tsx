@@ -1,8 +1,9 @@
+"use client"
 import React, { ReactNode } from "react";
 import Navbar from "./navbar/Navbar";
 import Sidebar from "./sidebar/Sidebar";
 
-const MainSkeleton = ({children}: {children: ReactNode}) => {
+const MainLayout = ({children}: {children: ReactNode}) => {
   return (
     <div className=" ">
       <nav>
@@ -18,4 +19,4 @@ const MainSkeleton = ({children}: {children: ReactNode}) => {
   );
 };
 
-export default MainSkeleton;
+export default MainLayout;

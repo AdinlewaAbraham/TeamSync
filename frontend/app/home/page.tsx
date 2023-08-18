@@ -1,9 +1,14 @@
 "use client";
-import MainSkeleton from "@/components/MainSkeleton";
+import MainLayout from "@/components/MainLayout";
 import React, { useEffect } from "react";
+import Link from "next/link";
 
 const page = () => {
-  return <MainSkeleton>shii</MainSkeleton>;
+  return (
+    <>
+      home page <Link href={"/login"}> redirect to login page</Link>{" "}
+    </>
+  );
 };
 
 export default page;

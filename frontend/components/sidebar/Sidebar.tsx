@@ -1,3 +1,4 @@
+"use client";
 import { useGlobalContext } from "@/context/GeneralContext";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,6 +7,8 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { BiHomeAlt2 } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const SidebarComponent = ({
   menuName,
@@ -16,25 +19,21 @@ const SidebarComponent = ({
   redirectLink: string;
   iconComp: React.JSX.Element;
 }) => {
-  const [pathName, setPathName] = useState<string>("")
-  useEffect(() => {
-    const pathName: string = window.location.pathname;
-    setPathName(pathName)
-  }, [])
-  
-  const currentBaseUrl = window.location.origin;
-  console.log(currentBaseUrl);
+  const pathname = usePathname();
+
   return (
-    <a href={redirectLink}>
+    <Link href={redirectLink}>
       <div
-        className={` text-sm flex items-center p-4 hover:bg-menuItem-hover text-text-muted rounded-md whitespace-nowrap overflow-hidden ${
-          pathName.startsWith(redirectLink) && "bg-menuItem-active"
-        }`}
+        className={`inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1
+         focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary
+         text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 w-full justify-start hover:bg-menuItem-hover ${
+           pathname.startsWith(redirectLink) && "bg-menuItem-active"
+         }`}
       >
         <i className="mr-2 text-muted-dark">{iconComp}</i>
         <p className="text-muted-light">{menuName}</p>
       </div>
-    </a>
+    </Link>
   );
 };
 
@@ -90,7 +89,7 @@ const Sidebar = () => {
           animate={{ width: sidebarWidth }}
           exit={{ width: 0 }}
           transition={{ duration: isResizing ? 0 : 0.15 }}
-          className="overflow-hidden bg-bg-primary h-[calc(100dvh-50px)] relative p-4"
+          className="overflow-hidden bg-bg-primary h-[calc(100dvh-50px)] relative "
           style={{ width: sidebarWidth }}
         >
           <span
@@ -106,29 +105,28 @@ const Sidebar = () => {
             className="absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize"
             style={{ backgroundColor: isResizing ? "blue" : "transparent" }}
           />
-          <div className="p-4">
-            <div className="items-center flex">
-              <div className="w-10 h-10 rounded-full bg-slate-400 mr-2 "></div>
-              <h1>workspace1</h1>
-              <RiArrowDropDownLine size={30} />
-            </div>
+          <div className="border-b-[1px] border-border-default p-4">
+            <SidebarComponent
+              menuName="Home"
+              redirectLink="/home"
+              iconComp={<BiHomeAlt2 />}
+            />
+            <SidebarComponent
+              menuName="My tasks"
+              redirectLink="/mytasks"
+              iconComp={<FaTasks />}
+            />
+            <SidebarComponent
+              menuName="Dashboards"
+              redirectLink="/dashboards"
+              iconComp={<LuLayoutDashboard />}
+            />
           </div>
-          <SidebarComponent
-            menuName="Home"
-            redirectLink="/home"
-            iconComp={<BiHomeAlt2 />}
-          />
-          <SidebarComponent
-            menuName="My tasks"
-            redirectLink="/mytasks"
-            iconComp={<FaTasks />}
-          />
-          <SidebarComponent
-            menuName="Dashboards"
-            redirectLink="/dashboards"
-            iconComp={<LuLayoutDashboard />}
-          />
-          {/* projects */}
+          <div className="p-4">
+            <header>
+              <h3>projects</h3>
+            </header>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

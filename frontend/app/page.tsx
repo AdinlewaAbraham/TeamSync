@@ -1,9 +1,9 @@
-import App from "@/components/App";
-import { GeneralContextProvider } from "@/context/GeneralContext";
+import Link from "next/link";
 export default function Home() {
   return (
-    <GeneralContextProvider>
-      <App />
-    </GeneralContextProvider>
+      <div>
+        decide to either reidirect to login or home page
+        <Link href={'/home'}  > <a >redirect me</a> </Link>
+      </div>
   );
 }

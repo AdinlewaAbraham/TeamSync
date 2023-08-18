@@ -28,8 +28,14 @@ const config: Config = {
         muted: {
           dark: "#a2a0a2",
           light: "#d5d4d3",
-          border: "#a2a0a2"
+          border: "#a2a0a2",
         },
+        accent: {
+          primary: "#F9F9F9",
+        },
+        border:{
+          default: "#333333"
+        }
       },
     },
   },

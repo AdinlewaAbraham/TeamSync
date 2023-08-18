@@ -1,6 +1,10 @@
+"use client";
 import "./globals.css";
+import MainLayout from "@/components/MainLayout";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GeneralContextProvider } from "@/context/GeneralContext";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +18,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <GeneralContextProvider>
+          {pathname.startsWith("/login") || pathname.startsWith("/signup") ? (
+            <>{children}</>
+          ) : (
+            <MainLayout>{children}</MainLayout>
+          )}
+        </GeneralContextProvider>
+      </body>
     </html>
   );
 }
