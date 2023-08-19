@@ -1,0 +1,40 @@
+const mongoose = require("mongoose");
+
+
+/**
+ * @typedef {Object} User
+ * @property {string} name
+ * @property {string} email
+ * @property {Array} workspaces
+ */
+
+/**
+ * @type {import("mongoose").Model<Contact>}
+ */
+
+const userSchema = mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: [true, "whats your name?"],
+    },
+    userDisplayImage :{
+      type: String,
+      required: [true, "provide your picture"]
+    },
+    email: {
+      type: String,
+      required: [true, "whats your email?"],
+    },
+
+    workspaces: {
+      type: Array,
+      required: [false],
+    },
+  },
+  { timestamps: true }
+);
+
+const User = mongoose.model("user", userSchema);
+
+module.exports = { User };

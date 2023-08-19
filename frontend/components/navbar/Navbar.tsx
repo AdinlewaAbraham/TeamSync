@@ -5,6 +5,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { AiOutlineSearch } from "react-icons/ai";
 import { usePopper } from "react-popper";
+import "../../app/globals.css";
 const Navbar = () => {
   const { showSidebar, setShowSidebar } = useGlobalContext();
   const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -62,13 +63,13 @@ const Navbar = () => {
         <button
           data-after-sm="+"
           data-after-lg="Create"
-          className="accent-color rounded-md sm:p-1 px-3 py-1
+          className="accent-color rounded-md sm:p-1 px-3 py-1 button-default
          after:content-[attr(data-after-sm)] sm:after:content-[attr(data-after-lg)] "
           onClick={() => console.log("Button clicked")}
         />
       </div>
       <div className="hidden sm:flex">
-        <input type="text" className="bg-bg-secondary " />
+        <input type="text" className="text-input" placeholder="search" />
       </div>
       <div className="flex items-center">
         <i className="mr-4 sm:hidden flex ">

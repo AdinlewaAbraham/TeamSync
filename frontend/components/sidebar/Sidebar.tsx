@@ -9,6 +9,8 @@ import { FaTasks } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BsThreeDots } from "react-icons/bs";
+import { IoMdAdd } from "react-icons/io";
 
 const SidebarComponent = ({
   menuName,
@@ -24,7 +26,7 @@ const SidebarComponent = ({
   return (
     <Link href={redirectLink}>
       <div
-        className={`inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1
+        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1
          focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary
          text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 w-full justify-start hover:bg-menuItem-hover ${
            pathname.startsWith(redirectLink) && "bg-menuItem-active"
@@ -123,8 +125,32 @@ const Sidebar = () => {
             />
           </div>
           <div className="p-4">
-            <header>
+            <header className="cursor-pointer flex items-center justify-between">
               <h3>projects</h3>
+
+              <div className="grid grid-flow-col gap-x-3">
+                <i>
+                  <BsThreeDots />
+                </i>
+                <i>
+                  <IoMdAdd />
+                </i>
+              </div>
+            </header>
+          </div>
+
+          <div className="p-4">
+            <header className="cursor-pointer flex items-center justify-between">
+              <h3>workspace</h3>
+
+              <div className="grid grid-flow-col gap-x-3">
+                <i>
+                  <BsThreeDots />
+                </i>
+                <i>
+                  <IoMdAdd />
+                </i>
+              </div>
             </header>
           </div>
         </motion.div>
