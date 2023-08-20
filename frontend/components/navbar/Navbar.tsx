@@ -21,7 +21,6 @@ const Navbar = () => {
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
   useEffect(() => {
-    console.log("just rendered");
     const handleResize = () => {
       if (window.innerWidth <= 640) {
         console.log(window.innerWidth);

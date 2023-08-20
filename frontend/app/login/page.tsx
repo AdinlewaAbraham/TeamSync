@@ -1,12 +1,33 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import { AiOutlineGoogle } from "react-icons/ai";
 const login = () => {
+  const authWithGoogle = async () => {
+    try {
+      window.open("http://localhost:5001/auth/google", "_self");
+      // const response = await fetch("/api/auth/google", {
+      //   method: "GET",
+      // });
+      // if (response.ok) {
+      //   const { url } = await response.json();
+      //   console.log(url);
+      //   // Redirect user to Google login page
+      //   // router.push(url);
+      // } else {
+      //   console.error("Failed to initiate Google login");
+      // }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <div className="flex flex-col justify-center items-center text-white h-[calc(100vh-0px)]">
       <h1 className="text-2xl font-semibold mb-4">Log into TeamSync</h1>
       <div className="flex flex-col justify-center items-center space-y-4 sm:w-[350px] w-[200px]">
         <button
+          onClick={authWithGoogle}
           className="w-full whitespace-nowrap flex items-center justify-center rounded-md text-sm font-medium 
         transition-colors focus:outline-none  
         disabled:pointer-events-none disabled:opacity-50 border border-border-default 

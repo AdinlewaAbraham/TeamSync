@@ -4,7 +4,7 @@ const googleAuth = require("./routes/auth/googleRoute");
 require("dotenv").config();
 const cors = require("cors");
 const session = require("express-session");
-const authMiddleware = require("./middleware/authMiddleware");
+const authMiddleware = require("./middleware/validateUserTokenHandler");
 
 const MongoDBStore = require("connect-mongodb-session")(session);
 
@@ -32,18 +32,25 @@ app.use(passport.session());
 
 const port = process.env.PORT || 5000;
 
+app.use(cors());
+
 // protected
-app.use("/workspace", cors(), authMiddleware, workspace);
+app.use("/workspace", authMiddleware, workspace);
 
 // login route for google
 app.use("/auth/google/", googleAuth);
+
+app.get("/user", authMiddleware, (req, res) => {
+  res.status(200).json(req.user);
+});
 
 app.get("/auth/failure", (req, res) => {
   res.send("something went wrong");
 });
 app.get("/login", (req, res) => {
-  res.status(200).json({message: "first fullstack api call"})
-})
+  res.status(200).json({ message: "first fullstack api call" });
+});
+
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {

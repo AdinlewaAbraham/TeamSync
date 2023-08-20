@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GeneralContextProvider } from "@/context/GeneralContext";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  useEffect(() => {
+    console.log("render")
+  }, [])
+  
   return (
     <html lang="en">
       <body className={inter.className}>
