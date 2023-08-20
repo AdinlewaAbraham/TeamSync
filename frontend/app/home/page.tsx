@@ -1,34 +1,27 @@
-"use sever";
+"use client";
 import MainLayout from "@/components/MainLayout";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useGlobalContext } from "@/context/GeneralContext";
+import User from "@/interfaces/user";
 
 const page = () => {
-  async function fetchData() {
-    try {
-      const response = await fetch("/user", {
-        method: "GET",
-      });
+  const { user, setUser } = useGlobalContext();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Fetched data:", data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null;
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+    const user: User | null = userString ? JSON.parse(userString) : null;
+    if (user){
+      setUser(user)
+    }else{
+      
     }
-  }
 
-  fetchData();
-
- 
+  }, []);
 
   return (
     <>
+      {user?.name}
       home page <Link href={"/login"}> redirect to login page</Link>{" "}
     </>
   );

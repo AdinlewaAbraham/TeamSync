@@ -1,32 +1,27 @@
 "use client";
-import Link from "next/link";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { useEffect } from "react";
+import { redirectToLogin } from "@/helpers/redirect";
+
+import { useRouter } from "next/navigation";
+import fetchUser from "@/helpers/fetchUser";
 export default function Home() {
-  const { setToken, token } = useGlobalContext();
-
-  async function fetchData() {
-    try {
-      const response = await fetch("/api/user/", {
-        method: "GET",
-      });
-      const data = await response.json();
-      if (response.status === 401 && data.error === "REDIRECT TO LOGIN") {
-        console.log("redirect to login");
+  const { setUser, user } = useGlobalContext();
+  useEffect(() => {
+    const handleUser = async () => {
+      try {
+        const user = await fetchUser();
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          setUser(user);
+          window.location.href = "/home";
+        }
+      } catch (error) {
+        console.error(error);
       }
-      console.log(response.status);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+    };
+    handleUser();
+  }, []);
 
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null;
-    }
-  }
-
-  fetchData();
-  return <div></div>;
+  return <div>validationg user...</div>;
 }

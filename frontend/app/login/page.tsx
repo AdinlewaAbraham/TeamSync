@@ -6,18 +6,7 @@ import { AiOutlineGoogle } from "react-icons/ai";
 const login = () => {
   const authWithGoogle = async () => {
     try {
-      window.open("http://localhost:5001/auth/google", "_self");
-      // const response = await fetch("/api/auth/google", {
-      //   method: "GET",
-      // });
-      // if (response.ok) {
-      //   const { url } = await response.json();
-      //   console.log(url);
-      //   // Redirect user to Google login page
-      //   // router.push(url);
-      // } else {
-      //   console.error("Failed to initiate Google login");
-      // }
+      window.open(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, "_self");
     } catch (error) {
       console.error("Error:", error);
     }

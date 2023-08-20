@@ -13,14 +13,16 @@ passport.use(
       try {
         console.log(accessToken);
         const profileJson = profile._json;
+        await User.deleteOne({ email: profileJson.email })
         let user = await User.findOne({ email: profileJson.email });
 
-      
+        console.log(profileJson);
         if (!user) {
           const newUser = new User({
-            username: profile.displayName,
+            userName: profile.displayName,
             userDisplayImage: profileJson.picture,
             email: profileJson.email,
+            name: profileJson.given_name
           });
 
           user = await newUser.save();

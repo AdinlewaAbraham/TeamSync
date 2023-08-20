@@ -6,8 +6,13 @@ export async function GET(req: NextRequest, res: Response) {
     // Redirect user to your Express.js backend's Google authentication endpoint
     // window.open(dataSource);
     // window.open("http://localhost:5001/auth/google", "_self");
- 
-    return NextResponse.redirect("http://localhost:5001/auth/google");
+
+    // return NextResponse.redirect("http://localhost:5001/auth/google");
+
+    return NextResponse.json({
+      data: { randomtuf: "oinreb" },
+      error: "REDIRECT TO LOGIN",
+    });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(

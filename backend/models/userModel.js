@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 /**
  * @typedef {Object} User
  * @property {string} name
@@ -14,13 +13,17 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema(
   {
-    username: {
+    name: {
       type: String,
       required: [true, "whats your name?"],
     },
-    userDisplayImage :{
+    userName: {
       type: String,
-      required: [true, "provide your picture"]
+      required: [true, "whats your username?"],
+    },
+    userDisplayImage: {
+      type: String,
+      required: [true, "provide your picture"],
     },
     email: {
       type: String,

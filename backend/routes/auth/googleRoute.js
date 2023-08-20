@@ -23,7 +23,9 @@ router.get("/success", (req, res) => {
   });
   res.cookie("userToken", accessToken, { httpOnly: true });
   console.log(accessToken);
+  // make this flexable
   res.redirect("http://localhost:3000/");
+
 });
 
 module.exports = router;
