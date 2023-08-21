@@ -3,7 +3,7 @@ import MainLayout from "@/components/MainLayout";
 import React from "react";
 
 const page = () => {
-  return <>tasks</>;
+  return <>redirect to default</>;
 };
 
 export default page;

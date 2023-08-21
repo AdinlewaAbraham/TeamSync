@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
  */
 
 /**
- * @type {import("mongoose").Model<Contact>}
+ * @type {import("mongoose").Model<User>}
  */
 
 const userSchema = mongoose.Schema(
@@ -40,4 +40,4 @@ const userSchema = mongoose.Schema(
 
 const User = mongoose.model("user", userSchema);
 
-module.exports = { User };
+module.exports = { User , userSchema};

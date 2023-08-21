@@ -11,20 +11,13 @@ const page = () => {
   useEffect(() => {
     const userString = localStorage.getItem("user");
     const user: User | null = userString ? JSON.parse(userString) : null;
-    if (user){
-      setUser(user)
-    }else{
-      
+    if (user) {
+      setUser(user);
+    } else {
     }
-
   }, []);
 
-  return (
-    <>
-      {user?.name}
-      home page <Link href={"/login"}> redirect to login page</Link>{" "}
-    </>
-  );
+  return <main>redirect to last workspace home page</main>;
 };
 
 export default page;

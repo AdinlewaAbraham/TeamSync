@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
  */
 
 /**
- * @type {import("mongoose").Model<Contact>}
+ * @type {import("mongoose").Model<Workspace>}
  */
 
 const workspaceShema = mongoose.Schema(
@@ -26,10 +26,7 @@ const workspaceShema = mongoose.Schema(
       type: Array,
       required: [false],
     },
-    projects: {
-      type: Array,
-      required: [false],
-    },
+    projects: [{type: mongoose.Schema.Types.ObjectId, ref: "project"}],
   },
   { timestamps: true }
 );
