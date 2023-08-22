@@ -1,19 +1,21 @@
 const mongoose = require("mongoose");
-const { commentSchema } = require("./commentModel");
 
 /**
  * @typedef {Object} Task
  * @property {string} taskName
  * @property {string} description
- * @property {Array} assignees
+ * @property {[ mongoose.Schema.Types.ObjectId]} assignees
  *
- * @property {Date} dueDate
+ * @property {mongoose.Schema.Types.Date} dueDate
  * @property {string} Priority
  * @property {string} status
  *
- * @property {Array} comments
- * @property {Array} subTasks
- * @property {Array} collaborators
+ * @property {[ mongoose.Schema.Types.ObjectId]} comments
+ * @property {[ mongoose.Schema.Types.ObjectId]} subTasks
+ * @property {[ mongoose.Schema.Types.ObjectId]} members
+ *
+ * @property { mongoose.Schema.Types.ObjectId} projectId
+ * @property {Boolean} isComplete
  */
 
 /**
@@ -29,12 +31,9 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: [false],
   },
-  assignees: {
-    type: Array,
-    required: [false],
-  },
+  assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
   dueDate: {
-    type: Date,
+    type: mongoose.Schema.Types.Date,
   },
   Priority: {
     type: String,
@@ -44,11 +43,12 @@ const taskSchema = mongoose.Schema({
     type: String,
     required: [true, "task status required"],
   },
-  comments: [commentSchema],
-  subTasks:  [{ type: mongoose.Schema.Types.ObjectId, ref: 'task' }],
-  collaborators: {
-    type: Array,
-    required: [false],
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "comment" }],
+  subTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "task" }],
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "need the projectid this task belong to"],
   },
   isComplete: {
     type: Boolean,

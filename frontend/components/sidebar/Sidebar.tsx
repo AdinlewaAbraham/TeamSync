@@ -11,6 +11,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
+import DropDownComponent from "./DropDownComponent";
+import ProjectMainSection from "./project/ProjectMainSection";
+import WorkspaceMainSection from "./workspace/workspaceMainSection";
 
 const SidebarComponent = ({
   menuName,
@@ -26,11 +29,14 @@ const SidebarComponent = ({
   return (
     <Link href={redirectLink}>
       <div
-        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1
+        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-md 
+        text-sm font-medium transition-colors 
+        focus-visible:outline-none focus-visible:ring-1
          focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary
-         text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 w-full justify-start hover:bg-menuItem-hover ${
-           pathname.startsWith(redirectLink) && "bg-menuItem-active"
-         }`}
+         text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 w-full justify-start
+          hover:bg-menuItem-hover ${
+            pathname.startsWith(redirectLink) && "bg-menuItem-active"
+          }`}
       >
         <i className="mr-2 text-muted-dark">{iconComp}</i>
         <p className="text-muted-light">{menuName}</p>
@@ -91,67 +97,60 @@ const Sidebar = () => {
           animate={{ width: sidebarWidth }}
           exit={{ width: 0 }}
           transition={{ duration: isResizing ? 0 : 0.15 }}
-          className="overflow-hidden bg-bg-primary h-[calc(100dvh-50px)] relative "
+          className="relative flex flex-col justify-between overflow-hidden bg-bg-primary h-[calc(100dvh-50px)]"
           style={{ width: sidebarWidth }}
         >
-          <span
-            onMouseDown={(e) => {
-              document.body.classList.add("select-none");
-              setIsResizing(true);
-              setInitialX(e.clientX);
-            }}
-            onMouseUp={() => {
-              setIsResizing(false);
-              document.body.classList.remove("select-none");
-            }}
-            className="absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize"
-            style={{ backgroundColor: isResizing ? "blue" : "transparent" }}
-          />
-          <div className="border-b-[1px] border-border-default p-4">
-            <SidebarComponent
-              menuName="Home"
-              redirectLink="/home"
-              iconComp={<BiHomeAlt2 />}
+          <div>
+            <span
+              onMouseDown={(e) => {
+                document.body.classList.add("select-none");
+                setIsResizing(true);
+                setInitialX(e.clientX);
+              }}
+              onMouseUp={() => {
+                setIsResizing(false);
+                document.body.classList.remove("select-none");
+              }}
+              className="absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize"
+              style={{ backgroundColor: isResizing ? "blue" : "transparent" }}
             />
-            <SidebarComponent
-              menuName="My tasks"
-              redirectLink="/mytasks"
-              iconComp={<FaTasks />}
+            <div className="border-b-[1px] border-border-default p-4">
+              <SidebarComponent
+                menuName="Home"
+                redirectLink="/home"
+                iconComp={<BiHomeAlt2 />}
+              />
+              <SidebarComponent
+                menuName="My tasks"
+                redirectLink="/mytasks"
+                iconComp={<FaTasks />}
+              />
+              <SidebarComponent
+                menuName="Dashboards"
+                redirectLink="/dashboards"
+                iconComp={<LuLayoutDashboard />}
+              />
+            </div>
+            <DropDownComponent
+              MainComponent={<ProjectMainSection />}
+              AddComponent={<>hey</>}
+              MoreComponent={<>some shere</>}
+              title={"Projects"}
             />
-            <SidebarComponent
-              menuName="Dashboards"
-              redirectLink="/dashboards"
-              iconComp={<LuLayoutDashboard />}
+
+            <DropDownComponent
+              MainComponent={<WorkspaceMainSection />}
+              AddComponent={<>hey</>}
+              MoreComponent={<>some shere</>}
+              title={"workspace"}
             />
           </div>
-          <div className="p-4">
-            <header className="cursor-pointer flex items-center justify-between">
-              <h3>projects</h3>
-
-              <div className="grid grid-flow-col gap-x-3">
-                <i>
-                  <BsThreeDots />
-                </i>
-                <i>
-                  <IoMdAdd />
-                </i>
-              </div>
-            </header>
-          </div>
 
           <div className="p-4">
-            <header className="cursor-pointer flex items-center justify-between">
-              <h3>workspace</h3>
-
-              <div className="grid grid-flow-col gap-x-3">
-                <i>
-                  <BsThreeDots />
-                </i>
-                <i>
-                  <IoMdAdd />
-                </i>
-              </div>
-            </header>
+            <div className="flex items-center p-4 hover:bg-menuItem-hover  rounded-md  ">
+              <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
+              workspacename
+            </div>
           </div>
         </motion.div>
       )}

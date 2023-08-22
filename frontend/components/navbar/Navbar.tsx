@@ -20,6 +20,8 @@ const Navbar = () => {
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
+
+  const { user } = useGlobalContext();
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 640) {
@@ -45,9 +47,8 @@ const Navbar = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
   return (
-    <div className="w-full h-[50px] flex items-center justify-between px-3 border-b-[1px] bg-bg-primary border-gray-700">
+    <div className="w-full h-[50px] flex items-center justify-between px-3 border-b-[1px] bg-bg-primary border-border-default">
       <div className="flex items-center">
         <i
           className="cursor-pointer text-white mr-10"
@@ -79,7 +80,13 @@ const Navbar = () => {
           ref={setReferenceElement}
           onClick={() => setShowUserMenu(!showUserMenu)}
         >
-          <div className="w-8 h-8 rounded-full bg-slate-400 mr-0.5 "></div>
+          <div className="w-8 h-8 rounded-full bg-slate-400 mr-0.5 ">
+            <img
+              src={user?.userDisplayImage}
+              alt=""
+              className="w-full h-full rounded-full"
+            />
+          </div>
           <i className="">
             <RiArrowDropDownLine size={30} />
           </i>

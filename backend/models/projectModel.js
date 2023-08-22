@@ -1,38 +1,44 @@
 const mongoose = require("mongoose");
 
 /**
- * @typedef {Object} Comment
- * @property {string} text
- * @property {mongoose.Schema.Types.ObjectId} senderId
+ * @typedef {string} Project
+ * @property {string} projectName
+ * @property {mongoose.Schema.Types.Date} dueDate
+ * @property {string} description
  *
- * @property {string} senderDisplayName
- * @property {string} senderEmail
+ * @property {[ mongoose.Schema.Types.ObjectId]} members
+ * @property {[ mongoose.Schema.Types.ObjectId]} lists
  *
  */
 
 /**
- * @type {import("mongoose").Model<Comment>}
+ * @type {import("mongoose").Model<Project>}
  */
 
-const commentSchema = mongoose.Schema({
-  text: { type: String, required: [true, "provide comment text"] },
-  senderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: [true, "provide comment text"],
+const projectSchema = mongoose.Schema({
+  projectName: { type: String, required: [true, "provide project name"] },
+  dueDate: {
+    type: mongoose.Schema.Types.Date,
+    required: [false],
   },
-  senderDisplayName: {
+  description: {
     type: String,
-    required: [true, "provide comment text"],
+    required: [false],
   },
-  senderEmail: {
-    type: String,
-    required: [true, "provide comment text"],
-  },
-  lists: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "list"
-  }]
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+  lists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "list",
+    },
+  ],
 });
 
-const Comment = mongoose.model("project", taskSchema);
+const Project = mongoose.model("project", projectSchema);
 
-module.exports = { Comment, commentSchema };
+module.exports = { Project, projectSchema };
