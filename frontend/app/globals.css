@@ -7,7 +7,7 @@
     @apply bg-accent-primary hover:bg-accent-primary/90 text-black;
   }
   .text-input {
-    @apply h-9 rounded-md border border-border-default bg-transparent px-3 py-1 
+    @apply h-9 rounded-lg border border-border-default bg-transparent px-3 py-1 
     text-sm shadow-sm transition-colors placeholder-gray-400 focus:outline-none 
     focus:ring-1 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50
   }

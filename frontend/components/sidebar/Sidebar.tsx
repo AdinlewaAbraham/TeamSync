@@ -13,7 +13,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
 import DropDownComponent from "./DropDownComponent";
 import ProjectMainSection from "./project/ProjectMainSection";
-import WorkspaceMainSection from "./workspace/workspaceMainSection";
+import WorkspaceMainSection from "./workspace/WorkspaceMainSection";
 
 const SidebarComponent = ({
   menuName,
@@ -29,7 +29,7 @@ const SidebarComponent = ({
   return (
     <Link href={redirectLink}>
       <div
-        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-md 
+        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-lg
         text-sm font-medium transition-colors 
         focus-visible:outline-none focus-visible:ring-1
          focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary
@@ -136,6 +136,7 @@ const Sidebar = () => {
               AddComponent={<>hey</>}
               MoreComponent={<>some shere</>}
               title={"Projects"}
+              showSidebarIcon={true}
             />
 
             <DropDownComponent
@@ -143,11 +144,12 @@ const Sidebar = () => {
               AddComponent={<>hey</>}
               MoreComponent={<>some shere</>}
               title={"workspace"}
+              showSidebarIcon={false}
             />
           </div>
 
           <div className="p-4">
-            <div className="flex items-center p-4 hover:bg-menuItem-hover  rounded-md  ">
+            <div className="flex items-center p-4 hover:bg-menuItem-hover  rounded-lg cursor-pointer">
               <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
               workspacename
             </div>

@@ -6,9 +6,11 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { AiOutlineSearch } from "react-icons/ai";
 import { usePopper } from "react-popper";
 import "../../app/globals.css";
+import CreateMenu from "./CreateMenu";
 const Navbar = () => {
   const { showSidebar, setShowSidebar } = useGlobalContext();
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [showCreateMenu, setShowCreateMenu] = useState<boolean>(false);
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
 
   const [referenceElement, setReferenceElement] =
@@ -17,9 +19,27 @@ const Navbar = () => {
     null
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
+
+  const [referenceElement2, setReferenceElement2] =
+    useState<HTMLDivElement | null>(null);
+  const [popperElement2, setPopperElement2] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [arrowElement2, setArrowElement2] = useState<HTMLDivElement | null>(
+    null
+  );
+  const { styles: styles2, attributes: attributes2 } = usePopper(
+    referenceElement2,
+    popperElement2,
+    {
+      placement: "right-end",
+      modifiers: [{ name: "arrow", options: { element: arrowElement2 } }],
+    }
+  );
 
   const { user } = useGlobalContext();
   useEffect(() => {
@@ -36,8 +56,13 @@ const Navbar = () => {
       const target = e.target as HTMLElement;
 
       const closestAncestor = target.closest(".userMenu");
+      const closestAncestor2 = target.closest(".createMenu");
       if (!closestAncestor) {
         setShowUserMenu(false);
+      }
+
+      if (!closestAncestor2) {
+        setShowCreateMenu(false);
       }
     };
     window.addEventListener("click", handleClick);
@@ -60,13 +85,25 @@ const Navbar = () => {
         </i>
         {/* remove text for logo and keep only logo for mobile */}
         <h1 className="mr-4 uppercase select-none">teamsync</h1>
-        <button
+        <div
           data-after-sm="+"
           data-after-lg="Create"
-          className="accent-color rounded-md sm:p-1 px-3 py-1 button-default
-         after:content-[attr(data-after-sm)] sm:after:content-[attr(data-after-lg)] "
-          onClick={() => console.log("Button clicked")}
-        />
+          className="accent-color text-xs flex justify-center items-center rounded-lg sm:py-0 font-bold sm:px-2 px-3 py-0 button-default
+         after:content-[attr(data-after-sm)] sm:after:content-[attr(data-after-lg)] 
+         createMenu"
+          onClick={() => setShowCreateMenu(!showCreateMenu)}
+          ref={setReferenceElement2}
+        ></div>
+        {showCreateMenu && (
+          <div
+            ref={setPopperElement2}
+            style={styles2.popper}
+            {...attributes2.popper}
+            className="z-20 createMenu"
+          >
+            <CreateMenu />
+          </div>
+        )}
       </div>
       <div className="hidden sm:flex">
         <input type="text" className="text-input" placeholder="search" />

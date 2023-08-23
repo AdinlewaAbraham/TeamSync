@@ -9,11 +9,13 @@ const DropDownComponent = ({
   AddComponent,
   MoreComponent,
   title,
+  showSidebarIcon,
 }: {
   MainComponent: React.ReactNode;
   AddComponent: React.ReactNode;
   MoreComponent: React.ReactNode;
   title: string;
+  showSidebarIcon: boolean;
 }) => {
   const [showMainComponent, setShowMainComponent] = useState<boolean>(false);
   return (
@@ -24,7 +26,7 @@ const DropDownComponent = ({
           onClick={() => setShowMainComponent(!showMainComponent)}
         >
           <i
-            className={` px-[7px] rounded-md text-lg transition-all duration-200 group-hover:opacity-100 ${
+            className={` px-[7px] rounded-lg text-lg transition-all duration-200 group-hover:opacity-100 ${
               showMainComponent ? "opacity-0" : "rotate-[-90deg] "
             }  `}
           >
@@ -32,18 +34,22 @@ const DropDownComponent = ({
           </i>
           <h3>{title}</h3>
         </div>
-        <div className="grid grid-flow-col ">
-          <SidebarIconComponent
-            icon={<BsThreeDots />}
-            toolTipText="Show options"
-          />
-          <SidebarIconComponent
-            icon={<IoMdAdd />}
-            toolTipText={"Add " + title}
-          />
-        </div>
+        {showSidebarIcon && (
+          <div className="grid grid-flow-col ">
+            <SidebarIconComponent
+              icon={<BsThreeDots />}
+              toolTipText="Show options"
+            />
+            <SidebarIconComponent
+              icon={<IoMdAdd />}
+              toolTipText={"Add " + title}
+            />
+          </div>
+        )}
       </header>
-      {showMainComponent && <main className="px-8 truncate">{MainComponent}</main>}
+      {showMainComponent && (
+        <main className="px-8 truncate">{MainComponent}</main>
+      )}
     </section>
   );
 };

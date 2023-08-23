@@ -9,6 +9,8 @@ export type GeneralContextType = {
   setToken: (c: string) => void;
   user: User | null;
   setUser: (c: User | null) => void;
+  showCreateWorkspaceModal: boolean;
+  setShowCreateWorkspaceModal: (c: boolean) => void;
 };
 
 const GeneralContext = createContext<GeneralContextType>({
@@ -18,6 +20,8 @@ const GeneralContext = createContext<GeneralContextType>({
   setToken: () => {},
   user: null,
   setUser: () => {},
+  showCreateWorkspaceModal: false,
+  setShowCreateWorkspaceModal: () => {},
 });
 
 export const GeneralContextProvider = ({
@@ -26,12 +30,23 @@ export const GeneralContextProvider = ({
   children: ReactNode;
 }) => {
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
+    useState<boolean>(false);
   const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
 
   return (
     <GeneralContext.Provider
-      value={{ showSidebar, setShowSidebar, token, setToken, user, setUser }}
+      value={{
+        showSidebar,
+        setShowSidebar,
+        token,
+        setToken,
+        user,
+        setUser,
+        showCreateWorkspaceModal,
+        setShowCreateWorkspaceModal,
+      }}
     >
       {children}
     </GeneralContext.Provider>

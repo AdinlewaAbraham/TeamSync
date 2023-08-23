@@ -13,7 +13,7 @@ const SidebarIconComponent = ({
   const [showToolTip, setShowToolTip] = useState(false);
   return (
     <div
-      className="p-1 hover:bg-menuItem-hover relative flex justify-center rounded-md"
+      className="p-1 hover:bg-menuItem-hover relative flex justify-center rounded-lg"
       onMouseEnter={() => setShowToolTip(true)}
       onMouseLeave={() => setShowToolTip(false)}
     >
@@ -24,7 +24,7 @@ const SidebarIconComponent = ({
             showToolTip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }
           }
           transition={{ duration: 0, delay: 0.5 }}
-          className="text-xs p-2 bg-menuItem-active  absolute top-[-40px] whitespace-nowrap rounded-md"
+          className="text-xs p-2 bg-menuItem-active  absolute top-[-40px] whitespace-nowrap rounded-lg"
         >
           {toolTipText}
        
