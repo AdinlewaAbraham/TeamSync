@@ -1,2 +1,3 @@
 things to do 
  write both frontend and backend code for creating workspace
+if a new user automatically create workspace with project and tasks

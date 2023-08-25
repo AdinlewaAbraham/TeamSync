@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
  * @property {string} name
  * @property {string} description
  * @property {[mongoose.Schema.Types.ObjectId]} members
+ * @property {[mongoose.Schema.Types.ObjectId]} admins
+ * @property {mongoose.Schema.Types.ObjectId} creator
  * @property {[mongoose.Schema.Types.ObjectId]} projects
  * @property {[object]} settings
  */
@@ -21,7 +23,7 @@ const workspaceShema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "please provide a description for the workspace"],
+      required: [false],
     },
     members: [
       {
@@ -29,6 +31,17 @@ const workspaceShema = mongoose.Schema(
         ref: "user",
       },
     ],
+    admins: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: [true, "need creator of workspace"],
+    },
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "project" }],
     settings: {
       type: Object,

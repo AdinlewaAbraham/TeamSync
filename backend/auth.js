@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { User } = require("./models/userModel");
+const { Workspace } = require("./models/workspaceModel");
 
 passport.use(
   new GoogleStrategy(
@@ -13,7 +14,7 @@ passport.use(
       try {
         console.log(accessToken);
         const profileJson = profile._json;
-        await User.deleteOne({ email: profileJson.email })
+        await User.deleteOne({ email: profileJson.email });
         let user = await User.findOne({ email: profileJson.email });
 
         console.log(profileJson);
@@ -22,10 +23,19 @@ passport.use(
             userName: profile.displayName,
             userDisplayImage: profileJson.picture,
             email: profileJson.email,
-            name: profileJson.given_name
+            name: profileJson.given_name,
+            activeWorkspaceId: "placeholderId",
+          });;
+          const workspace = new Workspace({
+            name: "my workspace",
+            creator: newUser._id,
+            admins: [newUser._id],
+            members: [newUser._id],
           });
+          const createdWorkspace = await workspace.save();
 
-          user = await newUser.save();
+          newUser.activeWorkspaceId = createdWorkspace._id;
+          user = await newUser.save()
         }
         req.user = user;
         return cb(null, user);

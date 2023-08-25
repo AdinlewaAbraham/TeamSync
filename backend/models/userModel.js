@@ -36,6 +36,11 @@ const userSchema = mongoose.Schema({
       ref: "Workspace",
     },
   ],
+  activeWorkspaceId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Workspace",
+    required: [true, "activeworkspaceId needed"],
+  },
 });
 
 const User = mongoose.model("user", userSchema);

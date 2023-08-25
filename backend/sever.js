@@ -34,6 +34,7 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 
+app.use(express.json());
 // protected
 app.use("/workspace", authMiddleware, workspace);
 

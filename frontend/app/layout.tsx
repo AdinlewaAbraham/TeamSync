@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <GeneralContextProvider>
-          {pathname.startsWith("/login") || pathname.startsWith("/signup") ? (
+          {pathname.startsWith("/login") || pathname.startsWith("/signup")|| pathname.startsWith("/home") ? (
             <>{children}</>
           ) : (
             <MainLayout>{children}</MainLayout>

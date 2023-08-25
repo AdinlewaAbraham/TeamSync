@@ -101,7 +101,7 @@ const Navbar = () => {
             {...attributes2.popper}
             className="z-20 createMenu"
           >
-            <CreateMenu />
+            <CreateMenu setShowCreateMenu={setShowCreateMenu}/>
           </div>
         )}
       </div>
