@@ -45,10 +45,8 @@ const Navbar = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 640) {
-        console.log(window.innerWidth);
         setIsMobile(true);
       } else {
-        console.log(window.innerWidth);
         setIsMobile(false);
       }
     };

@@ -1,7 +1,16 @@
 const asyncHandler = require("express-async-handler");
 const { Workspace } = require("../../models/workspaceModel");
+const { Project } = require("../../models/projectModel");
+
 const getWorkspace = asyncHandler(async (req, res) => {
-  const workspace = await Workspace.findById(req.params.id);
+  console.log(req.params.id);
+  const workspace = await Workspace.findById(req.params.id)
+    .populate({
+      path: "members",
+      options: { limit: 5 },
+    })
+    .populate("projects")
+    .exec();
 
   res.status(200).json(workspace);
 });
@@ -25,7 +34,7 @@ const createWorkspace = asyncHandler(async (req, res) => {
       .status(500)
       .json({ error: "An error occurred while creating the workspace." });
   }
-
+// add workspace to user workspace array
   // res.status(200).json(workspace);
 });
 const updateWorkspace = asyncHandler(async (req, res) => {

@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get("userToken")?.value;
-    const response = await fetch("http://localhost:5001/user/", {
+    const response = await fetch(process.env.API_HOST + "/user/", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

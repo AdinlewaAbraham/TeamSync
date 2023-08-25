@@ -20,9 +20,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  useEffect(() => {
-    console.log("render")
-  }, [])
   
   return (
     <html lang="en">

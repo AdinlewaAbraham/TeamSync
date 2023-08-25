@@ -63,4 +63,14 @@ app.get("/logout", (req, res, next) => {
 
 app.listen(port, () => {});
 
+// io = require("socket.io")(app, {
+//   cors: {
+//     origin: "*",
+//   },
+// });
+
+// io.on("connection", (socket)=>{
+//   console.log("connected")
+// })
+
 module.exports = { db };

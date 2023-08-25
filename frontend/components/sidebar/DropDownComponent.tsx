@@ -6,16 +6,12 @@ import SidebarIconComponent from "./SidebarIconComponent";
 
 const DropDownComponent = ({
   MainComponent,
-  AddComponent,
-  MoreComponent,
   title,
-  showSidebarIcon,
+  sidebarIconComponent,
 }: {
   MainComponent: React.ReactNode;
-  AddComponent: React.ReactNode;
-  MoreComponent: React.ReactNode;
   title: string;
-  showSidebarIcon: boolean;
+  sidebarIconComponent: React.ReactNode;
 }) => {
   const [showMainComponent, setShowMainComponent] = useState<boolean>(false);
   return (
@@ -34,18 +30,7 @@ const DropDownComponent = ({
           </i>
           <h3>{title}</h3>
         </div>
-        {showSidebarIcon && (
-          <div className="grid grid-flow-col ">
-            <SidebarIconComponent
-              icon={<BsThreeDots />}
-              toolTipText="Show options"
-            />
-            <SidebarIconComponent
-              icon={<IoMdAdd />}
-              toolTipText={"Add " + title}
-            />
-          </div>
-        )}
+        {sidebarIconComponent}
       </header>
       {showMainComponent && (
         <main className="px-8 truncate">{MainComponent}</main>

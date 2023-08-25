@@ -25,7 +25,8 @@ passport.use(
             email: profileJson.email,
             name: profileJson.given_name,
             activeWorkspaceId: "placeholderId",
-          });;
+            workspaces: ["placeholderId"],
+          });
           const workspace = new Workspace({
             name: "my workspace",
             creator: newUser._id,
@@ -33,9 +34,9 @@ passport.use(
             members: [newUser._id],
           });
           const createdWorkspace = await workspace.save();
-
-          newUser.activeWorkspaceId = createdWorkspace._id;
-          user = await newUser.save()
+          newUser.workspaces = [createdWorkspace.id];
+          newUser.activeWorkspaceId = createdWorkspace.id;
+          user = await newUser.save();
         }
         req.user = user;
         return cb(null, user);

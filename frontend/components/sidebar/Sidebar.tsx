@@ -7,13 +7,17 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { BiHomeAlt2 } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
+import { MdOutlineUnfoldMore } from "react-icons/md";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
 import DropDownComponent from "./DropDownComponent";
 import ProjectMainSection from "./project/ProjectMainSection";
-import WorkspaceMainSection from "./workspace/WorkspaceMainSection";
+import WorkspaceMainsection from "./workspace/WorkspaceMainsection";
+import fetchWorkspace from "@/helpers/fetchWorkspace";
+import SidebarIconComponent from "./SidebarIconComponent";
+import { usePopper } from "react-popper";
 
 const SidebarComponent = ({
   menuName,
@@ -46,11 +50,43 @@ const SidebarComponent = ({
 };
 
 const Sidebar = () => {
-  const { showSidebar } = useGlobalContext();
+  const { showSidebar, activeWorkspace, user, setActiveWorkspace } =
+    useGlobalContext();
   const [isResizing, setIsResizing] = useState<boolean>(false);
+  const [showAddProjectComponent, setShowAddProjectComponent] =
+    useState<boolean>(false);
+  const [showSortOptions, setShowSortOptions] = useState<boolean>(false);
 
   const [initialX, setInitialX] = useState<number>(0);
   const [sidebarWidth, setSidebarWidth] = useState<number>(250);
+
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
+  });
+
+  const [referenceElement2, setReferenceElement2] =
+    useState<HTMLDivElement | null>(null);
+  const [popperElement2, setPopperElement2] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [arrowElement2, setArrowElement2] = useState<HTMLDivElement | null>(
+    null
+  );
+  const { styles: styles2, attributes: attributes2 } = usePopper(
+    referenceElement2,
+    popperElement2,
+    {
+      placement: "right",
+      modifiers: [{ name: "arrow", options: { element: arrowElement2 } }],
+    }
+  );
   useEffect(() => {
     const locallyStoredSidebarWidth = localStorage.getItem("localSidebarWidth");
 
@@ -88,6 +124,24 @@ const Sidebar = () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isResizing, sidebarWidth, initialX]);
+
+  useEffect(() => {
+    const getWorkspace = async () => {
+      if (!user?.activeWorkspaceId) return;
+      const workspaceString = localStorage.getItem(user?.activeWorkspaceId);
+      const localWorkspace = workspaceString
+        ? JSON.parse(workspaceString)
+        : null;
+      if (localWorkspace) {
+        setActiveWorkspace(localWorkspace);
+      } else {
+        const data = await fetchWorkspace(user?.activeWorkspaceId);
+        localStorage.setItem(user?.activeWorkspaceId, JSON.stringify(data));
+        setActiveWorkspace(data);
+      }
+    };
+    getWorkspace();
+  }, [user?.activeWorkspaceId]);
 
   return (
     <AnimatePresence>
@@ -133,25 +187,63 @@ const Sidebar = () => {
             </div>
             <DropDownComponent
               MainComponent={<ProjectMainSection />}
-              AddComponent={<>hey</>}
-              MoreComponent={<>some shere</>}
               title={"Projects"}
-              showSidebarIcon={true}
+              sidebarIconComponent={
+                <div className="grid grid-flow-col ">
+                  <div
+                    ref={setReferenceElement}
+                    onClick={() => {
+                      setShowSortOptions(!showSortOptions);
+                    }}
+                  >
+                    <SidebarIconComponent
+                      icon={<BsThreeDots />}
+                      toolTipText="Show options"
+                    />
+                    {showSortOptions && (
+                      <div ref={setReferenceElement}> i love the between</div>
+                    )}
+                  </div>
+                  <div>
+                    <div
+                      ref={setReferenceElement2}
+                      onClick={() => {
+                        setShowAddProjectComponent(!showAddProjectComponent);
+                      }}
+                    >
+                      <SidebarIconComponent
+                        icon={<IoMdAdd />}
+                        toolTipText={"Add project"}
+                      />
+                    </div>
+                    {showAddProjectComponent && (
+                      <div
+                        ref={setPopperElement2}
+                        className="absolute bg-red-200"
+                      >
+                        what the heck is going onnnnn
+                      </div>
+                    )}
+                  </div>
+                </div>
+              }
             />
-
             <DropDownComponent
-              MainComponent={<WorkspaceMainSection />}
-              AddComponent={<>hey</>}
-              MoreComponent={<>some shere</>}
+              MainComponent={<WorkspaceMainsection />}
               title={"workspace"}
-              showSidebarIcon={false}
+              sidebarIconComponent={false}
             />
           </div>
 
-          <div className="p-4">
-            <div className="flex items-center p-4 hover:bg-menuItem-hover  rounded-lg cursor-pointer">
-              <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
-              workspacename
+          <div className="p-4 flex items-center justify-between">
+            <div className="flex items-center justify-between w-full p-4 hover:bg-menuItem-hover  rounded-lg cursor-pointer">
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
+                {activeWorkspace?.name}
+              </div>
+              <i>
+                <MdOutlineUnfoldMore />
+              </i>
             </div>
           </div>
         </motion.div>

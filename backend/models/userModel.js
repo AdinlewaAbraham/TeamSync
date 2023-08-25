@@ -34,6 +34,7 @@ const userSchema = mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Workspace",
+      required: [true, "needs to be in aleast one workspace"],
     },
   ],
   activeWorkspaceId: {

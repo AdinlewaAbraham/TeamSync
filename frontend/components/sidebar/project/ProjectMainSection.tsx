@@ -1,9 +1,29 @@
-import React from 'react'
+import { useGlobalContext } from "@/context/GeneralContext";
+import React from "react";
 
 const ProjectMainSection = () => {
-  return (
- <div >no projects</div>
-  )
-}
+  const { activeWorkspace } = useGlobalContext();
+  const projects = activeWorkspace?.projects;
 
-export default ProjectMainSection
+  return (
+    <div>
+      {projects ? (
+        <>
+          {projects.length === 0 ? (
+            <>no projects create one</>
+          ) : (
+            <>
+              {projects.map((project) => (
+                <>{project}</>
+              ))}
+            </>
+          )}
+        </>
+      ) : (
+        <>loading</>
+      )}
+    </div>
+  );
+};
+
+export default ProjectMainSection;

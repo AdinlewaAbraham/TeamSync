@@ -27,6 +27,7 @@
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
-    "redis": "^4.6.7"
+    "redis": "^4.6.7",
+    "socket.io": "^4.7.2"
   }
 }

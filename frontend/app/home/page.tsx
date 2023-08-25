@@ -6,11 +6,11 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import User from "@/interfaces/user";
 import LoadingComponent from "@/components/LoadingComponent";
 import fetchUser from "@/helpers/fetchUser";
-import {  useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const { user, setUser } = useGlobalContext();
-  // const router = useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const getUser = async () => {
@@ -24,8 +24,12 @@ const page = () => {
       }
     };
     getUser();
-    // router.push("/workspace/" + user?.activeWorkspaceId + "home");
   }, []);
+  useEffect(() => {
+    if (user) {
+      router.push("/workspace/" + user?.activeWorkspaceId + "/home");
+    }
+  }, [user]);
 
   return <LoadingComponent />;
 };
