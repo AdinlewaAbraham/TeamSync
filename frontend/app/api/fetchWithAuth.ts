@@ -20,7 +20,7 @@ export async function fetchWithAuth(
     console.log(data);
 
     if (!response.ok) {
-      console.error("something is wrong wih your response");
+      console.error("something is wrong wih your response check fetchWithAuth");
     }
     return { data, status: response.status };
   } catch (error) {

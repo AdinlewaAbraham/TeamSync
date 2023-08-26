@@ -1,7 +1,6 @@
 things to do 
- write both frontend and backend code for creating workspace
 if a new user automatically create workspace with project and tasks
 
 
-add workspace to user workspace array list when created 
-add add project for both backend and frontend
+when project is created and its is added locally to workspace object it creates a bug on the sideabe
+make sidehight fixed and scrollable

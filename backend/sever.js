@@ -1,5 +1,6 @@
 const express = require("express");
 const workspace = require("./routes/workspace/workspaceRoute");
+const project = require("./routes/project/projectRoute");
 const googleAuth = require("./routes/auth/googleRoute");
 require("dotenv").config();
 const cors = require("cors");
@@ -37,6 +38,8 @@ app.use(cors());
 app.use(express.json());
 // protected
 app.use("/workspace", authMiddleware, workspace);
+// protected
+app.use("/project", authMiddleware, project);
 
 // login route for google
 app.use("/auth/google/", googleAuth);

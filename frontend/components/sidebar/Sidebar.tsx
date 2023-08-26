@@ -18,6 +18,8 @@ import WorkspaceMainsection from "./workspace/WorkspaceMainsection";
 import fetchWorkspace from "@/helpers/fetchWorkspace";
 import SidebarIconComponent from "./SidebarIconComponent";
 import { usePopper } from "react-popper";
+import CreateProjectMOdal from "./project/CreateProjectModal";
+import SortOptions from "./project/SortOptions";
 
 const SidebarComponent = ({
   menuName,
@@ -42,8 +44,8 @@ const SidebarComponent = ({
             pathname.startsWith(redirectLink) && "bg-menuItem-active"
           }`}
       >
-        <i className="mr-2 text-muted-dark">{iconComp}</i>
-        <p className="text-muted-light">{menuName}</p>
+        <i className="mr-2 text-icon-default">{iconComp}</i>
+        <p className="font-medium">{menuName}</p>
       </div>
     </Link>
   );
@@ -68,6 +70,8 @@ const Sidebar = () => {
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+    strategy: "fixed",
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
 
@@ -84,6 +88,7 @@ const Sidebar = () => {
     popperElement2,
     {
       placement: "right",
+      strategy: "fixed",
       modifiers: [{ name: "arrow", options: { element: arrowElement2 } }],
     }
   );
@@ -142,6 +147,24 @@ const Sidebar = () => {
     };
     getWorkspace();
   }, [user?.activeWorkspaceId]);
+  useEffect(() => {
+    const getWorkspace = async () => {
+      if (!user?.activeWorkspaceId) return;
+      const workspaceString = localStorage.getItem(user?.activeWorkspaceId);
+      const localWorkspace = workspaceString
+        ? JSON.parse(workspaceString)
+        : null;
+      if (localWorkspace) {
+        const updatedWorkspace = await fetchWorkspace(user.activeWorkspaceId);
+        localStorage.setItem(
+          user.activeWorkspaceId,
+          JSON.stringify(updatedWorkspace)
+        );
+        setActiveWorkspace(updatedWorkspace);
+      }
+    };
+    getWorkspace();
+  }, [user?.activeWorkspaceId]);
 
   return (
     <AnimatePresence>
@@ -191,17 +214,25 @@ const Sidebar = () => {
               sidebarIconComponent={
                 <div className="grid grid-flow-col ">
                   <div
-                    ref={setReferenceElement}
                     onClick={() => {
                       setShowSortOptions(!showSortOptions);
                     }}
                   >
-                    <SidebarIconComponent
-                      icon={<BsThreeDots />}
-                      toolTipText="Show options"
-                    />
+                    <div ref={setReferenceElement}>
+                      <SidebarIconComponent
+                        icon={<BsThreeDots />}
+                        toolTipText="Show options"
+                      />
+                    </div>
                     {showSortOptions && (
-                      <div ref={setReferenceElement}> i love the between</div>
+                      <div
+                        ref={setPopperElement}
+                        style={styles.popper}
+                        {...attributes.popper}
+                        className="absolute"
+                      >
+                        <SortOptions />
+                      </div>
                     )}
                   </div>
                   <div>
@@ -219,9 +250,11 @@ const Sidebar = () => {
                     {showAddProjectComponent && (
                       <div
                         ref={setPopperElement2}
-                        className="absolute bg-red-200"
+                        style={styles2.popper}
+                        {...attributes2.popper}
+                        className="fixed "
                       >
-                        what the heck is going onnnnn
+                        <CreateProjectMOdal />
                       </div>
                     )}
                   </div>
@@ -237,7 +270,7 @@ const Sidebar = () => {
 
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center justify-between w-full p-4 hover:bg-menuItem-hover  rounded-lg cursor-pointer">
-              <div className="flex items-center">
+              <div className="flex items-center whitespace-nowrap mr-2 ">
                 <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
                 {activeWorkspace?.name}
               </div>

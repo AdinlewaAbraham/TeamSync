@@ -7,7 +7,11 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import fetchUser from "@/helpers/fetchUser";
 import fetchWorkspace from "@/helpers/fetchWorkspace";
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
+const MainLayout = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const { showCreateWorkspaceModal, setUser, user, setActiveWorkspace } =
     useGlobalContext();
 

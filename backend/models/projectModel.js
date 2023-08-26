@@ -5,8 +5,6 @@ const mongoose = require("mongoose");
  * @property {string} projectName
  * @property {mongoose.Schema.Types.Date} dueDate
  * @property {string} description
- *
- * @property {[ mongoose.Schema.Types.ObjectId]} members
  * @property {[ mongoose.Schema.Types.ObjectId]} lists
  *
  */
@@ -25,18 +23,17 @@ const projectSchema = mongoose.Schema({
     type: String,
     required: [false],
   },
-  members: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
-  ],
   lists: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "list",
     },
   ],
+  workspaceId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "workspace",
+    required: [true, "workspace project belongs to required"]
+  }
 });
 
 const Project = mongoose.model("project", projectSchema);

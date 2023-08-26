@@ -12,7 +12,7 @@
     focus:ring-1 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50
   }
   .button-default {
-    @apply h-9 px-4 py-2
+    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center
   }
 }
 :root {

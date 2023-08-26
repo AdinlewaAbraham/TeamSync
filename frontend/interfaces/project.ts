@@ -4,4 +4,6 @@ export default interface Project {
   description: string;
   members: string[];
   lists: string[];
+  _id: string;
+  workspaceId: string
 }

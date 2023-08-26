@@ -33,9 +33,12 @@ const config: Config = {
         accent: {
           primary: "#F9F9F9",
         },
-        border:{
-          default: "#333333"
-        }
+        border: {
+          default: "#333333",
+        },
+        icon: {
+          default: "#a2a0a2",
+        },
       },
     },
   },

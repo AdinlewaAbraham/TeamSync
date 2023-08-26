@@ -16,24 +16,24 @@ const DropDownComponent = ({
   const [showMainComponent, setShowMainComponent] = useState<boolean>(false);
   return (
     <section className="group mt-2">
-      <header className="cursor-pointer flex items-center justify-between select-none pr-2">
+      <header className=" cursor-pointer flex items-center justify-between select-none pr-2 py-1">
         <div
           className="flex items-center "
           onClick={() => setShowMainComponent(!showMainComponent)}
         >
           <i
-            className={` px-[7px] rounded-lg text-lg transition-all duration-200 group-hover:opacity-100 ${
+            className={` px-[7px] rounded-lg text-xl text-icon-default group-hover:text-white transition-all duration-200 group-hover:opacity-100 ${
               showMainComponent ? "opacity-0" : "rotate-[-90deg] "
             }  `}
           >
             <IoMdArrowDropdown />
           </i>
-          <h3>{title}</h3>
+          <h3 className="font-medium">{title}</h3>
         </div>
         {sidebarIconComponent}
       </header>
       {showMainComponent && (
-        <main className="px-8 truncate">{MainComponent}</main>
+        <main className="px-4 truncate">{MainComponent}</main>
       )}
     </section>
   );
