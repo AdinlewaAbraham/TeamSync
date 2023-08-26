@@ -22,7 +22,7 @@ const DropDownComponent = ({
           onClick={() => setShowMainComponent(!showMainComponent)}
         >
           <i
-            className={` px-[7px] rounded-lg text-xl text-icon-default group-hover:text-white transition-all duration-200 group-hover:opacity-100 ${
+            className={` px-[7px] rounded-lg text-xl text-icon-default group-hover:text-white transition-all duration-300 group-hover:opacity-100 ${
               showMainComponent ? "opacity-0" : "rotate-[-90deg] "
             }  `}
           >

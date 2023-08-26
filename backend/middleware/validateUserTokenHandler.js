@@ -12,7 +12,6 @@ const validateToken = asyncHandler(async (req, res, next) => {
       if (err) {
         return res.status(401).json({ error: "REDIRECT_TO_LOGIN" });
       }
-      console.log(decoded);
 
       const cleaned = { ...decoded, id: decoded._id };
       delete cleaned._id;

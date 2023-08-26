@@ -7,7 +7,6 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { BiHomeAlt2 } from "react-icons/bi";
 import { FaTasks } from "react-icons/fa";
 import { LuLayoutDashboard } from "react-icons/lu";
-import { MdOutlineUnfoldMore } from "react-icons/md";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
@@ -20,6 +19,7 @@ import SidebarIconComponent from "./SidebarIconComponent";
 import { usePopper } from "react-popper";
 import CreateProjectMOdal from "./project/CreateProjectModal";
 import SortOptions from "./project/SortOptions";
+import WorkspacePicker from "./WorkspacePicker";
 
 const SidebarComponent = ({
   menuName,
@@ -268,17 +268,7 @@ const Sidebar = () => {
             />
           </div>
 
-          <div className="p-4 flex items-center justify-between">
-            <div className="flex items-center justify-between w-full p-4 hover:bg-menuItem-hover  rounded-lg cursor-pointer">
-              <div className="flex items-center whitespace-nowrap mr-2 ">
-                <div className="w-8 h-8 bg-menuItem-active rounded-full mr-2" />
-                {activeWorkspace?.name}
-              </div>
-              <i>
-                <MdOutlineUnfoldMore />
-              </i>
-            </div>
-          </div>
+         <WorkspacePicker />
         </motion.div>
       )}
     </AnimatePresence>

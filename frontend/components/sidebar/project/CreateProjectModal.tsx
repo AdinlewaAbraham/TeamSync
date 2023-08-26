@@ -1,6 +1,7 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Project from "@/interfaces/project";
+import Workspace from "@/interfaces/workspace";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -26,11 +27,23 @@ const CreateProjectMOdal = () => {
     const data = await response.json();
     console.log(data);
     await redirectToLogin(response.status, data?.error);
-    const project = data;
-    const newWorkspace = JSON.parse(JSON.stringify(activeWorkspace));
-    newWorkspace.projects = [activeWorkspace?.projects, project];
+    const Projects = [...(activeWorkspace?.projects || []), data];
+
+    const newWorkspace: Workspace = {
+      ...(activeWorkspace || []),
+      _id: activeWorkspace?._id || "",
+      admins: activeWorkspace?.admins || [],
+      creator: activeWorkspace?.creator || "",
+      description: activeWorkspace?.description || "",
+      members: activeWorkspace?.members || [],
+
+      name: activeWorkspace?.name || "",
+      projects: Projects,
+    };
     setActiveWorkspace(newWorkspace);
-    console.log(activeWorkspace);
+    if (activeWorkspace?._id) {
+      localStorage.setItem(activeWorkspace?._id, JSON.stringify(newWorkspace));
+    }
     setLoading(false);
   };
   return (

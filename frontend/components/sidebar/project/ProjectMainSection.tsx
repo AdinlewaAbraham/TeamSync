@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 const ProjectMainSection = () => {
-  const { activeWorkspace } = useGlobalContext();
+  const { activeWorkspace, user } = useGlobalContext();
   const projects = activeWorkspace?.projects;
 
   return (
@@ -11,7 +11,14 @@ const ProjectMainSection = () => {
       {projects ? (
         <>
           {projects.length === 0 ? (
-            <>no projects create one</>
+            <div className="px-4">
+              <div className="p-2 flex flex-col justify-center">
+                <p className="text-xs whitespace-normal">
+                  create project to organize tasks and what not
+                </p>
+                <button>create project</button>
+              </div>
+            </div>
           ) : (
             <ul>
               {projects.map((project) => (

@@ -13,6 +13,7 @@ require("./auth");
 
 const db = require("./config/dbConnection");
 const passport = require("passport");
+const { User } = require("./models/userModel");
 const app = express();
 
 const store = new MongoDBStore({
@@ -44,8 +45,10 @@ app.use("/project", authMiddleware, project);
 // login route for google
 app.use("/auth/google/", googleAuth);
 
-app.get("/user", authMiddleware, (req, res) => {
-  res.status(200).json(req.user);
+app.get("/user", authMiddleware, async (req, res) => {
+  const authUser = req.user;
+  const user = await User.findById(authUser.id).populate("workspaces").exec();
+  res.status(200).json(user);
 });
 
 app.get("/auth/failure", (req, res) => {

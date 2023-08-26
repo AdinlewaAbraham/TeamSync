@@ -1,9 +1,10 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
+import User from "@/interfaces/user";
 import React, { useEffect, useState } from "react";
 
 const CreateWorkspaceModal = () => {
-  const { setShowCreateWorkspaceModal, user } = useGlobalContext();
+  const { setShowCreateWorkspaceModal, user, setUser } = useGlobalContext();
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -19,19 +20,33 @@ const CreateWorkspaceModal = () => {
   const [workspaceDescription, setWorkspaceDescription] = useState("");
   const CreateWorkspace = async () => {
     try {
+      if (!user?._id)
+        console.log("the user object is empty you fucking doughnut");
       const response = await fetch("/api/workspace/", {
         method: "POST",
         body: JSON.stringify({
           workspaceName,
-          creatorId: user?.id,
+          creatorId: user?._id,
           workspaceDescription,
         }),
       });
       const data = await response.json();
-      console.log(response.status);
-      console.log(data.error);
+      const newWorkspaces = [...(user?.workspaces || []), data]; 
+      const updatedUser: User = {
+        ...(user || {}),
+        workspaces: newWorkspaces,
+        _id: user?._id || "",
+        userName: user?.userName || "",
+        email: user?.email || "",
+        name: user?.name || "",
+        userDisplayImage: user?.userDisplayImage || "",
+        activeWorkspaceId: user?.activeWorkspaceId || "",
+      };
+      setUser(updatedUser);
+
+      console.log(user);
+
       await redirectToLogin(response.status, data.error);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

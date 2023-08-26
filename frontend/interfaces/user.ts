@@ -1,9 +1,11 @@
+import Workspace from "./workspace";
+
 export default interface User {
-  id: string;
+  _id: string;
   userName: string;
   email: string;
   name: string;
   userDisplayImage: string;
-  workspaces: string[];
+  workspaces: Workspace[];
   activeWorkspaceId: string;
 }

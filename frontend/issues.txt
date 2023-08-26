@@ -4,3 +4,7 @@ if a new user automatically create workspace with project and tasks
 
 when project is created and its is added locally to workspace object it creates a bug on the sideabe
 make sidehight fixed and scrollable
+project and workspace navbar layout 
+
+
+add skeeton loaders
