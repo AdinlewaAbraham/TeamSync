@@ -22,9 +22,7 @@ const ProjectMainSection = () => {
           ) : (
             <ul>
               {projects.map((project) => (
-                <Link
-                  href={"/workspace/" + project.workspaceId + "/" + project._id}
-                >
+                <Link href={"/project/" + project._id} key={project._id}>
                   <li
                     className=" flex items-center px-4 py-2 rounded-lg hover:bg-menuItem-hover cursor-pointer text-sm font-medium "
                     key={project._id}

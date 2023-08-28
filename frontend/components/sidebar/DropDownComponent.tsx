@@ -3,6 +3,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
 import SidebarIconComponent from "./SidebarIconComponent";
+import { AnimatePresence, motion } from "framer-motion";
 
 const DropDownComponent = ({
   MainComponent,
@@ -32,9 +33,18 @@ const DropDownComponent = ({
         </div>
         {sidebarIconComponent}
       </header>
-      {showMainComponent && (
-        <main className="px-4 truncate">{MainComponent}</main>
-      )}
+      <AnimatePresence>
+        {showMainComponent && (
+          <motion.main
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            className="px-4 truncate overflow-hidden"
+          >
+            {MainComponent}
+          </motion.main>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

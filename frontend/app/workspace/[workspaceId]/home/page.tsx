@@ -13,22 +13,8 @@ const page = ({ params }: { params: { workspaceId: string } }) => {
     }
   }, [user?.activeWorkspaceId]);
 
-  return (
-    <>
-      {activeWorkspace ? (
-        <>loading</>
-      ) : (
-        <div>
-          members {activeWorkspace?.members.length}
-          <div>porjects</div>
-          <div>
-            about us
-            {activeWorkspace?.description}
-          </div>
-        </div>
-      )}
-    </>
-  );
+
+  return <div>{params.workspaceId}</div>;
 };
 
 export default page;

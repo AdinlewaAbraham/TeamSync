@@ -105,13 +105,17 @@ const WorkspacePicker = () => {
                       <>loading skeleton</>
                     )}
                   </div>
-                  <h3 className="text-muted-dark px-4 py-1.5 text-sm">
-                    Other Workspaces
-                  </h3>
+                  {filteredWorkspaces?.length !== 0 && (
+                    <h3 className="text-muted-dark px-4 py-1.5 text-sm">
+                      Other Workspaces
+                    </h3>
+                  )}
                   <div className="p-1">
                     {filteredWorkspaces ? (
                       filteredWorkspaces.map((workspace) => (
-                        <WorkspaceBar workspace={workspace} />
+                        <div key={workspace._id}>
+                          <WorkspaceBar workspace={workspace} />
+                        </div>
                       ))
                     ) : (
                       <>loading skeleton</>

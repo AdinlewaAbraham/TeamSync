@@ -9,7 +9,7 @@ const page = () => {
   const { user, setUser } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
-    const handleRedirect = async() => {
+    const handleRedirect = async () => {
       if (!user) {
         const userData = await fetchUser();
         setUser(userData);

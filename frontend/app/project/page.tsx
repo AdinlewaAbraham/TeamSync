@@ -2,7 +2,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>this will redirct to overview if  the projectid is verified </div>
   )
 }
 
