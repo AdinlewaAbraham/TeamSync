@@ -1,4 +1,5 @@
 "use client";
+import EditableComp from "@/components/EditableComp";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import Link from "next/link";
@@ -56,28 +57,35 @@ const layout = ({
 
   return (
     <section>
-      <nav className="w-full p-4 pb-0 border-b border-border-default">
-        <div className="flex items-center">
-          <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
-          <h1 className="text-xl">project name here</h1>
-        </div>
-        <ul className="flex rounded-lg p-2 pl-0 pb-0">
-          {[
-            "Home",
-            "Calendar",
-            "Dashboard",
-            "list",
-            "timeline",
-            "workflow",
-            "files",
-            "messages",
-          ].map((item) => (
-            <div key={item}>
-              <NavbarItem title={item} projectId={params.projectId} />
-            </div>
-          ))}
-        </ul>
-      </nav>
+      {activeProject ? (
+        <nav className="w-full p-4 pb-0 border-b border-border-default">
+          <div className="flex items-center">
+            <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+            <h1 className="text-xl">
+              <EditableComp text={activeProject?.projectName} styles="px-2 py-1" />
+            </h1>
+          </div>
+          <ul className="flex rounded-lg p-2 pl-0 pb-0">
+            {[
+              "Home",
+              "Dashboard",
+              "Board",
+              "Table",
+              "Calendar",
+              "timeline",
+              "workflow",
+              "files",
+              "messages",
+            ].map((item) => (
+              <div key={item}>
+                <NavbarItem title={item} projectId={params.projectId} />
+              </div>
+            ))}
+          </ul>
+        </nav>
+      ) : (
+        <>loading comp</>
+      )}
       <main className=" h-[calc(100dvh-200px)]">{children}</main>
     </section>
   );

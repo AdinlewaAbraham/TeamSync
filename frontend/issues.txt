@@ -6,6 +6,7 @@ when project is created and its is added locally to workspace object it creates 
 make sidehight fixed and scrollable
 project and workspace navbar layout 
 
+when user click project make it active project(check click flow)
 
 aplly Authorization to accesing projects and workspaces
 

@@ -21,16 +21,24 @@ const createProject = asyncHandler(async (req, res) => {
     workspaceId,
   });
 
+  const newList = new List({
+    listName: "Unnamed list",
+    projectId: newProject._id,
+  });
+  newProject.lists.push(newList._id);
+
   workspace.projects.push(newProject._id);
 
   try {
-    const [savedProject, savedWorkspace] = await Promise.all([
+    const [savedList, savedProject, savedWorkspace] = await Promise.all([
+      newList.save(),
       newProject.save(),
       workspace.save(),
     ]);
 
     res.status(200).json(savedProject);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error creating project" });
   }
 });

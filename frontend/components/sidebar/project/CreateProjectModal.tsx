@@ -27,7 +27,6 @@ const CreateProjectMOdal = () => {
     console.log(data);
     await redirectToLogin(response.status, data?.error);
     const Projects = [...(activeWorkspace?.projects || []), data];
-
     const newWorkspace: Workspace = {
       ...(activeWorkspace || []),
       _id: activeWorkspace?._id || "",
@@ -39,9 +38,14 @@ const CreateProjectMOdal = () => {
       name: activeWorkspace?.name || "",
       projects: Projects,
     };
-    setActiveWorkspace(newWorkspace);
-    if (activeWorkspace?._id) {
-      localStorage.setItem(activeWorkspace?._id, JSON.stringify(newWorkspace));
+    if (data?._id) {
+      setActiveWorkspace(newWorkspace);
+      if (activeWorkspace?._id) {
+        localStorage.setItem(
+          activeWorkspace?._id,
+          JSON.stringify(newWorkspace)
+        );
+      }
     }
     setLoading(false);
   };

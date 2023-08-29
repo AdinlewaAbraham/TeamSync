@@ -5,6 +5,7 @@ import React from "react";
 const ProjectMainSection = () => {
   const { activeWorkspace, user } = useGlobalContext();
   const projects = activeWorkspace?.projects;
+  console.log(projects)
 
   return (
     <div>
