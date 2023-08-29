@@ -4,7 +4,6 @@ const { Project } = require("../../models/projectModel");
 const { User } = require("../../models/userModel");
 
 const getWorkspace = asyncHandler(async (req, res) => {
-  console.log(req.params.id);
   const workspace = await Workspace.findById(req.params.id)
     .populate({
       path: "members",

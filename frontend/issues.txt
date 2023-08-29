@@ -7,4 +7,6 @@ make sidehight fixed and scrollable
 project and workspace navbar layout 
 
 
+aplly Authorization to accesing projects and workspaces
+
 add skeeton loaders

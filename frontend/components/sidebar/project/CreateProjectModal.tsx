@@ -13,7 +13,6 @@ const CreateProjectMOdal = () => {
 
   const { user, setActiveWorkspace, activeWorkspace } = useGlobalContext();
 
-  console.log(activeWorkspace);
   const handleProjectCreation = async () => {
     setLoading(true);
     const response = await fetch("/api/project/", {

@@ -268,7 +268,7 @@ const Sidebar = () => {
             />
           </div>
 
-         <WorkspacePicker />
+          <WorkspacePicker />
         </motion.div>
       )}
     </AnimatePresence>

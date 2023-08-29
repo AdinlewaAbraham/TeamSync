@@ -10,8 +10,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       method: "POST",
       body: JSON.stringify(postBody),
     });
-    // console.log(postBody);
-    // console.log(data);
     return NextResponse.json(data, { status });
   } catch (err) {
     console.error(err);

@@ -17,11 +17,11 @@ export async function fetchWithAuth(
 
     const response = await fetch(url, { ...options, headers });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
-    if (!response.ok) {
-      console.error("something is wrong wih your response check fetchWithAuth");
-    }
+    // if (!response.ok) {
+    //   console.log("something is wrong wih your response check fetchWithAuth this is your status     " + response.status );
+    // }
     return { data, status: response.status };
   } catch (error) {
     console.error(error);

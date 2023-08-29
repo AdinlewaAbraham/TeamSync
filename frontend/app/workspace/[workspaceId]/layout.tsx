@@ -3,7 +3,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import React, { ReactElement, ReactNode, useEffect } from "react";
-export const NavbarItem = ({
+const NavbarItem = ({
   title,
   activeWorkspaceId,
 }: {

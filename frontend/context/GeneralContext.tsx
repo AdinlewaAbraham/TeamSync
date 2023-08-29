@@ -1,4 +1,5 @@
 "use client";
+import Project from "@/interfaces/project";
 import User from "@/interfaces/user";
 import Workspace from "@/interfaces/workspace";
 import React, { ReactNode, createContext, useState, useContext } from "react";
@@ -14,6 +15,8 @@ export type GeneralContextType = {
   setShowCreateWorkspaceModal: (c: boolean) => void;
   activeWorkspace: Workspace | null;
   setActiveWorkspace: (c: Workspace | null) => void;
+  activeProject: Project | null;
+  setActiveProject: (c: Project | null) => void;
 };
 
 const GeneralContext = createContext<GeneralContextType>({
@@ -27,6 +30,8 @@ const GeneralContext = createContext<GeneralContextType>({
   setShowCreateWorkspaceModal: () => {},
   activeWorkspace: null,
   setActiveWorkspace: () => {},
+  activeProject: null,
+  setActiveProject: () => {},
 });
 
 export const GeneralContextProvider = ({
@@ -42,6 +47,7 @@ export const GeneralContextProvider = ({
   const [activeWorkspace, setActiveWorkspace] = useState<Workspace | null>(
     null
   );
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   return (
     <GeneralContext.Provider
@@ -56,6 +62,8 @@ export const GeneralContextProvider = ({
         setShowCreateWorkspaceModal,
         activeWorkspace,
         setActiveWorkspace,
+        activeProject,
+        setActiveProject,
       }}
     >
       {children}
