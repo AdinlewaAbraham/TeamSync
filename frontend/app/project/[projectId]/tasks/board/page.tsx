@@ -1,8 +1,10 @@
 "use client";
+import BoardCard from "@/components/board/BoardCard";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect } from "react";
+import { IoMdAdd } from "react-icons/io";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
@@ -39,8 +41,22 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, []);
 
   if (!activeProject) return <>loading state</>;
-
-  return <div>{params.projectId}</div>;
+  return (
+    <div className="flex">
+      {/* {params.projectId} */}
+      {activeProject.lists.map((list, index) => (
+        <div key={index}>
+          <BoardCard list={list} />
+        </div>
+      ))}
+      <div className="w-[280px] px-4 py-2  rounded-lg bg-bg-primary flex items-center h-[60px] hover:bg-menuItem-hover cursor-pointer">
+        <i className="mr-2">
+          <IoMdAdd />
+        </i>
+        add section
+      </div>
+    </div>
+  );
 };
 
 export default page;

@@ -49,7 +49,7 @@ const layout = ({
         console.log("redirecting");
         router.push("/home"); // or push to disired url
       } else {
-        router.push("/project/" + params.projectId + "/home");
+        // router.push("/project/" + params.projectId + "/home");
       }
     };
     getProject();
@@ -69,8 +69,7 @@ const layout = ({
             {[
               "Home",
               "Dashboard",
-              "Board",
-              "Table",
+              "Tasks",
               "Calendar",
               "timeline",
               "workflow",
