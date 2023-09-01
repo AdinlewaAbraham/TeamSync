@@ -7,7 +7,7 @@ const { Task } = require("../../models/taskModel");
 const editProject = asyncHandler((req, res) => {});
 
 const createProject = asyncHandler(async (req, res) => {
-  const { projectName, projectDescription, workspaceId } = req.body;
+  const { projectName, projectDescription, workspaceId } = await req.body;
 
   const workspace = await Workspace.findById(workspaceId);
 

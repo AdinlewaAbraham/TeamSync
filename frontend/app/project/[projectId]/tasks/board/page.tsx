@@ -46,7 +46,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       {/* {params.projectId} */}
       {activeProject.lists.map((list, index) => (
         <div key={index}>
-          <BoardCard list={list} />
+          <BoardCard list={list} projectId={params.projectId} />
         </div>
       ))}
       <div className="w-[280px] px-4 py-2  rounded-lg bg-bg-primary flex items-center h-[60px] hover:bg-menuItem-hover cursor-pointer">

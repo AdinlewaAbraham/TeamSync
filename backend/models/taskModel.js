@@ -37,11 +37,13 @@ const taskSchema = mongoose.Schema({
   },
   Priority: {
     type: String,
-    required: [true, "task prio required"],
+    default: "No-Priority",
+    required: [false],
   },
   status: {
     type: String,
-    required: [true, "task status required"],
+    default: "To-Do",
+    required: [false],
   },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "comment" }],
   subTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "task" }],
@@ -58,4 +60,4 @@ const taskSchema = mongoose.Schema({
 
 const Task = mongoose.model("task", taskSchema);
 
-module.exports = { Task ,taskSchema};
+module.exports = { Task, taskSchema };
