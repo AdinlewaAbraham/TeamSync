@@ -5,23 +5,38 @@ import fetchProject from "@/helpers/fetchProject";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect } from "react";
+import { FaChartLine } from "react-icons/fa";
+import { LuClipboardCheck } from "react-icons/lu";
+import { PiFlowArrowBold } from "react-icons/pi";
+import { BiHomeAlt2 } from "react-icons/bi";
+import {} from "react-icons/";
+import {} from "react-icons/";
+import {} from "react-icons/";
+import {} from "react-icons/";
 
 const NavbarItem = ({
   title,
   projectId,
+  icon,
 }: {
   title: string;
   projectId: string;
+  icon: ReactNode;
 }) => {
   const pathname = usePathname();
   const lowercaseTitle = title.toLowerCase();
-  const isCurrentTab = pathname.endsWith(lowercaseTitle);
+  const pathNameFragment = pathname.split("/");
+  const isCurrentTab =
+    pathname.endsWith(lowercaseTitle) ||
+    (lowercaseTitle === "tasks" &&
+      pathNameFragment[pathNameFragment.length - 2] === "tasks");
   return (
     <Link href={"/project/" + projectId + "/" + lowercaseTitle} key={title}>
       <li
-        className={` p-2 text-muted-dark hover:text-white transition-colors duration-150 cursor-pointer
+        className={` flex items-center p-2 text-sm text-muted-dark hover:text-white transition-colors duration-150 cursor-pointer
       ${isCurrentTab && "border-b-2 text-white"} border-white`}
       >
+        <i className="mr-1">{icon}</i>
         {title}
       </li>
     </Link>
@@ -62,22 +77,25 @@ const layout = ({
           <div className="flex items-center">
             <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
             <h1 className="text-xl">
-              <EditableComp text={activeProject?.projectName} styles="px-2 py-1" />
+              <EditableComp
+                text={activeProject?.projectName}
+                styles="px-2 py-1"
+              />
             </h1>
           </div>
           <ul className="flex rounded-lg p-2 pl-0 pb-0">
             {[
-              "Home",
-              "Dashboard",
-              "Tasks",
-              "Calendar",
-              "timeline",
-              "workflow",
-              "files",
-              "messages",
+              { title: "Home", icon: <BiHomeAlt2 /> },
+              { title: "Dashboard", icon: <FaChartLine /> },
+              { title: "Tasks", icon: <LuClipboardCheck /> },
+              { title: "files", icon: <FaChartLine /> },
             ].map((item) => (
-              <div key={item}>
-                <NavbarItem title={item} projectId={params.projectId} />
+              <div key={item.title}>
+                <NavbarItem
+                  title={item.title}
+                  projectId={params.projectId}
+                  icon={item.icon}
+                />
               </div>
             ))}
           </ul>

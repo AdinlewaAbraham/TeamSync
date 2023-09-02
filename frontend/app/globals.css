@@ -9,10 +9,10 @@
   .text-input {
     @apply h-9 rounded-lg border border-border-default bg-transparent px-3 py-1 
     text-sm shadow-sm transition-colors placeholder-gray-400 focus:outline-none 
-    focus:ring-1 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50
+    focus:ring-1 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50;
   }
   .button-default {
-    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center
+    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center;
   }
 }
 :root {
@@ -31,4 +31,6 @@
 
 body {
   @apply bg-bg-primary text-white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

@@ -43,7 +43,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
   if (!activeProject) return <>loading state</>;
   return (
     <div className="flex">
-      {/* {params.projectId} */}
       {activeProject.lists.map((list, index) => (
         <div key={index}>
           <BoardCard list={list} projectId={params.projectId} />

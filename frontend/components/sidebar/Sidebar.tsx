@@ -3,10 +3,9 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "@/styles/globals.css";
-import { RiArrowDropDownLine } from "react-icons/ri";
 import { BiHomeAlt2 } from "react-icons/bi";
-import { FaTasks } from "react-icons/fa";
-import { LuLayoutDashboard } from "react-icons/lu";
+import { LuClipboardCheck } from "react-icons/lu";
+import { FaChartLine } from "react-icons/fa";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
@@ -200,12 +199,12 @@ const Sidebar = () => {
               <SidebarComponent
                 menuName="My tasks"
                 redirectLink="/mytasks"
-                iconComp={<FaTasks />}
+                iconComp={<LuClipboardCheck />}
               />
               <SidebarComponent
                 menuName="Dashboards"
                 redirectLink="/dashboards"
-                iconComp={<LuLayoutDashboard />}
+                iconComp={<FaChartLine />}
               />
             </div>
             <DropDownComponent
