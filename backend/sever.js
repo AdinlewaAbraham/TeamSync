@@ -43,6 +43,7 @@ app.use("/workspace", authMiddleware, workspace);
 // protected
 app.use("/project", authMiddleware, project);
 app.use("/task", authMiddleware, task);
+app.use("/section", authMiddleware, task);
 
 // login route for google
 app.use("/auth/google/", googleAuth);

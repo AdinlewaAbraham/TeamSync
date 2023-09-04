@@ -29,7 +29,6 @@ const BoardCard = ({
 
     const data = await response.json();
     await redirectToLogin(response.status, data?.error);
-    
   };
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -44,18 +43,27 @@ const BoardCard = ({
 
   if (typeof list === "string") return <>loading this is a string </>;
   return (
-    <div className="bg-bg-primary h-full rounded-lg w-[280px] py-2 mr-2">
+    <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2">
       <header className="flex justify-between items-center px-4 py-2">
         <h1>{list.listName}</h1>
-        <div className="flex items-start">
-          <SidebarIconComponent
-            icon={<IoMdAdd />}
-            toolTipText={"Add project"}
-          />
-          <SidebarIconComponent
-            icon={<BsThreeDots />}
-            toolTipText="Show options"
-          />
+        <div className="flex items-start addTaskComponent">
+          <div
+            onClick={() => {
+              setShowAddTaskComponent(!showAddTaskComponent);
+            }}
+            className="cursor-pointer"
+          >
+            <SidebarIconComponent
+              icon={<IoMdAdd />}
+              toolTipText={"Add project"}
+            />
+          </div>
+          <div onClick={() => {}} className="cursor-pointer">
+            <SidebarIconComponent
+              icon={<BsThreeDots />}
+              toolTipText="Show options"
+            />
+          </div>
         </div>
       </header>
       {/* <section className="p-2"></section> */}

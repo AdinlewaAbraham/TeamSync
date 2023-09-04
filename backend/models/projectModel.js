@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
  * @property {string} projectName
  * @property {mongoose.Schema.Types.Date} dueDate
  * @property {string} description
- * @property {[ mongoose.Schema.Types.ObjectId]} lists
+ * @property {[ mongoose.Schema.Types.ObjectId]} sections
+ * @property {[ mongoose.Schema.Types.ObjectId]} workspaceId
  *
  */
 
@@ -23,10 +24,10 @@ const projectSchema = mongoose.Schema({
     type: String,
     required: [false],
   },
-  lists: [
+  sections: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "list",
+      ref: "section",
     },
   ],
   workspaceId: {

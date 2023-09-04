@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { Project } = require("../../models/projectModel");
 const { Workspace } = require("../../models/workspaceModel");
-const { List } = require("../../models/listModel");
+const { Section } = require("../../models/sectionModel");
 const { Task } = require("../../models/taskModel");
 
 const editProject = asyncHandler((req, res) => {});
@@ -21,17 +21,17 @@ const createProject = asyncHandler(async (req, res) => {
     workspaceId,
   });
 
-  const newList = new List({
-    listName: "Unnamed list",
+  const newSection = new Section({
+    sectionName: "Unnamed section",
     projectId: newProject._id,
   });
-  newProject.lists.push(newList._id);
+  newProject.sections.push(newSection._id);
 
   workspace.projects.push(newProject._id);
 
   try {
-    const [savedList, savedProject, savedWorkspace] = await Promise.all([
-      newList.save(),
+    const [savedSection, savedProject, savedWorkspace] = await Promise.all([
+      newSection.save(),
       newProject.save(),
       workspace.save(),
     ]);
@@ -46,8 +46,8 @@ const getProject = asyncHandler(async (req, res) => {
   const projectId = req.params.id;
   const project = await Project.findById(projectId)
     .populate({
-      path: "lists",
-      model: List, // Specify the List model
+      path: "sections",
+      model: Section, // Specify the section model
       populate: {
         path: "tasks",
         model: Task, // Adjust the task model name if needed
