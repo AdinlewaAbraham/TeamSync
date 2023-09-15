@@ -10,7 +10,6 @@ const createProject = asyncHandler(async (req, res) => {
   const { projectName, projectDescription, workspaceId } = await req.body;
 
   const workspace = await Workspace.findById(workspaceId);
-
   if (!workspace) {
     return res.status(404).json({ error: "Workspace not found" });
   }

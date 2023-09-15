@@ -1,4 +1,4 @@
-import List from "@/interfaces/list";
+import List from "@/interfaces/section";
 import React, { useEffect, useState } from "react";
 import SidebarIconComponent from "../sidebar/SidebarIconComponent";
 import { IoMdAdd } from "react-icons/io";
@@ -8,10 +8,10 @@ import { fetchWithAuth } from "@/app/api/fetchWithAuth";
 import { redirectToLogin } from "@/helpers/redirect";
 
 const BoardCard = ({
-  list,
+  section,
   projectId,
 }: {
-  list: List | string;
+  section: List | string;
   projectId: string;
 }) => {
   const [showAddTaskComponent, setShowAddTaskComponent] =
@@ -41,11 +41,11 @@ const BoardCard = ({
     return () => window.removeEventListener("click", handleClick);
   }, []);
 
-  if (typeof list === "string") return <>loading this is a string </>;
+  if (typeof section === "string") return <>loading this is a string </>;
   return (
     <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2">
       <header className="flex justify-between items-center px-4 py-2">
-        <h1>{list.listName}</h1>
+        <h1>{section.listName}</h1>
         <div className="flex items-start addTaskComponent">
           <div
             onClick={() => {

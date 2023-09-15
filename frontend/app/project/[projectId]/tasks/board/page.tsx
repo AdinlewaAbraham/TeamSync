@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { MdClose } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
+import Project from "@/interfaces/project";
+import Section from "@/interfaces/section";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
@@ -45,18 +47,32 @@ const page = ({ params }: { params: { projectId: string } }) => {
     resolveFuncSync();
   }, []);
 
+  console.log(activeProject);
+
   const addSection = async () => {
     if (sectionName === "") {
       console.log("bad request");
       return;
     }
-    const response = await fetch("/api/section/", {
-      method: "POST",
-      body: JSON.stringify({ sectionName }),
-    });
-    const data = await response.json();
-    redirectToLogin(response.status, data.error);
-
+    if (!activeProject) return;
+    const newSection: Section = {
+      listName: sectionName,
+      tasks: [],
+      projectId: activeProject?._id,
+    };
+    const newProject: Project = {
+      ...activeProject,
+      sections: [...activeProject.sections, newSection],
+    };
+    setActiveProject(newProject);
+    try {
+      const response = await fetch("/api/section/", {
+        method: "POST",
+        body: JSON.stringify({ sectionName }),
+      });
+      const data = await response.json();
+      redirectToLogin(response.status, data.error);
+    } catch (err) {}
     setShowAddSectionComponent(false);
   };
 
@@ -74,16 +90,21 @@ const page = ({ params }: { params: { projectId: string } }) => {
   if (!activeProject) return <>loading state</>;
   return (
     <div className="flex h-[calc(100dvh-245px)] ">
-      {activeProject.lists.map((list, index) => (
+      {activeProject.sections.map((section, index) => (
         <div key={index}>
-          <BoardCard list={list} projectId={params.projectId} />
+          <BoardCard section={section} projectId={params.projectId} />
         </div>
       ))}
       <div>
         {showAddSectionComponent ? (
           <div className="w-[280px] px-2 py-2 pt-0 flex flex-col rounded-lg bg-bg-primary addSectionComponent">
             <div className="h-[60px] flex items-center">
-              <input type="text" autoFocus className="text-input w-full" />
+              <input
+                type="text"
+                autoFocus
+                className="text-input w-full"
+                onChange={(e) => setSectionName(e.target.value)}
+              />
             </div>
 
             <div className="overflow-hidden flex items-center mb-1">
@@ -93,7 +114,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                   addSection();
                 }}
               >
-                add task
+                Add section
               </button>
               <i
                 className="text-icon-default hover:text-white transition-colors duration-150 text-2xl p-1 cursor-pointer"
@@ -111,7 +132,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
             <i className="mr-2">
               <IoMdAdd />
             </i>
-            add section
+            Add section
           </div>
         )}
       </div>
