@@ -1,7 +1,8 @@
 import Task from "./task";
 
 export default interface Section {
-  listName: string;
+  sectionName: string;
   tasks: Task[] | string[];
   projectId: string;
+  _id: string,
 }

@@ -37,12 +37,12 @@ const taskSchema = mongoose.Schema({
   },
   Priority: {
     type: String,
-    default: "No-Priority",
+    default: "null",
     required: [false],
   },
   status: {
     type: String,
-    default: "To-Do",
+    default: "null",
     required: [false],
   },
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "comment" }],
@@ -51,6 +51,10 @@ const taskSchema = mongoose.Schema({
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     required: [true, "need the projectid this task belong to"],
+  },
+  sectionId :{
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "need the sectionId this task belong to"],
   },
   isComplete: {
     type: Boolean,

@@ -22,6 +22,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       } else {
         const { data, status } = response;
         await redirectToLogin(status, data?.error);
+        console.log(data);
         setActiveProject(data);
         localStorage.setItem(params.projectId, JSON.stringify(data));
       }
@@ -29,17 +30,18 @@ const page = ({ params }: { params: { projectId: string } }) => {
     const getProject = async () => {
       if (activeProject) return;
       const stringData = localStorage.getItem(params.projectId);
-      const project = stringData ? JSON.parse(stringData) : undefined;
+      const project: Project = stringData ? JSON.parse(stringData) : undefined;
 
-      if (project) {
+      if (project?._id) {
         setActiveProject(project);
       } else {
         await fetchProjectFunc();
       }
     };
     const syncProject = async () => {
-      if (!activeProject) return;
-      await fetchProjectFunc();
+      if (activeProject?._id) {
+        await fetchProjectFunc();
+      }
     };
     const resolveFuncSync = async () => {
       await Promise.all([getProject(), syncProject()]);
@@ -47,32 +49,34 @@ const page = ({ params }: { params: { projectId: string } }) => {
     resolveFuncSync();
   }, []);
 
-  console.log(activeProject);
-
   const addSection = async () => {
     if (sectionName === "") {
-      console.log("bad request");
+      // console.log("bad request");
       return;
     }
     if (!activeProject) return;
-    const newSection: Section = {
-      listName: sectionName,
-      tasks: [],
-      projectId: activeProject?._id,
-    };
-    const newProject: Project = {
-      ...activeProject,
-      sections: [...activeProject.sections, newSection],
-    };
-    setActiveProject(newProject);
     try {
       const response = await fetch("/api/section/", {
         method: "POST",
-        body: JSON.stringify({ sectionName }),
+        body: JSON.stringify({ sectionName, projectId: activeProject._id }),
       });
       const data = await response.json();
-      redirectToLogin(response.status, data.error);
-    } catch (err) {}
+      await redirectToLogin(response.status, data.error);
+      const newSection: Section = {
+        sectionName: sectionName,
+        tasks: [],
+        projectId: activeProject?._id,
+        _id: data._id,
+      };
+      const newProject: Project = {
+        ...activeProject,
+        sections: [...activeProject.sections, newSection],
+      };
+      setActiveProject(newProject);
+    } catch (err) {
+      // isError = true;
+    }
+
     setShowAddSectionComponent(false);
   };
 
@@ -87,7 +91,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     return () => window.removeEventListener("click", handleClick);
   }, []);
 
-  if (!activeProject) return <>loading state</>;
+  if (!activeProject?.sections) return <>loading state</>;
   return (
     <div className="flex h-[calc(100dvh-245px)] ">
       {activeProject.sections.map((section, index) => (
