@@ -34,7 +34,7 @@ const config: Config = {
           primary: "#F9F9F9",
         },
         border: {
-          default: "#333333",
+          default: "#424244",
         },
         icon: {
           default: "#a2a0a2",

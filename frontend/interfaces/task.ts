@@ -10,4 +10,5 @@ export default interface Task {
   members: string[];
   projectId: string;
   isComplete: boolean;
+  _id: string;
 }
