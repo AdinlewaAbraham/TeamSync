@@ -22,7 +22,7 @@ const SidebarIconComponent = ({
             showToolTip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }
           }
           transition={{ duration: 0, delay: 0.5 }}
-          className="text-xs p-2 bg-menuItem-active absolute top-[-40px] whitespace-nowrap rounded-lg"
+          className="text-xs p-2 bg-menuItem-active absolute z-50 top-[-40px] whitespace-nowrap rounded-lg"
         >
           {toolTipText}
         </motion.div>

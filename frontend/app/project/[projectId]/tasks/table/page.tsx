@@ -24,8 +24,8 @@ import {
 import Task from "@/interfaces/task";
 
 const TaskRowComponent = ({ task }: { task: Task }) => {
-  const [showPriorityMenu, setShowPriorityMenu] = useState<boolean>(false)
-  const [showStatusMenu, setShowStatusMenu] = useState<boolean>(false)
+  const [showPriorityMenu, setShowPriorityMenu] = useState<boolean>(false);
+  const [showStatusMenu, setShowStatusMenu] = useState<boolean>(false);
 
   interface StatusObj {
     [key: string]: {
@@ -287,9 +287,6 @@ const TableDropdown = ({
                   placeholder="Write a task name"
                   onChange={(e) => setTaskName(e.target.value)}
                 />
-
-                {/* <button className="" onClick={()=>addTask()}>add task</button>
-                {taskName} */}
               </div>
             ) : (
               <div
@@ -315,7 +312,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   useEffect(() => {
     const fetchProjectFunc = async () => {
       const response = await fetchProject(params.projectId);
@@ -348,10 +345,21 @@ const page = ({ params }: { params: { projectId: string } }) => {
     };
     resolveFuncSync();
   }, []);
+  useEffect(() => {
+    const handleClick = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest(".addSectionInput")) {
+        await addSection();
+      }
+    };
+    window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
+  }, [sectionName]);
 
   const addSection = async () => {
+    console.log("i am adding to section")
+    setShowAddSectionComponent(true);
     if (sectionName === "") {
-      // console.log("bad request");
       return;
     }
     if (!activeProject) return;
@@ -377,8 +385,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
     } catch (err) {
       // isError = true;
     }
-
-    setShowAddSectionComponent(false);
   };
   if (!activeProject?.sections) return <>loading state</>;
   return (
@@ -402,11 +408,28 @@ const page = ({ params }: { params: { projectId: string } }) => {
               // isLast={activeProject.sections.length - 1 === index}
             />
           ))}
-          <div className="w-full border py-2 border-border-default rounded-b-lg pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer ">
-            <i className="mr-2">
-              <IoMdAdd />
-            </i>
-            Add section
+          <div className="w-full border  border-border-default rounded-b-lg ">
+            {showAddSectionComponent ? (
+              <div
+                className="py-2 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
+                onClick={() => setShowAddSectionComponent(false)}
+              >
+                <i className="mr-2">
+                  <IoMdAdd />
+                </i>
+                Add section
+              </div>
+            ) : (
+              <div className="addSectionInput w-full flex text-sm h-12">
+                <input
+                  type="text"
+                  autoFocus
+                  className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
+                  placeholder="Write a task name"
+                  onChange={(e) => setSectionName(e.target.value)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

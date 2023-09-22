@@ -9,19 +9,36 @@ import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 import RenderStatus, { RenderPriority } from "../ConditionalRender";
+import { usePopper } from "react-popper";
+import deleteSection from "@/helpers/deleteSection";
 
 const BoardCard = ({
   section,
   projectId,
+  isHorizontalOverflow,
 }: {
   section: Section | string;
   projectId: string;
+  isHorizontalOverflow: boolean;
 }) => {
   const [showAddTaskComponent, setShowAddTaskComponent] =
     useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
   const { setActiveProject, activeProject } = useGlobalContext();
+  const [showBoardMenu, setShowBoardMenu] = useState<boolean>(false);
   const [localSection, setLocalSection] = useState<Section | string>(section);
+
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-start",
+    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
+  });
   const handleAddTask = async () => {
     setShowAddTaskComponent(false);
     if (!projectId || !taskName || typeof section === "string") return;
@@ -48,6 +65,26 @@ const BoardCard = ({
       console.log("something went wrong");
     }
   };
+  const deleteSectionFunc = async () => {
+    if (typeof section === "string") return;
+    const returnObj = await deleteSection(section._id);
+    if (!returnObj) return;
+    const { data, status } = returnObj;
+    console.log(data, status);
+    if (status === 200) {
+      console.log("yahhhhhhhhhhhh");
+      if (!activeProject) return;
+      const filteredSections = activeProject.sections.filter((arrSection) => {
+        if (typeof arrSection === "string") return;
+        return arrSection._id !== section._id;
+      });
+      const newActiveProject = {
+        ...activeProject,
+        sections: filteredSections,
+      };
+      setActiveProject(newActiveProject);
+    }
+  };
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -60,7 +97,6 @@ const BoardCard = ({
   }, []);
 
   if (typeof localSection === "string") return <>loading this is a string </>;
-  
   return (
     <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2 ">
       <header className="flex justify-between items-center px-4 py-2">
@@ -77,15 +113,40 @@ const BoardCard = ({
               toolTipText={"Add project"}
             />
           </div>
-          <div onClick={() => {}} className="cursor-pointer">
+          <div
+            onClick={() => setShowBoardMenu(!showBoardMenu)}
+            className="cursor-pointer"
+            ref={setReferenceElement}
+          >
             <SidebarIconComponent
               icon={<BsThreeDots />}
               toolTipText="Show options"
             />
           </div>
+          {showBoardMenu && (
+            <div
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+              className="[&>div]:px-4  [&>div]:py-2 hover:[&>div]:bg-menuItem-hover [&>div]:cursor-pointer [&>div]: [&>div]:  
+              bg-bg-primary border border-border-default rounded-lg "
+            >
+              <div>rename section</div>
+              <div onClick={() => deleteSectionFunc()} className="">
+                {" "}
+                delete section
+              </div>
+            </div>
+          )}
         </div>
       </header>
-      <div className=" max-h-[calc(100dvh-300px)] overflow-auto scrollBar">
+      <div
+        className={` ${
+          isHorizontalOverflow
+            ? "max-h-[calc(100dvh-350px)]"
+            : "max-h-[calc(100dvh-295px)]"
+        }  overflow-auto scrollBar`}
+      >
         <main>
           <ul>
             {localSection.tasks.map((task) => (

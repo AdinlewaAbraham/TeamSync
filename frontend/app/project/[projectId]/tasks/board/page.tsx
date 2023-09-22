@@ -3,7 +3,7 @@ import BoardCard from "@/components/board/BoardCard";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { MdClose } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
@@ -51,7 +51,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   const addSection = async () => {
     if (sectionName === "") {
-      // console.log("bad request");
       return;
     }
     if (!activeProject) return;
@@ -80,6 +79,20 @@ const page = ({ params }: { params: { projectId: string } }) => {
     setShowAddSectionComponent(false);
   };
 
+  const [isHorizontalOverflow, setIsHorizontalOverflow] = useState(false);
+
+  useEffect(() => {
+    const divElement: HTMLElement | null =
+      document.getElementById("overflowElement");
+
+    if (divElement) {
+      const hasHorizontalOverflow: boolean =
+        divElement.scrollWidth > divElement.clientWidth;
+      console.log(hasHorizontalOverflow);
+      setIsHorizontalOverflow(hasHorizontalOverflow);
+    }
+  }, []);
+
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -91,12 +104,21 @@ const page = ({ params }: { params: { projectId: string } }) => {
     return () => window.removeEventListener("click", handleClick);
   }, []);
 
+  useEffect(() => {}, []);
+
   if (!activeProject?.sections) return <>loading state</>;
   return (
-    <div className="flex h-[calc(100dvh-245px)] ">
+    <div
+      className="flex h-[calc(100dvh-229px)] overflow-auto overflow-x scrollBar "
+      id="overflowElement"
+    >
       {activeProject.sections.map((section, index) => (
         <div key={index}>
-          <BoardCard section={section} projectId={params.projectId} />
+          <BoardCard
+            section={section}
+            projectId={params.projectId}
+            isHorizontalOverflow={isHorizontalOverflow}
+          />
         </div>
       ))}
       <div>
