@@ -67,7 +67,7 @@ const BoardCard = ({
   };
   const deleteSectionFunc = async () => {
     if (typeof section === "string") return;
-    const returnObj = await deleteSection(section._id);
+    const returnObj = await deleteSection(section._id, projectId);
     if (!returnObj) return;
     const { data, status } = returnObj;
     console.log(data, status);

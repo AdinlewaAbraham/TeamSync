@@ -1,10 +1,16 @@
 import { redirectToLogin } from "./redirect";
 
-export default async function deleteSection(id: string) {
+export default async function deleteSection(
+  sectionId: string,
+  projectId: string
+) {
   try {
-    const response = await fetch("/api/section/" + id, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      "/api/section/" + projectId + "/" + sectionId,
+      {
+        method: "DELETE",
+      }
+    );
     const data = await response.json();
     await redirectToLogin(response.status, data.error);
     // if (!response.ok) {

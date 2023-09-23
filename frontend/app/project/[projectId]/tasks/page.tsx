@@ -1,9 +1,14 @@
-import React from 'react'
+"use client";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+const page = ({ params }: { params: { projectId: string } }) => {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/project/" + params.projectId + "/tasks/board");
+  }, []);
 
-export default page
+  return <div>page</div>;
+};
+
+export default page;

@@ -5,8 +5,10 @@ const { Project } = require("../../models/projectModel");
 const getSection = asyncHandler(async (req, res) => {});
 const updateSection = asyncHandler(async (req, res) => {});
 const deleteSection = asyncHandler(async (req, res) => {
-  const sectionID = req.params.id;
+  const sectionID = req.params.sectionId;
+  const projectId = req.params.projectId;
   console.log(sectionID);
+  console.log(projectId);
 
   if (!sectionID) {
     res.status(400).json({ message: "bad request" });
@@ -15,6 +17,17 @@ const deleteSection = asyncHandler(async (req, res) => {
   } else {
     try {
       await Section.findByIdAndRemove(sectionID);
+      if (projectId) {
+        const project = await Project.findById(projectId);
+
+        await project.updateOne({
+          $pull: {
+            sections: sectionID,
+          },
+        });
+      }else{
+        console.log("no project id")
+      }
       res.status(200).json({ message: "Section deleted successfully" });
       console.log("Document deleted successfully");
     } catch (error) {
