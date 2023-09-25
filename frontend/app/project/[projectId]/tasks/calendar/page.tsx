@@ -1,9 +1,48 @@
-import React from 'react'
+"use client";
+import CalendarBox from "@/components/project/calendar/CalendarBox";
+import React from "react";
 
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  function generateDates(year: number, month: number) {
+    const startDate = new Date(year, month, 1);
+    const endDate = new Date(year, month + 1, 0);
+    const dates = [];
 
-export default page
+    for (
+      let date = startDate;
+      date <= endDate;
+      date.setDate(date.getDate() + 1)
+    ) {
+      dates.push(new Date(date)); // Clone the date to avoid mutations
+    }
+
+    return dates;
+  }
+
+  // Example usage:
+  const year = 2023;
+  const month = 8; // 8 represents September (0-indexed)
+  const dates = generateDates(year, month);
+
+  console.log(dates);
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return (
+    <div>
+      calendar comp
+      <header>
+        <ul className="flex w-full [&>li]:w-[calc(100%/7)]">
+          {days.map((day) => (
+            <li key={day}>{day}</li>
+          ))}
+        </ul>
+      </header>
+      <div className="grid grid-flow-row grid-cols-7">
+        {dates.map((date) => (
+          <CalendarBox date={JSON.stringify(date)} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default page;
