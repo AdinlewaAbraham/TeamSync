@@ -28,7 +28,6 @@ const page = () => {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return (
     <div>
-      calendar comp
       <header>
         <ul className="flex w-full [&>li]:w-[calc(100%/7)]">
           {days.map((day) => (
