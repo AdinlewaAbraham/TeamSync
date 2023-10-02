@@ -247,12 +247,12 @@ const TableDropdown = ({
 
   return (
     <div
-      className={`border border-border-default`}
+      className={`border border-border-default `}
       key={typeof section === "string" ? section : section._id}
     >
       <header
         onClick={() => setShowMainComponent(!showMainComponent)}
-        className="flex items-center cursor-pointer py-2 font-medium "
+        className="flex items-center cursor-pointer py-2 font-medium h-12"
       >
         <i
           className={` px-2 ${
@@ -357,7 +357,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, [sectionName]);
 
   const addSection = async () => {
-    console.log("i am adding to section")
+    console.log("i am adding to section");
     setShowAddSectionComponent(true);
     if (sectionName === "") {
       return;
@@ -390,17 +390,19 @@ const page = ({ params }: { params: { projectId: string } }) => {
   return (
     <div className="">
       <div>
-        <ul
-          className="flex w-full justify-between [&>li]:w-[20%] border border-border-default rounded-t-lg 
+        <div className="pr-[10px] w-full">
+          <ul
+            className="flex gutter w-full justify-between [&>li]:w-[20%] border border-border-default rounded-t-lg 
          [&>li]:py-2 text-sm text-muted-dark"
-        >
-          <li className="pl-2">Task name</li>
-          <li> Assignee</li>
-          <li> Due date </li>
-          <li> Priority </li>
-          <li> Status </li>
-        </ul>
-        <div className="h-[calc(100dvh-282px)] overflow-y-auto scrollBar">
+          >
+            <li className="pl-2">Task name</li>
+            <li> Assignee</li>
+            <li> Due date </li>
+            <li> Priority </li>
+            <li> Status </li>
+          </ul>
+        </div>
+        <div className="h-[calc(100dvh-266px)] overflow-y-scroll scrollBar pb-1 ">
           {activeProject.sections.map((section, index) => (
             <TableDropdown
               section={section}
@@ -411,7 +413,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <div className="w-full border  border-border-default rounded-b-lg ">
             {showAddSectionComponent ? (
               <div
-                className="py-2 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
+                className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
                 onClick={() => setShowAddSectionComponent(false)}
               >
                 <i className="mr-2">
