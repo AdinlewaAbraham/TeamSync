@@ -2,10 +2,7 @@ import React from "react";
 
 const CalendarBox = ({ date }: { date: string }) => {
   return (
-    <div
-      className=" border border-border-default h-28"
-      key={date}
-    >
+    <div className=" border border-border-default h-28 cursor-cell" key={date}>
       hello
     </div>
   );
