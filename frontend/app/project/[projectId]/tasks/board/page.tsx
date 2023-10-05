@@ -22,7 +22,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       } else {
         const { data, status } = response;
         await redirectToLogin(status, data?.error);
-        console.log(data);
+        // console.log(data);
         setActiveProject(data);
         localStorage.setItem(params.projectId, JSON.stringify(data));
       }
@@ -88,7 +88,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     if (divElement) {
       const hasHorizontalOverflow: boolean =
         divElement.scrollWidth > divElement.clientWidth;
-      console.log(hasHorizontalOverflow);
+      // console.log(hasHorizontalOverflow);
       setIsHorizontalOverflow(hasHorizontalOverflow);
     }
   }, []);

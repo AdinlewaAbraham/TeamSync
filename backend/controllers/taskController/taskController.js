@@ -10,10 +10,8 @@ const getTask = asyncHandler(async (req, res) => {
 });
 const updateTask = asyncHandler(async (req, res) => {});
 
-
-
 const createTask = asyncHandler(async (req, res) => {
-  const { taskName, projectId, sectionId } = await req.body;
+  const { taskName, projectId, sectionId, dueDate } = await req.body;
   if (!taskName || !projectId || !sectionId) {
     res.status(403).json({ message: "bad request" });
   }
@@ -36,9 +34,6 @@ const createTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "got this error" + error });
   }
 });
-
-
-
 
 const deleteTask = asyncHandler(async (req, res) => {});
 

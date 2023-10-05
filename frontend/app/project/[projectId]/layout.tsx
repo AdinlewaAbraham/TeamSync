@@ -72,17 +72,21 @@ const layout = ({
 
   return (
     <section>
-      {activeProject ? (
-        <nav className="w-full p-4 pb-0 border-b border-border-default">
-          <div className="flex items-center">
-            <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+      <nav className="w-full p-4 pb-0 border-b border-border-default">
+        <div className="flex items-center">
+          <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+          {activeProject ? (
             <h1 className="text-xl">
               <EditableComp
                 text={activeProject?.projectName}
                 styles="px-2 py-1"
               />
             </h1>
-          </div>
+          ) : (
+            <div className="text-xl">loading</div>
+          )}
+        </div>
+        {activeProject ? (
           <ul className="flex rounded-lg p-2 pl-0 pb-0">
             {[
               { title: "Home", icon: <BiHomeAlt2 /> },
@@ -99,10 +103,15 @@ const layout = ({
               </div>
             ))}
           </ul>
-        </nav>
-      ) : (
-        <>loading comp</>
-      )}
+        ) : (
+          <div>
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item}>loading</div>
+            ))}
+          </div>
+        )}
+      </nav>
+
       <main className=" h-[calc(100dvh-200px)]">{children}</main>
     </section>
   );

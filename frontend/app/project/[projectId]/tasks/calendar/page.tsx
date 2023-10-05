@@ -2,7 +2,7 @@
 import CalendarBox from "@/components/project/calendar/CalendarBox";
 import React from "react";
 
-const page = () => {
+const page = ({ params }: { params: { projectId: string } }) => {
   function generateDates(year: number, month: number) {
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 0);
@@ -24,7 +24,7 @@ const page = () => {
   const month = 8; // 8 represents September (0-indexed)
   const dates = generateDates(year, month);
 
-  console.log(dates);
+  // console.log(dates);
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return (
     <div>
@@ -35,9 +35,12 @@ const page = () => {
           ))}
         </ul>
       </header>
-      <div className="grid grid-flow-row grid-cols-7">
+      <div className="grid grid-flow-row grid-cols-7  pr-2 overflow-y-auto h-[calc(100dvh-229px)] scrollBar">
         {dates.map((date) => (
-          <CalendarBox date={JSON.stringify(date)} />
+          <CalendarBox
+            date={JSON.stringify(date)}
+            projectId={params.projectId}
+          />
         ))}
       </div>
     </div>
