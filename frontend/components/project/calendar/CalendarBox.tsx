@@ -27,6 +27,7 @@ const CalendarBox = ({
       taskName,
       projectId,
       sectionId: activeProject.sections[0]._id,
+      dueDate: date
     };
     const response = await fetch("/api/task/", {
       method: "POST",

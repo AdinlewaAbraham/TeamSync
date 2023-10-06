@@ -20,6 +20,7 @@ const createTask = asyncHandler(async (req, res) => {
     taskName: taskName,
     projectId: projectId,
     sectionId: sectionId,
+    dueDate: dueDate
   });
   const section = await Section.findById(sectionId);
   if (!section) {

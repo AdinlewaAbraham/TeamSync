@@ -102,6 +102,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
      border-border-default [&>li]:flex [&>li]:items-center h-12
     [&>li]:pr-2 text-sm"
       key={task._id}
+      onClick={()=>console.log(task)}
     >
       <li className="pl-8">{task.taskName}</li>
       <li className="flex items-center">

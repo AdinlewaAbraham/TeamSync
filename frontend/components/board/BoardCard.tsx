@@ -154,7 +154,7 @@ const BoardCard = ({
                 {typeof task === "string" ? (
                   <>loading</>
                 ) : (
-                  <div className="px-2 mb-2 ">
+                  <div className="px-2 mb-2 " onClick={()=>console.log(task)}>
                     <div
                       className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
                      flex flex-col border border-border-default"

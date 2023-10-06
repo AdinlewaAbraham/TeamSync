@@ -1,5 +1,6 @@
 "use client";
 import CalendarBox from "@/components/project/calendar/CalendarBox";
+import { useGlobalContext } from "@/context/GeneralContext";
 import React from "react";
 
 const page = ({ params }: { params: { projectId: string } }) => {
@@ -23,6 +24,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const year = 2023;
   const month = 8; // 8 represents September (0-indexed)
   const dates = generateDates(year, month);
+// get all tasks
+  // const tasksWithDueDate = task;
 
   // console.log(dates);
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
