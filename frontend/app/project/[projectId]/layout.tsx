@@ -104,7 +104,7 @@ const layout = ({
             ))}
           </ul>
         ) : (
-          <div>
+          <div className="flex">
             {[1, 2, 3, 4].map((item) => (
               <div key={item}>loading</div>
             ))}

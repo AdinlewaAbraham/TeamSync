@@ -1,9 +1,16 @@
 "use client";
 import CalendarBox from "@/components/project/calendar/CalendarBox";
 import { useGlobalContext } from "@/context/GeneralContext";
-import React from "react";
+import React, { useState } from "react";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 
 const page = ({ params }: { params: { projectId: string } }) => {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const [month, setMonth] = useState<number>(currentMonth);
+  const [year, setYear] = useState<number>(currentYear);
   function generateDates(year: number, month: number) {
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 0);
@@ -14,37 +21,138 @@ const page = ({ params }: { params: { projectId: string } }) => {
       date <= endDate;
       date.setDate(date.getDate() + 1)
     ) {
-      dates.push(new Date(date)); // Clone the date to avoid mutations
+      dates.push(new Date(date));
     }
 
     return dates;
   }
 
-  // Example usage:
-  const year = 2023;
-  const month = 8; // 8 represents September (0-indexed)
   const dates = generateDates(year, month);
-// get all tasks
-  // const tasksWithDueDate = task;
 
-  // console.log(dates);
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const firstDay = properlyIndexedDays[dates[0].getDay()];
+  const noOfDaysToUnshift = days.indexOf(firstDay);
+
+  const getPrevMonthDays = () => {
+    if (month === 0) {
+      return generateDates(year - 1, 11);
+    } else {
+      return generateDates(year, month - 1);
+    }
+  };
+  const getNextMonthDays = () => {
+    if (month === 11) {
+      return generateDates(year + 1, 0);
+    } else {
+      return generateDates(year, month + 1);
+    }
+  };
+
+  const prevMonthDays = getPrevMonthDays(); //make sure you check if in last or first month go back one year if first and go forward one year if last
+  const daysToFill = prevMonthDays.slice(-noOfDaysToUnshift);
+
+  dates.unshift(...daysToFill);
+
+  const noOfDaysToPush = 7 - (dates.length % 7);
+  if (dates.length % 7 !== 0) {
+    const nextMonthDays = getNextMonthDays(); //make sure you check if in last or first month go back one year if first and go forward one year if last
+    const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
+    dates.push(...daysToFill);
+  }
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const handleAddMonth = () => {
+    if (month === 11) {
+      setYear(year + 1);
+      setMonth(0);
+    } else {
+      setMonth(month + 1);
+    }
+  };
+  const handleDecreaseMonth = () => {
+    if (month === 0) {
+      setYear(year - 1);
+      setMonth(11);
+    } else {
+      setMonth(month - 1);
+    }
+  };
   return (
-    <div>
-      <header>
-        <ul className="flex w-full [&>li]:w-[calc(100%/7)]">
-          {days.map((day) => (
-            <li key={day}>{day}</li>
+    <div className="select-none">
+      <nav
+        className="flex items-center py-2 border-t border-border-default text-muted-dark  text-sm [&>i]:rounded-lg hover:[&>i]:bg-menuItem-active [&>i]:h-9
+       [&>i]:w-7 [&>i]:flex [&>i]:items-center  [&>i]:justify-center  [&>i]:text-muted-dark 
+       hover:[&>i]:text-white [&>i]:duration-150 [&>i]:transition-colors  [&>i]:text-lg [&>i]:cursor-pointer   "
+      >
+        <button
+          className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
+        flex items-center justify-center"
+          onClick={() => {
+            setYear(currentYear);
+            setMonth(currentMonth);
+            const element = document.getElementById("today");
+            element?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          Today
+        </button>
+        <i className="" onClick={handleDecreaseMonth}>
+          <MdNavigateBefore />
+        </i>
+        <i onClick={handleAddMonth}>
+          <MdNavigateNext />
+        </i>
+        <div className="text-xl text-white">
+          {months[month]} {year}
+        </div>
+      </nav>
+      <div className=" rounded-l-lg border-b border-t  border-l border-border-default  ">
+        <header>
+          <ul
+            className="flex [&>li]:text-muted-dark w-full [&>li]:w-[calc(100%/7)]
+           pr-[18px] [&>li]:pl-2 border-b  text-sm py-1
+         border-border-default last:border-r-0"
+          >
+            {days.map((day, index) => (
+              <li
+                className={`border- border-border-default ${
+                  index === days.length ? "" : ""
+                } `}
+                key={index}
+              >
+                {day}
+              </li>
+            ))}
+          </ul>
+        </header>
+        <div className="grid grid-flow-row grid-cols-7    overflow-y-auto h-[calc(100dvh-300px)] calendarScrollBar">
+          {dates.map((date, index) => (
+            <CalendarBox
+              date={date}
+              projectId={params.projectId}
+              isNotinMonth={
+                index < noOfDaysToUnshift ||
+                index >= dates.length - noOfDaysToPush
+              }
+              index={index}
+            />
           ))}
-        </ul>
-      </header>
-      <div className="grid grid-flow-row grid-cols-7  pr-2 overflow-y-auto h-[calc(100dvh-229px)] scrollBar">
-        {dates.map((date) => (
-          <CalendarBox
-            date={JSON.stringify(date)}
-            projectId={params.projectId}
-          />
-        ))}
+        </div>
       </div>
     </div>
   );

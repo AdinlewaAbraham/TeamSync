@@ -49,8 +49,8 @@ const layout = ({
   params: { projectId: string };
 }) => {
   return (
-    <div className="px-8 py-4 pb-0 pr-0  ">
-      <nav>
+    <div className="pl-8">
+      <nav className="py-4">
         <ul className="max-w-max h-9 flex justify-center items-center p-1 bg-bg-primary rounded-lg">
           {[
             { title: "Board", icon: <BiSolidBarChartAlt2 /> },
@@ -67,7 +67,7 @@ const layout = ({
           ))}
         </ul>
       </nav>
-      <main className="mt-6">{children}</main>
+      <main className="">{children}</main>
     </div>
   );
 };

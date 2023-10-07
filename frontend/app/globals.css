@@ -62,3 +62,7 @@ body {
 .scrollBar::scrollbar-thumb {
   border-radius: 999px;
 }
+
+.calendarScrollBar::-webkit-scrollbar-track {
+  background-color: #aaa;
+}
