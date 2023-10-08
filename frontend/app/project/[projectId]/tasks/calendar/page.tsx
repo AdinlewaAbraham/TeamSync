@@ -1,16 +1,55 @@
 "use client";
 import CalendarBox from "@/components/project/calendar/CalendarBox";
 import { useGlobalContext } from "@/context/GeneralContext";
-import React, { useState } from "react";
+import fetchProject from "@/helpers/fetchProject";
+import { redirectToLogin } from "@/helpers/redirect";
+import React, { useEffect, useState } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import Project from "@/interfaces/project";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
+  const { activeProject, setActiveProject } = useGlobalContext();
+
   const [month, setMonth] = useState<number>(currentMonth);
   const [year, setYear] = useState<number>(currentYear);
+
+  useEffect(() => {
+    const fetchProjectFunc = async () => {
+      const response = await fetchProject(params.projectId);
+      if (!response) {
+      } else {
+        const { data, status } = response;
+        await redirectToLogin(status, data?.error);
+        // console.log(data);
+        setActiveProject(data);
+        localStorage.setItem(params.projectId, JSON.stringify(data));
+      }
+    };
+    const getProject = async () => {
+      if (activeProject) return;
+      const stringData = localStorage.getItem(params.projectId);
+      const project: Project = stringData ? JSON.parse(stringData) : undefined;
+
+      if (project?._id) {
+        setActiveProject(project);
+      } else {
+        await fetchProjectFunc();
+      }
+    };
+    const syncProject = async () => {
+      if (activeProject?._id) {
+        await fetchProjectFunc();
+      }
+    };
+    const resolveFuncSync = async () => {
+      await Promise.all([getProject(), syncProject()]);
+    };
+    resolveFuncSync();
+  }, []);
   function generateDates(year: number, month: number) {
     const startDate = new Date(year, month, 1);
     const endDate = new Date(year, month + 1, 0);
@@ -92,6 +131,20 @@ const page = ({ params }: { params: { projectId: string } }) => {
       setMonth(month - 1);
     }
   };
+
+  if (!activeProject?.sections) return <>loading state</>;
+
+  const allTasks = activeProject.sections
+    .map((section) => {
+      if (typeof section === "string") return;
+      return section.tasks;
+    })
+    .flat(1);
+  const taskWithDueDate = allTasks.filter((task) => {
+    if (typeof task === "string") return;
+    return task?.dueDate;
+  });
+
   return (
     <div className="select-none">
       <nav
@@ -150,6 +203,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 index >= dates.length - noOfDaysToPush
               }
               index={index}
+              taskWithDueDate={taskWithDueDate}
             />
           ))}
         </div>

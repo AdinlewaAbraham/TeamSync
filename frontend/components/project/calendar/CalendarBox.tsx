@@ -1,5 +1,6 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
+import Task from "@/interfaces/task";
 import React, { useState } from "react";
 
 const CalendarBox = ({
@@ -7,11 +8,13 @@ const CalendarBox = ({
   projectId,
   isNotinMonth,
   index,
+  taskWithDueDate,
 }: {
   date: Date;
   projectId: string;
   isNotinMonth: boolean;
   index: number;
+  taskWithDueDate: (string | Task | undefined)[];
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -20,7 +23,7 @@ const CalendarBox = ({
   const addTask = async () => {
     setShowInput(false);
 
-    if (!projectId || !taskName) return;
+    if (!projectId || !taskName || !date) return;
 
     if (
       typeof activeProject?.sections[0] !== "object" ||
@@ -57,6 +60,12 @@ const CalendarBox = ({
     currentDate.getMonth() === date.getMonth() &&
     currentDate.getDate() === date.getDate();
 
+  const tasks = taskWithDueDate.filter((task) => {
+    if (typeof task !== "object") return;
+    const taskDueDate = new Date(task.dueDate);
+    return taskDueDate.toISOString() === date.toISOString();
+  });
+
   return (
     <div
       id={isToday ? "today" : index.toString()}
@@ -75,9 +84,24 @@ const CalendarBox = ({
       >
         {date.getDate()}
       </div>
+      {tasks.map((task, index) => {
+        if (typeof task !== "object") return;
+        const isLast = tasks.length - 1 === index;
+        return (
+          <div
+            key={task._id}
+            className={`${
+              isLast ? "" : "mb-1"
+            } bg-bg-primary rounded-lg bg-transparent border w-full border-border-default
+             px-2 text-sm h-9 flex items-center`}
+          >
+            {task.taskName}
+          </div>
+        );
+      })}
       {showInput && (
         <input
-          className="bg-transparent border w-full border-border-default px-2 text-sm h-9 flex items-center"
+          className="bg-transparent  w-full border-border-default ring-0 px-2 text-sm h-9 flex items-center"
           autoFocus
           onBlur={() => addTask()}
           onChange={(e) => setTaskName(e.target.value)}

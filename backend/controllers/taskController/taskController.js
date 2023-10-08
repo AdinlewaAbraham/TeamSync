@@ -15,7 +15,8 @@ const createTask = asyncHandler(async (req, res) => {
   if (!taskName || !projectId || !sectionId) {
     res.status(403).json({ message: "bad request" });
   }
-  console.log(taskName, projectId, sectionId);
+  console.log(taskName, projectId, sectionId, dueDate);
+
   const task = new Task({
     taskName: taskName,
     projectId: projectId,

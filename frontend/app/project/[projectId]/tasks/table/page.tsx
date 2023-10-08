@@ -237,7 +237,6 @@ const TableDropdown = ({
   useEffect(() => {
     const handleClick = async (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      console.log(taskName);
       if (!target.closest(".addTaskInput")) {
         addTask();
       }
@@ -358,7 +357,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, [sectionName]);
 
   const addSection = async () => {
-    console.log("i am adding to section");
     setShowAddSectionComponent(true);
     if (sectionName === "") {
       return;

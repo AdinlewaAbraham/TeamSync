@@ -106,7 +106,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   useEffect(() => {}, []);
 
-  if (!activeProject?.sections) return <>loading state</>;
+  if (!activeProject?.sections) return <>loading statee</>;
+
   return (
     <div
       className="flex h-[calc(100dvh-229px)] overflow-auto overflow-x scrollBar "
