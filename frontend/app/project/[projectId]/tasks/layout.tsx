@@ -57,7 +57,6 @@ const layout = ({
             { title: "Table", icon: <FaRegListAlt /> },
             { title: "Calendar", icon: <FaRegCalendar /> },
             { title: "timeline", icon: <FaChartLine /> },
-            { title: "workflow", icon: <PiFlowArrowBold /> },
           ].map((listItem) => (
             <NavbarItem
               title={listItem.title}

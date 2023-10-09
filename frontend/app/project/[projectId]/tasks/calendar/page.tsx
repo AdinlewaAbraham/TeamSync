@@ -16,6 +16,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   const [month, setMonth] = useState<number>(currentMonth);
   const [year, setYear] = useState<number>(currentYear);
+  const [color, setcolor] = useState("no-color");
 
   useEffect(() => {
     const fetchProjectFunc = async () => {
@@ -147,31 +148,39 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   return (
     <div className="select-none">
-      <nav
-        className="flex items-center py-2 border-t border-border-default text-muted-dark  text-sm [&>i]:rounded-lg hover:[&>i]:bg-menuItem-active [&>i]:h-9
+      <nav className="flex justify-between py-2 text-sm items-center border-t border-border-default">
+        <div
+          className="flex items-center text-muted-dark 
+           [&>i]:rounded-lg hover:[&>i]:bg-menuItem-active [&>i]:h-9
        [&>i]:w-7 [&>i]:flex [&>i]:items-center  [&>i]:justify-center  [&>i]:text-muted-dark 
        hover:[&>i]:text-white [&>i]:duration-150 [&>i]:transition-colors  [&>i]:text-lg [&>i]:cursor-pointer   "
-      >
-        <button
-          className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
-        flex items-center justify-center"
-          onClick={() => {
-            setYear(currentYear);
-            setMonth(currentMonth);
-            const element = document.getElementById("today");
-            element?.scrollIntoView({ behavior: "smooth" });
-          }}
         >
-          Today
-        </button>
-        <i className="" onClick={handleDecreaseMonth}>
-          <MdNavigateBefore />
-        </i>
-        <i onClick={handleAddMonth}>
-          <MdNavigateNext />
-        </i>
-        <div className="text-xl text-white">
-          {months[month]} {year}
+          <button
+            className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
+        flex items-center justify-center"
+            onClick={() => {
+              setYear(currentYear);
+              setMonth(currentMonth);
+              const element = document.getElementById("today");
+              element?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            Today
+          </button>
+          <i className="" onClick={handleDecreaseMonth}>
+            <MdNavigateBefore />
+          </i>
+          <i onClick={handleAddMonth}>
+            <MdNavigateNext />
+          </i>
+          <div className="text-xl text-white">
+            {months[month]} {year}
+          </div>
+        </div>
+        <div className="flex">
+          <div>month view</div>
+          <div>filter</div>
+          <div>color</div>
         </div>
       </nav>
       <div className=" rounded-l-lg border-b border-t  border-l border-border-default  ">
