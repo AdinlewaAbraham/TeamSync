@@ -2,7 +2,9 @@ import React from 'react'
 
 const MonthTimeline = () => {
   return (
-    <div>MonthTimeline</div>
+    <div>
+      
+    </div>
   )
 }
 
