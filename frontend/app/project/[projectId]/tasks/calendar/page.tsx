@@ -133,6 +133,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
     return task?.dueDate;
   });
 
+
+// if the starts with that day it will have a p to the right 
+//  if the task ends it will have a padding to the right 
+//  if it does not start or end with that day it has no padding 
+// 
+//   
   return (
     <div className="select-none">
       <nav className="flex justify-between py-2 text-sm items-center border-t border-border-default">

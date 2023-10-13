@@ -2,9 +2,10 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
+import TimelineVerticalBars from "@/components/project/timeline/TimelineVerticalBars";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const monthNames = [
@@ -27,6 +28,31 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const fourMonths = generateDatesForFourMonths(currentYear, currentMonth);
   const [months, setMonths] = useState(fourMonths);
   const { setActiveProject, activeProject } = useGlobalContext();
+  const [scrollPosition, setscrollPosition] = useState<number>(0);
+  const [selectedDateObject, setSelectedDateObject] = useState<{
+    startDate: Date;
+    endDate: Date;
+  } | null>(null);
+
+  const headerRef = useRef(null);
+  const timelineRef = useRef(null);
+
+  useEffect(() => {
+    if (!headerRef.current || !timelineRef.current) return;
+
+    const headerElement = headerRef.current as HTMLElement;
+    const timelineElement = timelineRef.current as HTMLElement;
+    const handleScroll = (e: Event) => {
+      headerElement.scrollLeft = timelineElement.scrollLeft;
+    };
+
+    timelineElement.addEventListener("scroll", handleScroll);
+
+    // Make sure to remove the event listener when the component unmounts
+    return () => {
+      timelineElement.removeEventListener("scroll", handleScroll);
+    };
+  }, [timelineRef.current, headerRef.current]);
 
   useEffect(() => {
     const fetchProjectFunc = async () => {
@@ -73,9 +99,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
       year: invalidMonthPrev ? currentYear-- : currentYear,
       dates: invalidMonthPrev
         ? generateDates(currentYear--, 11)
-        : generateDates(currentYear, currentMonth),
+        : generateDates(currentYear, currentMonth - 1),
     };
-
     dates.push(prevMonth);
     for (let i = 0; i < numberOfMonths; i++) {
       const inValidMonthCurrent = currentMonth > 11;
@@ -152,38 +177,80 @@ const page = ({ params }: { params: { projectId: string } }) => {
     setMonths([...months, nextMonth]);
     console.log(months);
   };
+  if (!activeProject?.sections) return <>loading state</>;
 
+  const allTasks = activeProject.sections
+    .map((section) => {
+      if (typeof section === "string") return;
+      return section.tasks;
+    })
+    .flat(1);
+  const taskWithDateToStart = allTasks.filter((task) => {
+    if (typeof task !== "object") return;
+    return task?.dateToStart;
+  });
   return (
     <div>
       <nav className="flex justify-between items-center py-2 text-sm  border-t border-border-default">
-        <div> add task</div>
+        <div className="h-9 flex justify-center items-center"> add task</div>
       </nav>
-      <h1>what to do</h1>
-      <ol>
-        <li>initaillty render three or four months </li>
-        <li>add horizontal infinity scroll</li>
-        <li>
-          dont make custom components for diff time views "months, weeks, years"{" "}
-        </li>
-        <li>
-          render all tasks in col from the header down like having long
-          veritical bars{" "}
-        </li>
-      </ol>
-      <div className=" border-t border-border-default">
-        <header className="flex">
-          {months.map((month) => (
-            <div className="flex">
-              {" "}
-              <div>
+      <div className="border-t border-border-default h-full relative">
+        <header
+          className="flex relative overflow-x-hidden border-b border-border-default"
+          ref={headerRef}
+        >
+          {months.map((month, index) => (
+            <div className="flex flex-col relative" key={index}>
+              <div className="max-w-max px-2 sticky left-0 ">
                 {month.name} {month.year}
               </div>
-              {month.dates.map((day) => (
-                <div>{day.getDay()}</div>
-              ))}
+              <div className="flex">
+                {month.dates.map((day, index) => {
+                  const month = selectedDateObject?.startDate.getUTCMonth();
+                  const year = selectedDateObject?.startDate.getFullYear();
+
+                  const highlightDate =
+                    selectedDateObject &&
+                    new Date(day) >= new Date(selectedDateObject?.startDate) &&
+                    new Date(day) <= new Date(selectedDateObject?.endDate);
+
+                  return (
+                    <div
+                      key={index}
+                      className={`w-[40px]
+                     ${
+                       (day.getDay() === 0 || day.getDay() === 6) &&
+                       !highlightDate &&
+                       "bg-bg-primary"
+                     } ${
+                        highlightDate && "bg-accent-blue"
+                      } flex items-center justify-center `}
+                      onClick={() => console.log(day)}
+                    >
+                      {index + 1}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </header>
+        <div className="flex overflow-x-scroll w-full " ref={timelineRef}>
+          {months.map((month) => (
+            <div key={month.name + month.year} className="">
+              <div className="flex">
+                {month.dates.map((day) => (
+                  <TimelineVerticalBars
+                    day={day}
+                    setSelectedDateObject={setSelectedDateObject}
+                    projectId={params.projectId}
+                    taskWithDateToStart={taskWithDateToStart}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

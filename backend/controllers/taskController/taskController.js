@@ -11,17 +11,18 @@ const getTask = asyncHandler(async (req, res) => {
 const updateTask = asyncHandler(async (req, res) => {});
 
 const createTask = asyncHandler(async (req, res) => {
-  const { taskName, projectId, sectionId, dueDate } = await req.body;
+  const { taskName, projectId, sectionId, dueDate,dateToStart } = await req.body;
   if (!taskName || !projectId || !sectionId) {
     res.status(403).json({ message: "bad request" });
   }
-  console.log(taskName, projectId, sectionId, dueDate);
+  console.log(taskName, projectId, sectionId, dateToStart, dueDate);
 
   const task = new Task({
     taskName: taskName,
     projectId: projectId,
     sectionId: sectionId,
-    dueDate: dueDate
+    dateToStart: dateToStart,
+    dueDate: dueDate,
   });
   const section = await Section.findById(sectionId);
   if (!section) {

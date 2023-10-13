@@ -3,6 +3,7 @@ export default interface Task {
   description: string;
   assignees: string[];
   dueDate: Date;
+  dateToStart: Date;
   Priority: string;
   status: string;
   comments: string[];

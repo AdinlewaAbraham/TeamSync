@@ -32,6 +32,9 @@ const taskSchema = mongoose.Schema({
     required: [false],
   },
   assignees: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+  dateToStart: {
+    type: mongoose.Schema.Types.Date,
+  },
   dueDate: {
     type: mongoose.Schema.Types.Date,
   },
@@ -52,7 +55,7 @@ const taskSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: [true, "need the projectid this task belong to"],
   },
-  sectionId :{
+  sectionId: {
     type: mongoose.Schema.Types.ObjectId,
     required: [true, "need the sectionId this task belong to"],
   },
@@ -60,6 +63,10 @@ const taskSchema = mongoose.Schema({
     type: Boolean,
     required: [false],
   },
+  createdAt: {
+    type: mongoose.Schema.Types.Date,
+    default: new Date,
+  }
 });
 
 const Task = mongoose.model("task", taskSchema);
