@@ -66,8 +66,8 @@ const TimelineVerticalBars = ({
     const tasksToMapuseEffect: (string | Task | undefined)[] =
       taskWithDateToStart.filter((task) => {
         if (typeof task !== "object") return false;
-        if (!task?.dateToStart) return false
-        return day.toUTCString() ===  new Date(task.dateToStart).toUTCString();
+        if (!task?.dateToStart) return false;
+        return day.toUTCString() === new Date(task.dateToStart).toUTCString();
       });
     setTasksToMap(tasksToMapuseEffect);
   }, [taskWithDateToStart]);
@@ -77,6 +77,11 @@ const TimelineVerticalBars = ({
       "this is month " + day.getUTCMonth + "and day " + day.getUTCDay + task
     );
   });
+  
+  useEffect(() => {
+    
+  }, [])
+  
 
   return (
     <div
@@ -95,15 +100,20 @@ const TimelineVerticalBars = ({
       {tasksToMap.map((task) => {
         if (typeof task !== "object") return;
         return (
-          <div key={task._id} className={`absolute bg-red-500 left-0 z-50 h-9`}>
-            {task.taskName}
+          <div key={task._id} className="w-full flex justify-center">
+            <div
+              className={` bg-accent-primary relative left-0 z-50 h-9 mb-2 transition-opacity duration-150 hover:hidden flex 
+          rounded-lg pl-2 items-center whitespace-nowrap w-[10px] cursor-pointer`}
+            >
+              {/* <p className="absolute left-[15px] ">{task.taskName}</p> */}
+            </div>
           </div>
         );
       })}
       {showInput && (
         <input
           type="text"
-          className="text-input absolute left-0 z-50 w-[calc(40px*5)]"
+          className="text-input  left-0 z-50 w-[calc(40px*5)]"
           onBlur={() => {
             handleAddTask();
             setSelectedDateObject(null);
