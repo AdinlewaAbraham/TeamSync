@@ -14,7 +14,7 @@ const page = ({ params }: { params: { workspaceId: string } }) => {
   }, [user?.activeWorkspaceId]);
 
 
-  return <div>{params.workspaceId}</div>;
+  return <div>{params.workspaceId} add notion like text editior to this </div>;
 };
 
 export default page;
