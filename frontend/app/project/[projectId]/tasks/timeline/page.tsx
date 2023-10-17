@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineVerticalBars from "@/components/project/timeline/TimelineVerticalBars";
+import HourHorizontalColums from "@/components/project/timeline/HourHorizontalColums";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const monthNames = [
@@ -23,7 +24,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     "December",
   ];
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth();
+  const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
   const fourMonths = generateDatesForFourMonths(currentYear, currentMonth);
   const [months, setMonths] = useState(fourMonths);
@@ -185,9 +186,9 @@ const page = ({ params }: { params: { projectId: string } }) => {
       return section.tasks;
     })
     .flat(1);
-  const taskWithDateToStart = allTasks.filter((task) => {
+  const taskWithDateRange = allTasks.filter((task) => {
     if (typeof task !== "object") return;
-    return task?.dateToStart;
+    return task?.dateToStart && task.dueDate;
   });
   return (
     <div>
@@ -235,16 +236,34 @@ const page = ({ params }: { params: { projectId: string } }) => {
             </div>
           ))}
         </header>
-        <div className="flex overflow-x-scroll w-full " ref={timelineRef}>
+        <div
+          className="flex overflow-x-scroll w-full relative  overflow-y-auto h-[calc(100dvh-340px)]"
+          ref={timelineRef}
+        >
           {months.map((month) => (
             <div key={month.name + month.year} className="">
-              <div className="flex">
+              <div className="flex relative">
+                <div className=" absolute grid grid-rows-1 z-10 ">
+                  {Array.from({ length: 24 }).map((time, index) => (
+                    <HourHorizontalColums
+                      time={index + 1}
+                      index={index}
+                      projectId={params.projectId}
+                      setSelectedDateObject={setSelectedDateObject}
+                      month={monthNames.findIndex(
+                        (monthname) => monthname === month.name
+                      )}
+                      year={month.year}
+                      taskWithDateRange={taskWithDateRange}
+                    />
+                  ))}
+                </div>
                 {month.dates.map((day) => (
                   <TimelineVerticalBars
                     day={day}
                     setSelectedDateObject={setSelectedDateObject}
                     projectId={params.projectId}
-                    taskWithDateToStart={taskWithDateToStart}
+                    taskWithDateToStart={taskWithDateRange}
                   />
                 ))}
               </div>

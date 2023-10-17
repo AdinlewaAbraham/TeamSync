@@ -66,3 +66,29 @@ body {
 .calendarScrollBar::-webkit-scrollbar-track {
   background-color: #aaa;
 }
+
+.timeline_col {
+  display: grid;
+  grid-template-columns: repeat(
+    31,
+    1fr
+  ); 
+  grid-template-rows: repeat(
+    24,
+    1fr
+  );
+  gap: 1px;
+  
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(31, 1fr); /* Adjust for the number of days in the month */
+  grid-template-rows: repeat(24, 1fr); /* 24 rows for hours in a day, adjust as needed */
+  gap: 1px; /* Optional gap between cells */
+}
+
+.day, .time-slot {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 5px;
+}

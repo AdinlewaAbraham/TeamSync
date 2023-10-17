@@ -72,21 +72,15 @@ const TimelineVerticalBars = ({
     setTasksToMap(tasksToMapuseEffect);
   }, [taskWithDateToStart]);
 
-  tasksToMap.map((task) => {
-    console.log(
-      "this is month " + day.getUTCMonth + "and day " + day.getUTCDay + task
-    );
-  });
-  
-  useEffect(() => {
-    
-  }, [])
-  
-
+  useEffect(() => {}, []);
+  const isToday = (new Date()).toUTCString() === (new Date(day)).toUTCString();
+  if (isToday) {
+    console.log(day);
+  }
   return (
     <div
       key={day.getUTCSeconds()}
-      className={`w-[40px] cursor-cell h-[calc(100dvh-370px)] relative pt-4 ${
+      className={`w-[40px] cursor-cell h-[calc(24*40px)] relative ${
         (day.getDay() === 0 || day.getDay() === 6) && "bg-bg-primary"
       } `}
       onClick={() => {
@@ -97,15 +91,18 @@ const TimelineVerticalBars = ({
         setSelectedDateObject(selectedDateObject);
       }}
     >
+      {isToday && (
+        <div className="absolute h-10 left-0 w-1 z-50 bg-green-500" />
+      )}
       {tasksToMap.map((task) => {
         if (typeof task !== "object") return;
         return (
-          <div key={task._id} className="w-full flex justify-center">
+          <div key={task._id} className="w-full pl-2">
             <div
               className={` bg-accent-primary relative left-0 z-50 h-9 mb-2 transition-opacity duration-150 hover:hidden flex 
-          rounded-lg pl-2 items-center whitespace-nowrap w-[10px] cursor-pointer`}
+           items-center whitespace-nowrap w-[1px] cursor-pointer`}
             >
-              {/* <p className="absolute left-[15px] ">{task.taskName}</p> */}
+              {/* <p className="absolute left-[1pl-25px] ">{task.taskName}</p> */}
             </div>
           </div>
         );

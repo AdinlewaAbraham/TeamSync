@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Task from "@/interfaces/task";
 import { BiCheckCircle } from "react-icons/bi";
+import { AiOutlineDelete } from "react-icons/ai";
 
 const TaskBar = ({ task, isLast }: { task: Task; isLast: boolean }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
+  const handleTaskDelete = async (taskId: string) => {};
   return (
     <div
       key={task._id}
@@ -32,6 +34,9 @@ const TaskBar = ({ task, isLast }: { task: Task; isLast: boolean }) => {
         )}
       </AnimatePresence>
       <div>{task.taskName}</div>
+      <i onClick={() => handleTaskDelete(task._id)}>
+        <AiOutlineDelete />
+      </i>
     </div>
   );
 };
