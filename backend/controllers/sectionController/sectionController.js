@@ -35,7 +35,7 @@ const deleteSection = asyncHandler(async (req, res) => {
       console.error("Error deleting document:", error);
     }
   }
-});
+})
 const createSection = asyncHandler(async (req, res) => {
   const postBody = req.body;
   const { sectionName, projectId } = postBody;

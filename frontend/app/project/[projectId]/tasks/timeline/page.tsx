@@ -7,7 +7,18 @@ import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineVerticalBars from "@/components/project/timeline/TimelineVerticalBars";
 import HourHorizontalColums from "@/components/project/timeline/HourHorizontalColums";
+import EditableComp from "@/components/EditableComp";
+import { IoMdArrowDropdown } from "react-icons/io";
+import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 
+// stuff to do when i get back from calendar comp break
+/*
+1. remove 24 task timeframe limit implement row numbers instead 
+2. improve the ux by making the height bigger make the whole page scrollable
+3. reguar stuff but when a user deletes the only task in a row just remove the row and update and the taks in row 
+   that are bigger than the row and minus one for the row number
+4. consider ,making it like asana
+*/
 const page = ({ params }: { params: { projectId: string } }) => {
   const monthNames = [
     "January",
@@ -89,41 +100,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
     resolveFuncSync();
   }, []);
 
-  function generateDatesForFourMonths(year: number, month: number) {
-    let currentYear = year;
-    let currentMonth = month;
-    const dates = [];
-    const numberOfMonths = 4;
-    const invalidMonthPrev = currentMonth - 1 < 0;
-    const prevMonth = {
-      name: invalidMonthPrev ? monthNames[11] : monthNames[currentMonth - 1],
-      year: invalidMonthPrev ? currentYear-- : currentYear,
-      dates: invalidMonthPrev
-        ? generateDates(currentYear--, 11)
-        : generateDates(currentYear, currentMonth - 1),
-    };
-    dates.push(prevMonth);
-    for (let i = 0; i < numberOfMonths; i++) {
-      const inValidMonthCurrent = currentMonth > 11;
-      const nextYear = currentYear + 1;
-      const month = {
-        name: inValidMonthCurrent ? monthNames[0] : monthNames[currentMonth],
-        year: inValidMonthCurrent ? nextYear : currentYear,
-        dates: inValidMonthCurrent
-          ? generateDates(nextYear, 0)
-          : generateDates(currentYear, currentMonth),
-      };
-      dates.push(month);
-      if (inValidMonthCurrent) {
-        // reset
-        currentYear++;
-        currentMonth = 0;
-      }
-      currentMonth++;
-    }
-
-    return dates;
-  }
 
   const getPrevMonthDays = (year: number, month: number) => {
     if (month === 0) {
@@ -195,80 +171,98 @@ const page = ({ params }: { params: { projectId: string } }) => {
       <nav className="flex justify-between items-center py-2 text-sm  border-t border-border-default">
         <div className="h-9 flex justify-center items-center"> add task</div>
       </nav>
-      <div className="border-t border-border-default h-full relative">
-        <header
-          className="flex relative overflow-x-hidden border-b border-border-default"
-          ref={headerRef}
-        >
-          {months.map((month, index) => (
-            <div className="flex flex-col relative" key={index}>
-              <div className="max-w-max px-2 sticky left-0 ">
-                {month.name} {month.year}
-              </div>
-              <div className="flex">
-                {month.dates.map((day, index) => {
-                  const month = selectedDateObject?.startDate.getUTCMonth();
-                  const year = selectedDateObject?.startDate.getFullYear();
+      <div className="border-t border-border-default h-full relative flex">
+        <div className="w-[200px] pt-[50px]">
+          <div className="border-t border-border-default">
+            {activeProject.sections.map((section) => {
+              if (typeof section !== "object") return;
+              return (
+                <div key={section._id} className="flex items-center">
+                  {/* <EditableComp text={section.sectionName} styles=""  /> */}
 
-                  const highlightDate =
-                    selectedDateObject &&
-                    new Date(day) >= new Date(selectedDateObject?.startDate) &&
-                    new Date(day) <= new Date(selectedDateObject?.endDate);
+                  <IoMdArrowDropdown />
+                  {section.sectionName}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="w-[900px] ">
+          <header
+            className="flex relative overflow-x-hidden border-b border-border-default pr-[20px]"
+            ref={headerRef}
+          >
+            {months.map((month, index) => (
+              <div className="flex flex-col relative" key={index}>
+                <div className="max-w-max px-2 sticky left-0 ">
+                  {month.name} {month.year}
+                </div>
+                <div className="flex">
+                  {month.dates.map((day, index) => {
+                    const month = selectedDateObject?.startDate.getUTCMonth();
+                    const year = selectedDateObject?.startDate.getFullYear();
 
-                  return (
-                    <div
-                      key={index}
-                      className={`w-[40px]
+                    const highlightDate =
+                      selectedDateObject &&
+                      new Date(day) >=
+                        new Date(selectedDateObject?.startDate) &&
+                      new Date(day) <= new Date(selectedDateObject?.endDate);
+
+                    return (
+                      <div
+                        key={index}
+                        className={`w-[40px]
                      ${
                        (day.getDay() === 0 || day.getDay() === 6) &&
                        !highlightDate &&
                        "bg-bg-primary"
                      } ${
-                        highlightDate && "bg-accent-blue"
-                      } flex items-center justify-center `}
-                      onClick={() => console.log(day)}
-                    >
-                      {index + 1}
-                    </div>
-                  );
-                })}
+                          highlightDate && "bg-accent-blue"
+                        } flex items-center justify-center `}
+                        onClick={() => console.log(day)}
+                      >
+                        {index + 1}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
-        </header>
-        <div
-          className="flex overflow-x-scroll w-full relative  overflow-y-auto h-[calc(100dvh-340px)]"
-          ref={timelineRef}
-        >
-          {months.map((month) => (
-            <div key={month.name + month.year} className="">
-              <div className="flex relative">
-                <div className=" absolute grid grid-rows-1 z-10 ">
-                  {Array.from({ length: 24 }).map((time, index) => (
-                    <HourHorizontalColums
-                      time={index + 1}
-                      index={index}
-                      projectId={params.projectId}
+            ))}
+          </header>
+          <div
+            className="flex overflow-x-scroll relative  overflow-y-auto h-[calc(100dvh-340px)]"
+            ref={timelineRef}
+          >
+            {months.map((month) => (
+              <div key={month.name + month.year} className="">
+                <div className="flex relative">
+                  <div className=" absolute grid grid-rows-1 z-10 ">
+                    {Array.from({ length: 24 }).map((time, index) => (
+                      <HourHorizontalColums
+                        time={index + 1}
+                        index={index}
+                        projectId={params.projectId}
+                        setSelectedDateObject={setSelectedDateObject}
+                        month={monthNames.findIndex(
+                          (monthname) => monthname === month.name
+                        )}
+                        year={month.year}
+                        taskWithDateRange={taskWithDateRange}
+                      />
+                    ))}
+                  </div>
+                  {month.dates.map((day) => (
+                    <TimelineVerticalBars
+                      day={day}
                       setSelectedDateObject={setSelectedDateObject}
-                      month={monthNames.findIndex(
-                        (monthname) => monthname === month.name
-                      )}
-                      year={month.year}
-                      taskWithDateRange={taskWithDateRange}
+                      projectId={params.projectId}
+                      taskWithDateToStart={taskWithDateRange}
                     />
                   ))}
                 </div>
-                {month.dates.map((day) => (
-                  <TimelineVerticalBars
-                    day={day}
-                    setSelectedDateObject={setSelectedDateObject}
-                    projectId={params.projectId}
-                    taskWithDateToStart={taskWithDateRange}
-                  />
-                ))}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

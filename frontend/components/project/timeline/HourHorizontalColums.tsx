@@ -89,7 +89,7 @@ const HourHorizontalColums = ({
   return (
     <div
       key={index}
-      className="border-y border-border-default flex items-center h-[52px] w-screen relative "
+      className="border-y border-border-default flex items-center h-[52px] w-full relative "
       onClick={(event) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const offsetX = event.clientX - rect.left;

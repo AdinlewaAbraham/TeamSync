@@ -54,6 +54,20 @@ const CalendarBox = ({
     }
   };
 
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const currentDate = new Date();
 
@@ -77,13 +91,17 @@ const CalendarBox = ({
         index <= 6 ? "border-t-0" : "border-t"
       } `}
       key={date.toString()}
-      onClick={() => setShowInput(true)}
+      onClick={() => {
+        setShowInput(true);
+        console.log(date);
+      }}
     >
       <div
         className={` max-w-max mb-1 p-2 h-7 flex justify-center items-center  ${
           isNotinMonth && "text-muted-dark"
         } ${isToday && "bg-accent-blue rounded-lg"} `}
       >
+        {date.getDate() === 1 && <>{months[date.getMonth()].substring(0, 3)}</>}
         {date.getDate()}
       </div>
       {tasks.map((task, index) => {
