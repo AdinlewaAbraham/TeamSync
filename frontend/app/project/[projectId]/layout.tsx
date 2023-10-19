@@ -93,8 +93,8 @@ const layout = ({
               { title: "Dashboard", icon: <FaChartLine /> },
               { title: "Tasks", icon: <LuClipboardCheck /> },
               { title: "files", icon: <FaChartLine /> },
-            ].map((item) => (
-              <div key={item.title}>
+            ].map((item, index) => (
+              <div key={item.title + index}>
                 <NavbarItem
                   title={item.title}
                   projectId={params.projectId}

@@ -62,6 +62,7 @@ const layout = ({
               title={listItem.title}
               projectId={params.projectId}
               icon={listItem.icon}
+              key={listItem.title}
             />
           ))}
         </ul>

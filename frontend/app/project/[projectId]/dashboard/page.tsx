@@ -6,9 +6,9 @@ const page = () => {
     <div className="">
       project reports with charts and all
       <div className=" timeline_col">
-        {months.map((month) => (
+        {/* {months.map((month) => (
           <div className="w-5 h-5 border border-border-default"></div>
-        ))}
+        ))} */}
       </div>
       <div className="calendar-grid">
         <div className="day">1</div>

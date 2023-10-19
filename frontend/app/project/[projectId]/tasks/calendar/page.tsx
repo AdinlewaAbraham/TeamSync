@@ -3,7 +3,7 @@ import CalendarBox from "@/components/project/calendar/CalendarBox";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
@@ -11,17 +11,98 @@ import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentYear = currentDate.getFullYear();
+  const cM = currentDate.getMonth();
+  const cY = currentDate.getFullYear();
 
   const { activeProject, setActiveProject } = useGlobalContext();
 
-  const [month, setMonth] = useState<number>(currentMonth);
+  const [currentMonth, setCurrentMonth] = useState<number>(cM);
   const [monthsDates, setmonthsDates] = useState(
-    generateDatesForFourMonths(currentYear, currentMonth)
+    generateDatesForFourMonths(cY, cM)
   );
-  const [year, setYear] = useState<number>(currentYear);
+  const [currentYear, setCurrentYear] = useState<number>(cY);
   const [color, setcolor] = useState("no-color");
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const getPrevMonthDays = (month: number, year: number) => {
+    if (month === 0) {
+      return generateDates(year - 1, 11);
+    } else {
+      return generateDates(year, month - 1);
+    }
+  };
+  const getNextMonthDays = (month: number, year: number) => {
+    if (month === 11) {
+      return generateDates(year + 1, 0);
+    } else {
+      return generateDates(year, month + 1);
+    }
+  };
+  let lastDayPushed: Date | null;
+  const filledMonthsDates = monthsDates.map((month) => {
+    const dates: Date[] = JSON.parse(JSON.stringify(month.dates));
+
+    const firstDayInDates = new Date(dates[0]);
+    const firstDay = properlyIndexedDays[firstDayInDates.getDay()];
+    const noOfDaysToUnshift = days.indexOf(firstDay);
+    const prevMonthDays = getPrevMonthDays(
+      firstDayInDates.getMonth(),
+      firstDayInDates.getFullYear()
+    );
+    let daysToUnshit;
+    if (lastDayPushed) {
+      const currentDate = new Date(lastDayPushed);
+      const daysToUnshiftHolderArr = [];
+      for (let i = 0; i < noOfDaysToUnshift; i++) {
+        // this is meant to be the prev month
+        const newDate = new Date(currentDate);
+        newDate.setDate(newDate.getDate() + 1);
+        daysToUnshiftHolderArr.push(newDate);
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      daysToUnshit = daysToUnshiftHolderArr;
+      if (daysToUnshit.length !== 0) {
+        // remove unwanted begining dates
+        const lastdayInDaysToUnshit = new Date(
+          daysToUnshit[daysToUnshit.length - 1]
+        );
+        dates.splice(0, lastdayInDaysToUnshit.getDate());
+      }
+    } else {
+      daysToUnshit = prevMonthDays.slice(-noOfDaysToUnshift);
+    }
+    dates.unshift(...daysToUnshit);
+
+    const noOfDaysToPush = 7 - (dates.length % 7);
+    if (dates.length % 7 !== 0) {
+      const nextMonthDays = getNextMonthDays(
+        firstDayInDates.getMonth(),
+        firstDayInDates.getFullYear()
+      );
+      const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
+      dates.push(...daysToFill);
+      lastDayPushed = daysToFill[daysToFill.length - 1];
+      if (daysToFill.length === 0) {
+        lastDayPushed = null;
+      }
+    }
+    return { ...month, dates: dates };
+  });
+  const [havescrolled, setHavescrolled] = useState(false);
+  useEffect(() => {
+    // if (filledMonthsDates.length > 0){
+
+    // }
+    const scrollToElement = document.getElementsByClassName(
+      "currentMonthFirstDate"
+    );
+
+    if (scrollToElement[0] && !havescrolled) {
+      scrollToElement[0].scrollIntoView();
+      setHavescrolled(true);
+    }
+  }, [filledMonthsDates]);
 
   useEffect(() => {
     const fetchProjectFunc = async () => {
@@ -57,40 +138,28 @@ const page = ({ params }: { params: { projectId: string } }) => {
     resolveFuncSync();
   }, []);
 
-  const dates = generateDates(year, month);
+  const calendarBoxScollParent = useRef(null);
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  useEffect(() => {
+    const targetElement = calendarBoxScollParent.current;
 
-  const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const firstDay = properlyIndexedDays[dates[0].getDay()];
-  const noOfDaysToUnshift = days.indexOf(firstDay);
-
-  const getPrevMonthDays = (month: number, year: number) => {
-    if (month === 0) {
-      return generateDates(year - 1, 11);
-    } else {
-      return generateDates(year, month - 1);
+    if (!targetElement) {
+      return;
     }
-  };
-  const getNextMonthDays = (month: number, year: number) => {
-    if (month === 11) {
-      return generateDates(year + 1, 0);
-    } else {
-      return generateDates(year, month + 1);
-    }
-  };
+    console.log("i exist");
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = entry.contentRect.width;
+        console.log(`Element width changed to ${newWidth}px`);
+      }
+    });
 
-  const prevMonthDays = getPrevMonthDays(); //make sure you check if in last or first month go back one year if first and go forward one year if last
-  const daysToFill = prevMonthDays.slice(-noOfDaysToUnshift);
+    resizeObserver.observe(targetElement);
 
-  dates.unshift(...daysToFill);
-
-  const noOfDaysToPush = 7 - (dates.length % 7);
-  if (dates.length % 7 !== 0) {
-    const nextMonthDays = getNextMonthDays(); //make sure you check if in last or first month go back one year if first and go forward one year if last
-    const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
-    dates.push(...daysToFill);
-  }
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [calendarBoxScollParent]);
 
   const months = [
     "January",
@@ -107,19 +176,19 @@ const page = ({ params }: { params: { projectId: string } }) => {
     "December",
   ];
   const handleAddMonth = () => {
-    if (month === 11) {
-      setYear(year + 1);
-      setMonth(0);
+    if (currentMonth === 11) {
+      setCurrentYear(currentYear + 1);
+      setCurrentMonth(0);
     } else {
-      setMonth(month + 1);
+      setCurrentMonth(currentMonth + 1);
     }
   };
   const handleDecreaseMonth = () => {
-    if (month === 0) {
-      setYear(year - 1);
-      setMonth(11);
+    if (currentMonth === 0) {
+      setCurrentYear(currentYear - 1);
+      setCurrentMonth(11);
     } else {
-      setMonth(month - 1);
+      setCurrentMonth(currentMonth - 1);
     }
   };
 
@@ -131,68 +200,15 @@ const page = ({ params }: { params: { projectId: string } }) => {
       return section.tasks;
     })
     .flat(1);
-  const taskWithDueDate = allTasks.filter((task) => {
-    if (typeof task === "string") return;
-    return task?.dueDate;
+  const taskWithDateRange = allTasks.filter((task) => {
+    if (typeof task !== "object") return;
+    return task?.dateToStart && task.dueDate;
   });
 
   // if the starts with that day it will have a p to the right
   //  if the task ends it will have a padding to the right
   //  if it does not start or end with that day it has no padding
-  //
-  //
-  let lastDayPushed: Date | null;
-  const filledMonthsDates = monthsDates.map((month) => {
-    const dates: Date[] = JSON.parse(JSON.stringify(month.dates));
 
-    const firstDayInDates = new Date(dates[0]);
-    const firstDay = properlyIndexedDays[firstDayInDates.getDay()];
-    const noOfDaysToUnshift = days.indexOf(firstDay);
-    const prevMonthDays = getPrevMonthDays(
-      firstDayInDates.getMonth(),
-      firstDayInDates.getFullYear()
-    );
-    let daysToUnshit;
-    if (lastDayPushed) {
-      const currentDate = new Date(lastDayPushed);
-      const daysToUnshiftHolderArr = [];
-      for (let i = 0; i < noOfDaysToUnshift; i++) {
-        // this is meant to be the prev month
-        const newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() + 1);
-        daysToUnshiftHolderArr.push(newDate);
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-      daysToUnshit = daysToUnshiftHolderArr;
-      if (daysToUnshit.length !== 0) {
-        // remove unwanted begining dates
-        const lastdayInDaysToUnshit = new Date(
-          daysToUnshit[daysToUnshit.length - 1]
-        )
-        dates.splice(0, lastdayInDaysToUnshit.getDate());
-      }
-    } else {
-      daysToUnshit = prevMonthDays.slice(-noOfDaysToUnshift);
-    }
-    dates.unshift(...daysToUnshit);
-
-    const noOfDaysToPush = 7 - (dates.length % 7);
-    if (dates.length % 7 !== 0) {
-      const nextMonthDays = getNextMonthDays(
-        firstDayInDates.getMonth(),
-        firstDayInDates.getFullYear()
-      );
-      const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
-      dates.push(...daysToFill);
-      lastDayPushed = daysToFill[daysToFill.length - 1];
-      if (daysToFill.length === 0) {
-        lastDayPushed = null;
-      }
-    }
-    return { ...month, dates: dates };
-  });
-  console.log(filledMonthsDates);
-  console.log(monthsDates);
   return (
     <div className="select-none">
       <nav className="flex justify-between py-2 text-sm items-center border-t border-border-default">
@@ -205,12 +221,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <button
             className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
         flex items-center justify-center"
-            onClick={() => {
-              setYear(currentYear);
-              setMonth(currentMonth);
-              const element = document.getElementById("today");
-              element?.scrollIntoView({ behavior: "smooth" });
-            }}
+            // onClick={() => {
+            //   setYear(currentYear);
+            //   setMonth(currentMonth);
+            //   const element = document.getElementById("today");
+            //   element?.scrollIntoView({ behavior: "smooth" });
+            // }}
           >
             Today
           </button>
@@ -221,7 +237,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
             <MdNavigateNext />
           </i>
           <div className="text-xl text-white">
-            {months[month]} {year}
+            {months[currentMonth]} {cY !== currentYear && currentYear}
           </div>
         </div>
         <div className="flex">
@@ -250,24 +266,32 @@ const page = ({ params }: { params: { projectId: string } }) => {
           </ul>
         </header>
         <div
-          className="overflow-y-auto h-[calc(100dvh-300px)] calendarScrollBar"
-          // onScroll={}
+          className="overflow-y-auto h-[calc(100dvh-310px)] calendarScrollBar"
+          id="calendarBoxScollParent"
+          ref={calendarBoxScollParent}
         >
-          {filledMonthsDates.map((month) => (
+          {filledMonthsDates.map((month, monthIndex) => (
             <div
-              className="grid grid-flow-row grid-cols-7"
+              className="grid grid-flow-row grid-cols-7 "
               key={month.name + month.year}
+              id="calendarBoxParent"
             >
               {month.dates.map((date: Date, index: number) => (
                 <CalendarBox
                   date={new Date(date)}
                   projectId={params.projectId}
-                  isNotinMonth={
-                    index < noOfDaysToUnshift ||
-                    index >= dates.length - noOfDaysToPush
+                  highlight={
+                    new Date(date).getMonth() === currentMonth &&
+                    new Date(date).getFullYear() === currentYear
                   }
                   index={index}
-                  taskWithDueDate={taskWithDueDate}
+                  taskWithDateRange={taskWithDateRange}
+                  key={index + new Date(date).getMonth()}
+                  monthIndex={monthIndex}
+                  currentMonth={currentMonth}
+                  currentYear={currentYear}
+                  setCurrentMonth={setCurrentMonth}
+                  setCurrentYear={setCurrentYear}
                 />
               ))}
             </div>

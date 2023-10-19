@@ -100,7 +100,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
     resolveFuncSync();
   }, []);
 
-
   const getPrevMonthDays = (year: number, month: number) => {
     if (month === 0) {
       return {
@@ -251,12 +250,13 @@ const page = ({ params }: { params: { projectId: string } }) => {
                       />
                     ))}
                   </div>
-                  {month.dates.map((day) => (
+                  {month.dates.map((day, index) => (
                     <TimelineVerticalBars
                       day={day}
                       setSelectedDateObject={setSelectedDateObject}
                       projectId={params.projectId}
                       taskWithDateToStart={taskWithDateRange}
+                      key={index}
                     />
                   ))}
                 </div>

@@ -102,7 +102,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
      border-border-default [&>li]:flex [&>li]:items-center h-12
     [&>li]:pr-2 text-sm"
       key={task._id}
-      onClick={()=>console.log(task)}
+      onClick={() => console.log(task)}
     >
       <li className="pl-8">{task.taskName}</li>
       <li className="flex items-center">
@@ -139,6 +139,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
                 <div
                   className="py-1 h-9 px-2 text-sm  
                   flex items-center w-full"
+                  key={priority.text}
                 >
                   <div className="flex items-center  py-1 px-2 cursor-pointer hover:bg-menuItem-hover w-full rounded-lg">
                     <i className="mr-2">{priority.icon}</i>
@@ -174,10 +175,11 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
               {...attributes2.popper}
               className="bg-bg-secondary w-[calc(100%+3px)] z-50 border border-border-default rounded-lg"
             >
-              {Object.values(statusObj).map((status) => (
+              {Object.values(statusObj).map((status, index) => (
                 <div
                   className="py-1 px-2 text-sm
                   flex items-center w-full"
+                  key={status.text + index}
                 >
                   <div className=" flex items-center  py-1 px-2 cursor-pointer hover:bg-menuItem-hover w-full rounded-lg">
                     <i className="mr-2">{status.icon}</i>
@@ -268,7 +270,7 @@ const TableDropdown = ({
           <motion.main>
             {localSection.tasks.map((task) => {
               if (typeof task === "string") {
-                return <>loading comp</>;
+                return <div key={task}>loading comp</div>;
               } else {
                 return <TaskRowComponent task={task} />;
               }
