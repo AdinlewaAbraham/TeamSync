@@ -11,9 +11,16 @@ const getTask = asyncHandler(async (req, res) => {
 const updateTask = asyncHandler(async (req, res) => {});
 
 const createTask = asyncHandler(async (req, res) => {
-  const { taskName, projectId, sectionId, dueDate,dateToStart } = await req.body;
-  if (!taskName || !projectId || !sectionId) {
-    res.status(403).json({ message: "bad request" });
+  const { taskName, projectId, sectionId, dueDate, dateToStart, rowNumber } =
+    await req.body;
+  if (
+    !taskName ||
+    !projectId ||
+    !sectionId ||
+    (dueDate && dateToStart && !rowNumber) 
+  ) {
+    console.log("bad request")
+    return res.status(403).json({ message: "bad request" });
   }
   console.log(taskName, projectId, sectionId, dateToStart, dueDate);
 
@@ -23,18 +30,19 @@ const createTask = asyncHandler(async (req, res) => {
     sectionId: sectionId,
     dateToStart: dateToStart,
     dueDate: dueDate,
+    rowNumber: rowNumber,
   });
   const section = await Section.findById(sectionId);
   if (!section) {
-    res.status(404).send("section not found");
+    return res.status(404).send("section not found");
   }
   section.tasks.push(task.id);
   try {
     await Promise.all([task.save(), section.save()]);
-    res.status(200).json(task);
+    return res.status(200).json(task);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "got this error" + error });
+    return res.status(500).json({ message: "got this error" + error });
   }
 });
 

@@ -4,26 +4,37 @@ import Task from "@/interfaces/task";
 import { BiCheckCircle } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
+import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 
 const TaskBar = ({
+  index,
   task,
   isLast,
-  calendarIndex,
   calendarDate,
+  taskHoverStatusObj,
+  setTaskHoverStatusObj,
+  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
+  calendarIndex,
 }: {
+  index: number;
   task: Task;
   isLast: boolean;
-  calendarIndex: number;
   calendarDate: Date;
+  taskHoverStatusObj: TaskHoverStatusObj;
+  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
+  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
+  calendarIndex: number;
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
   const handleTaskDelete = async (taskId: string) => {};
 
   const boxRef = useRef<HTMLElement | null>(null);
   const [boxWidth, setBoxWidth] = useState(0);
-
+  const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
-    new Date(task.dateToStart).toISOString() !== calendarDate.toISOString();
+    taskDateToStart.getFullYear() !== calendarDate.getFullYear() ||
+    taskDateToStart.getMonth() !== calendarDate.getMonth() ||
+    taskDateToStart.getDate() !== calendarDate.getDate();
   useEffect(() => {
     const element = boxRef.current;
 
@@ -67,9 +78,11 @@ const TaskBar = ({
   const widthForTasksThatDoesNotStartOnDay = doesTaskRunThrough
     ? boxWidth * 7
     : daysRemainingFromSpillOver * boxWidth - padding / 2;
-// implement heigth or as you may say top
+
+  // implement heigth or as you may say top
+  const isMonday = calendarIndex === 0;
   return (
-    <div key={task._id + calendarIndex}>
+    <div key={task._id + index}>
       <div
         className="h-1 w-full bg-transparent absolute"
         ref={(element) => (boxRef.current = element)}
@@ -78,27 +91,55 @@ const TaskBar = ({
         key={task._id}
         className={`${
           isLast ? "" : "mb-1"
-        } absolute z-50 bg-bg-secondary rounded-lg ${
-          hasOverflowToRight &&
-          !doesNotStartOnDay &&
-          "rounded-r-none border-r-0"
-        } ${doesTaskRunThrough && "rounded-r-none"} ${
+        } absolute z-50 bg-bg-secondary rounded-lg top-[${index * 36}px]
+         ${
+           hasOverflowToRight &&
+           !doesNotStartOnDay &&
+           "rounded-r-none border-r-0"
+         } ${doesTaskRunThrough && "rounded-r-none"} ${
           doesNotStartOnDay && "rounded-l-none border-l-0 "
         }
+        
          border-2 w-full border-border-default
-       hover:border-accent-blue transition-colors duration-150
+       ${taskHoverStatusObj?.[task._id] && "border-accent-blue"}
+          transition-colors duration-150
       px-3 py-1 text-xs h-9 flex items-center cursor-pointer group  `}
         style={{
           width: doesNotStartOnDay
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
           left: doesNotStartOnDay ? 0 : padding / 2,
+          top: doesNotStartOnDay
+            ? index * 36 +
+              40 /*hieght of top header */ +
+              /* height of taskbar */ index * 4 /* margin*/
+            : ((isMonday ? 0 : index) +
+                noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
+                36 +
+              40 /*hieght of top header */ +
+              /* height of taskbar */ ((isMonday ? 0 : index) +
+                noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
+                4 /* margin*/,
         }}
-        onMouseEnter={() => setShowCheckMark(true)}
-        onMouseLeave={() => setShowCheckMark(false)}
+        onClick={() =>
+          console.log(
+            noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
+            index,
+            new Date(task.dateToStart).toDateString(),
+            new Date(task.dueDate).toDateString()
+          )
+        }
+        // onMouseEnter={() => {
+        //   setTaskHoverStatusObj({ ...taskHoverStatusObj, [task._id]: true });
+        //   setShowCheckMark(true);
+        // }}
+        // onMouseLeave={() => {
+        //   setTaskHoverStatusObj({ ...taskHoverStatusObj, [task._id]: false });
+        //   setShowCheckMark(false);
+        // }}
         draggable
       >
-        {dateIndex}
+        {/* {dateIndex} */}
         <AnimatePresence>
           {showCheckMark && (
             <motion.div
@@ -114,9 +155,9 @@ const TaskBar = ({
           )}
         </AnimatePresence>
         <div>{task.taskName}</div>
-        <i onClick={() => handleTaskDelete(task._id)}>
+        {/* <i onClick={() => handleTaskDelete(task._id)}>
           <AiOutlineDelete />
-        </i>
+        </i> */}
       </div>
     </div>
   );

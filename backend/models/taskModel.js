@@ -66,6 +66,10 @@ const taskSchema = mongoose.Schema({
   createdAt: {
     type: mongoose.Schema.Types.Date,
     default: new Date,
+  },
+  rowNumber: {
+    type: Number,
+    required: [false],
   }
 });
 

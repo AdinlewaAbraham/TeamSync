@@ -347,16 +347,16 @@ const page = ({ params }: { params: { projectId: string } }) => {
     };
     resolveFuncSync();
   }, []);
-  useEffect(() => {
-    const handleClick = async (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".addSectionInput")) {
-        await addSection();
-      }
-    };
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, [sectionName]);
+  // useEffect(() => {
+  //   const handleClick = async (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     if (!target.closest(".addSectionInput")) {
+  //       await addSection();
+  //     }
+  //   };
+  //   window.addEventListener("click", handleClick);
+  //   return () => window.removeEventListener("click", handleClick);
+  // }, [sectionName]);
 
   const addSection = async () => {
     setShowAddSectionComponent(true);
@@ -430,6 +430,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                   className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
                   placeholder="Write a task name"
                   onChange={(e) => setSectionName(e.target.value)}
+                  onBlur={async () => await addSection()}
                 />
               </div>
             )}

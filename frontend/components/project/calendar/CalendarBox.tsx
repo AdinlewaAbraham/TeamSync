@@ -3,6 +3,8 @@ import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
 import React, { useEffect, useRef, useState } from "react";
 import TaskBar from "./TaskBar";
+import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
+import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 
 const CalendarBox = ({
   date,
@@ -15,6 +17,8 @@ const CalendarBox = ({
   currentYear,
   setCurrentMonth,
   setCurrentYear,
+  taskHoverStatusObj,
+  setTaskHoverStatusObj,
 }: {
   date: Date;
   projectId: string;
@@ -26,6 +30,8 @@ const CalendarBox = ({
   currentYear: number;
   setCurrentMonth: (c: number) => void;
   setCurrentYear: (c: number) => void;
+  taskHoverStatusObj: TaskHoverStatusObj;
+  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -81,13 +87,15 @@ const CalendarBox = ({
     )
       return;
     const dueDate = new Date(date);
-    dueDate.setDate(dueDate.getDate() + 1);
+    dueDate.setDate(dueDate.getDate() + 3);
+    const rowNumber = findMinFreeRowNumber(taskWithDateRange, date, dueDate);
     const postBody = {
       taskName,
       projectId,
       sectionId: activeProject.sections[0]._id,
       dateToStart: date,
       dueDate: dueDate,
+      rowNumber: rowNumber,
     };
     const response = await fetch("/api/task/", {
       method: "POST",
@@ -134,11 +142,15 @@ const CalendarBox = ({
     (day) => days[date.getDay()] === day
   );
 
-  const tasks = taskWithDateRange.filter((task) => {
+  const tasksThatStartOnDay = taskWithDateRange.filter((task) => {
     if (typeof task !== "object") return false;
 
     const taskDateToStart = new Date(task.dateToStart);
-    if (taskDateToStart.toISOString() === date.toISOString()) {
+    if (
+      taskDateToStart.getMonth() === date.getMonth() &&
+      taskDateToStart.getDate() === date.getDate() &&
+      taskDateToStart.getFullYear() === date.getFullYear()
+    ) {
       return true;
     }
 
@@ -151,7 +163,28 @@ const CalendarBox = ({
 
     return false;
   });
-
+  const noOfDaysThatDoesNotStartOnDayButFallInTimeFrame = taskWithDateRange.filter((task) => {
+    if (typeof task !== "object") return false;
+    const taskDueDate = new Date(task.dueDate);
+    const taskDateToStart = new Date(task.dateToStart);
+    return (
+      date <= taskDueDate &&
+      date >= taskDateToStart &&
+      !(
+        taskDateToStart.getDate() === date.getDate() &&
+        taskDateToStart.getFullYear() === date.getFullYear() &&
+        taskDateToStart.getMonth() === date.getMonth()
+      )
+    );
+  }).length;
+  if (date.getDate() === 19) {
+    console.log(
+      "this is length " +
+        (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame)
+    );
+    console.log(tasksThatStartOnDay.length);
+    console.log(noOfDaysThatDoesNotStartOnDayButFallInTimeFrame);
+  }
   return (
     <div
       id={isToday ? "today" : index.toString()}
@@ -169,11 +202,12 @@ const CalendarBox = ({
       ref={boxRef}
       onClick={() => {
         setShowInput(true);
-        console.log(tasks);
+        console.log(noOfDaysThatDoesNotStartOnDayButFallInTimeFrame);
       }}
+      // style={{height: isToday ? 300 : 192}}
     >
       <div
-        className={` max-w-max mb-1 p-4 h-7 flex justify-center items-center  ${
+        className={` max-w-max m-2 p-2 h-7 flex justify-center items-center  ${
           !highlight && "text-muted-dark"
         } ${isToday && "bg-accent-blue rounded-lg"} `}
       >
@@ -182,20 +216,37 @@ const CalendarBox = ({
         )}
         {date.getDate()}
       </div>
-      {tasks.map((task, index) => {
+      {tasksThatStartOnDay.map((task, index) => {
         if (typeof task !== "object") return;
-        const isLast = tasks.length - 1 === index;
-        return <TaskBar task={task} isLast={isLast} calendarIndex={index} calendarDate={date} />;
+        const isLast = tasksThatStartOnDay.length - 1 === index;
+        return (
+          <TaskBar
+            index={index}
+            task={task}
+            isLast={isLast}
+            calendarDate={date}
+            taskHoverStatusObj={taskHoverStatusObj}
+            setTaskHoverStatusObj={setTaskHoverStatusObj}
+            noOfDaysThatDoesNotStartOnDayButFallInTimeFrame={noOfDaysThatDoesNotStartOnDayButFallInTimeFrame}
+            calendarIndex={dateIndex}
+          />
+        );
       })}
       {showInput && (
         <div className="px-2">
           <input
             className={`${
-              tasks.length > 0 && "mt-1"
-            } bg-transparent text-input w-full border-2 border-border-default text-sm focus:ring-0 flex items-center`}
+              tasksThatStartOnDay.length > 0 && "mt-1"
+            } absolute bg-transparent text-input w-[calc(100%-16px)] border-2 border-border-default text-sm focus:ring-0 flex items-center`}
             autoFocus
             onBlur={() => addTask()}
             onChange={(e) => setTaskName(e.target.value)}
+            style={{
+              left: 8,
+              top:
+                36 *
+                (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame),
+            }}
           />
         </div>
       )}

@@ -12,4 +12,5 @@ export default interface Task {
   projectId: string;
   isComplete: boolean;
   _id: string;
+  rowNumber: number;
 }

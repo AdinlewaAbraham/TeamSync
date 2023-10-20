@@ -93,16 +93,16 @@ const page = ({ params }: { params: { projectId: string } }) => {
     }
   }, []);
 
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".addSectionComponent")) {
-        addSection();
-      }
-    };
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
+  // useEffect(() => {
+  //   const handleClick = (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     if (!target.closest(".addSectionComponent")) {
+  //       addSection();
+  //     }
+  //   };
+  //   window.addEventListener("click", handleClick);
+  //   return () => window.removeEventListener("click", handleClick);
+  // }, []);
 
   useEffect(() => {}, []);
 
@@ -131,6 +131,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 autoFocus
                 className="text-input w-full"
                 onChange={(e) => setSectionName(e.target.value)}
+                onBlur={async () => await addSection()}
               />
             </div>
 

@@ -11,6 +11,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import RenderStatus, { RenderPriority } from "../ConditionalRender";
 import { usePopper } from "react-popper";
 import deleteSection from "@/helpers/deleteSection";
+import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 
 const BoardCard = ({
   section,
@@ -39,10 +40,28 @@ const BoardCard = ({
     placement: "bottom-start",
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
+  // console.log(section.tasks);
   const handleAddTask = async () => {
     setShowAddTaskComponent(false);
     if (!projectId || !taskName || typeof section === "string") return;
-    const postBody = { taskName, projectId, sectionId: section._id };
+    const startDate = new Date();
+
+    const lastDate = new Date(startDate);
+    lastDate.setDate(startDate.getDate() + 10);
+    startDate.setDate(startDate.getDate());
+
+    const rowNumber = findMinFreeRowNumber(section.tasks, startDate, lastDate);
+
+    console.log("this is rownumber " + rowNumber, section.tasks);
+
+    const postBody = {
+      taskName,
+      projectId,
+      sectionId: section._id,
+      dateToStart: startDate,
+      dueDate: lastDate,
+      rowNumber: rowNumber,
+    };
     const response = await fetch("/api/task/", {
       method: "POST",
       body: JSON.stringify(postBody),
@@ -85,16 +104,16 @@ const BoardCard = ({
       setActiveProject(newActiveProject);
     }
   };
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest(".addTaskComponent")) {
-        handleAddTask();
-      }
-    };
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
+  // useEffect(() => {
+  //   const handleClick = (e: MouseEvent) => {
+  //     const target = e.target as HTMLElement;
+  //     if (!target.closest(".addTaskComponent")) {
+  //       handleAddTask();
+  //     }
+  //   };
+  //   window.addEventListener("click", handleClick);
+  //   return () => window.removeEventListener("click", handleClick);
+  // }, []);
 
   if (typeof localSection === "string") return <>loading this is a string </>;
   return (
@@ -154,7 +173,7 @@ const BoardCard = ({
                 {typeof task === "string" ? (
                   <>loading</>
                 ) : (
-                  <div className="px-2 mb-2 " onClick={()=>console.log(task)}>
+                  <div className="px-2 mb-2 " onClick={() => console.log(task)}>
                     <div
                       className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
                      flex flex-col border border-border-default"
@@ -195,6 +214,7 @@ const BoardCard = ({
                 className="text-input focus:ring-0 bg-bg-secondary w-full p-2 h-[90px] resize-none"
                 placeholder="provide task name"
                 onChange={(e) => setTaskName(e.target.value)}
+                onBlur={async () => await handleAddTask()}
               />
               <div className="flex items-center">
                 <button

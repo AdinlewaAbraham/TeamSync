@@ -8,6 +8,9 @@ import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
+import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
+import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
+import Task from "@/interfaces/task";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const currentDate = new Date();
@@ -20,6 +23,9 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const [monthsDates, setmonthsDates] = useState(
     generateDatesForFourMonths(cY, cM)
   );
+
+  const [taskHoverStatusObj, setTaskHoverStatusObj] =
+    useState<TaskHoverStatusObj>({ shutUpTs: true });
   const [currentYear, setCurrentYear] = useState<number>(cY);
   const [color, setcolor] = useState("no-color");
 
@@ -146,11 +152,9 @@ const page = ({ params }: { params: { projectId: string } }) => {
     if (!targetElement) {
       return;
     }
-    console.log("i exist");
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const newWidth = entry.contentRect.width;
-        console.log(`Element width changed to ${newWidth}px`);
       }
     });
 
@@ -204,6 +208,24 @@ const page = ({ params }: { params: { projectId: string } }) => {
     if (typeof task !== "object") return;
     return task?.dateToStart && task.dueDate;
   });
+  if (
+    Array.isArray(taskWithDateRange) &&
+    taskWithDateRange.every((item) => typeof item === "object")
+  ) {
+    const taskArray: Task[] = taskWithDateRange as Task[];
+    const rowNumber = findMinFreeRowNumber(
+      taskArray,
+      new Date("2023-10-02T23:00:00.000Z"),
+      new Date("2023-10-11T23:00:00.000Z")
+    );
+  }
+
+  //   const allTaskThatFallsWithinTimeFrame = allTasks.filter((task) => {
+  //     const dateToStart = new Date(task.dateToStart)
+  //     const dueDate = new Date(task.dueDate)
+  //     return dateToStart >= taskDateToStart && dueDate <= taskDueDate;
+  //   });
+  // console.log(allTaskThatFallsWithinTimeFrame)
 
   // if the starts with that day it will have a p to the right
   //  if the task ends it will have a padding to the right
@@ -221,12 +243,10 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <button
             className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
         flex items-center justify-center"
-            // onClick={() => {
-            //   setYear(currentYear);
-            //   setMonth(currentMonth);
-            //   const element = document.getElementById("today");
-            //   element?.scrollIntoView({ behavior: "smooth" });
-            // }}
+            onClick={() => {
+              const element = document.getElementById("today");
+              element?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Today
           </button>
@@ -292,6 +312,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
                   currentYear={currentYear}
                   setCurrentMonth={setCurrentMonth}
                   setCurrentYear={setCurrentYear}
+                  taskHoverStatusObj={taskHoverStatusObj}
+                  setTaskHoverStatusObj={setTaskHoverStatusObj}
                 />
               ))}
             </div>
