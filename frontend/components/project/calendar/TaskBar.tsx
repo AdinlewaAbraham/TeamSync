@@ -113,11 +113,15 @@ const TaskBar = ({
             ? index * 36 +
               40 /*hieght of top header */ +
               /* height of taskbar */ index * 4 /* margin*/
-            : ((isMonday ? 0 : index) +
+            : ((isMonday
+                ? index - noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
+                : index) +
                 noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
                 36 +
               40 /*hieght of top header */ +
-              /* height of taskbar */ ((isMonday ? 0 : index) +
+              /* height of taskbar */ ((isMonday
+                ? index - noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
+                : index) +
                 noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
                 4 /* margin*/,
         }}

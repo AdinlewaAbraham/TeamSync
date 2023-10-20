@@ -163,24 +163,26 @@ const CalendarBox = ({
 
     return false;
   });
-  const noOfDaysThatDoesNotStartOnDayButFallInTimeFrame = taskWithDateRange.filter((task) => {
-    if (typeof task !== "object") return false;
-    const taskDueDate = new Date(task.dueDate);
-    const taskDateToStart = new Date(task.dateToStart);
-    return (
-      date <= taskDueDate &&
-      date >= taskDateToStart &&
-      !(
-        taskDateToStart.getDate() === date.getDate() &&
-        taskDateToStart.getFullYear() === date.getFullYear() &&
-        taskDateToStart.getMonth() === date.getMonth()
-      )
-    );
-  }).length;
+  const noOfDaysThatDoesNotStartOnDayButFallInTimeFrame =
+    taskWithDateRange.filter((task) => {
+      if (typeof task !== "object") return false;
+      const taskDueDate = new Date(task.dueDate);
+      const taskDateToStart = new Date(task.dateToStart);
+      return (
+        date <= taskDueDate &&
+        date >= taskDateToStart &&
+        !(
+          taskDateToStart.getDate() === date.getDate() &&
+          taskDateToStart.getFullYear() === date.getFullYear() &&
+          taskDateToStart.getMonth() === date.getMonth()
+        )
+      );
+    }).length;
   if (date.getDate() === 19) {
     console.log(
       "this is length " +
-        (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame)
+        (tasksThatStartOnDay.length +
+          noOfDaysThatDoesNotStartOnDayButFallInTimeFrame)
     );
     console.log(tasksThatStartOnDay.length);
     console.log(noOfDaysThatDoesNotStartOnDayButFallInTimeFrame);
@@ -227,7 +229,9 @@ const CalendarBox = ({
             calendarDate={date}
             taskHoverStatusObj={taskHoverStatusObj}
             setTaskHoverStatusObj={setTaskHoverStatusObj}
-            noOfDaysThatDoesNotStartOnDayButFallInTimeFrame={noOfDaysThatDoesNotStartOnDayButFallInTimeFrame}
+            noOfDaysThatDoesNotStartOnDayButFallInTimeFrame={
+              noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
+            }
             calendarIndex={dateIndex}
           />
         );
@@ -243,9 +247,9 @@ const CalendarBox = ({
             onChange={(e) => setTaskName(e.target.value)}
             style={{
               left: 8,
-              top:
-                36 *
-                (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame),
+              top: 0,
+              // 36 *
+              // (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame),
             }}
           />
         </div>

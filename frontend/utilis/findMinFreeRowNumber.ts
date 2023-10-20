@@ -5,7 +5,6 @@ export default function findMinFreeRowNumber(
   startDate: Date,
   dueDate: Date
 ) {
-  return
   if (allTasks.length === 0) {
     console.log("allTasks was empty");
 
