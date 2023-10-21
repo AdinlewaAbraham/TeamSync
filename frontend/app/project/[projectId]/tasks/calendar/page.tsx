@@ -11,6 +11,7 @@ import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Task from "@/interfaces/task";
+import CalendarRow from "@/components/project/calendar/CalendarRow";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const currentDate = new Date();
@@ -93,7 +94,14 @@ const page = ({ params }: { params: { projectId: string } }) => {
         lastDayPushed = null;
       }
     }
-    return { ...month, dates: dates };
+    const batchSize = 7;
+    const dateBatches = [];
+
+    for (let i = 0; i < dates.length; i += batchSize) {
+      dateBatches.push(dates.slice(i, i + batchSize));
+    }
+
+    return { ...month, dates: dateBatches };
   });
   const [havescrolled, setHavescrolled] = useState(false);
   useEffect(() => {
@@ -292,22 +300,17 @@ const page = ({ params }: { params: { projectId: string } }) => {
         >
           {filledMonthsDates.map((month, monthIndex) => (
             <div
-              className="grid grid-flow-row grid-cols-7 "
+              className="grid grid-flow-row  "
               key={month.name + month.year}
               id="calendarBoxParent"
             >
-              {month.dates.map((date: Date, index: number) => (
-                <CalendarBox
-                  date={new Date(date)}
-                  projectId={params.projectId}
-                  highlight={
-                    new Date(date).getMonth() === currentMonth &&
-                    new Date(date).getFullYear() === currentYear
-                  }
-                  index={index}
-                  taskWithDateRange={taskWithDateRange}
-                  key={index + new Date(date).getMonth()}
+              {month.dates.map((dateArr: Date[], rowIndex: number) => (
+                <CalendarRow
+                  dateArr={dateArr}
                   monthIndex={monthIndex}
+                  rowIndex={rowIndex}
+                  projectId={params.projectId}
+                  taskWithDateRange={taskWithDateRange}
                   currentMonth={currentMonth}
                   currentYear={currentYear}
                   setCurrentMonth={setCurrentMonth}

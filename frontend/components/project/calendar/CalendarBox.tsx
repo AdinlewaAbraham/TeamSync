@@ -11,27 +11,33 @@ const CalendarBox = ({
   projectId,
   highlight,
   index,
-  taskWithDateRange,
   monthIndex,
+  rowIndex,
+  taskWithDateRange,
   currentMonth,
   currentYear,
   setCurrentMonth,
   setCurrentYear,
   taskHoverStatusObj,
   setTaskHoverStatusObj,
+  rowTaskPositionObj,
+  setRowTaskPositionObj,
 }: {
   date: Date;
   projectId: string;
   highlight: boolean;
   index: number;
-  taskWithDateRange: (string | Task | undefined)[];
   monthIndex: number;
+  rowIndex: number;
+  taskWithDateRange: (string | Task | undefined)[];
   currentMonth: number;
   currentYear: number;
   setCurrentMonth: (c: number) => void;
   setCurrentYear: (c: number) => void;
   taskHoverStatusObj: TaskHoverStatusObj;
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
+  rowTaskPositionObj:any;
+  setRowTaskPositionObj: (c: any) => void;
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -40,6 +46,7 @@ const CalendarBox = ({
   const { activeProject } = useGlobalContext();
   const boxRef = useRef(null);
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const calendarBoxScollParentElement = document.getElementById(
       "calendarBoxScollParent"
@@ -75,7 +82,7 @@ const CalendarBox = ({
       }
     };
   }, [date]);
-
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const addTask = async () => {
     setShowInput(false);
 
@@ -178,33 +185,26 @@ const CalendarBox = ({
         )
       );
     }).length;
-  if (date.getDate() === 19) {
-    console.log(
-      "this is length " +
-        (tasksThatStartOnDay.length +
-          noOfDaysThatDoesNotStartOnDayButFallInTimeFrame)
-    );
-    console.log(tasksThatStartOnDay.length);
-    console.log(noOfDaysThatDoesNotStartOnDayButFallInTimeFrame);
-  }
+  const calendarBoxDate = new Date(date).getDate();
+
   return (
     <div
-      id={isToday ? "today" : index.toString()}
+      id={isToday ? "today" : calendarBoxDate.toString()}
       className={` ${
         date.getDate() === 1 &&
         newDate.getMonth() === date.getMonth() &&
         newDate.getFullYear() === date.getFullYear() &&
         "currentMonthFirstDate"
       } relative border border-border-default border-b-0 h-48 cursor-cell w-full ${
-        (index + 1) % 7 === 0 ? "border-r" : "border-r-0"
-      } ${index % 7 !== 0 ? "border-l" : "border-l-0"} ${
-        index <= 6 && monthIndex === 0 ? "border-t-0" : "border-t"
+        (calendarBoxDate + 1) % 7 === 0 ? "border-r" : "border-r-0"
+      } ${calendarBoxDate % 7 !== 0 ? "border-l" : "border-l-0"} ${
+        monthIndex === 0 && rowIndex === 0 ? "border-t-0" : "border-t"
       } `}
       key={date.toString()}
       ref={boxRef}
       onClick={() => {
         setShowInput(true);
-        console.log(noOfDaysThatDoesNotStartOnDayButFallInTimeFrame);
+        console.log(monthIndex);
       }}
       // style={{height: isToday ? 300 : 192}}
     >
@@ -233,6 +233,8 @@ const CalendarBox = ({
               noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
             }
             calendarIndex={dateIndex}
+            rowTaskPositionObj={rowTaskPositionObj}
+            setRowTaskPositionObj={setRowTaskPositionObj}
           />
         );
       })}

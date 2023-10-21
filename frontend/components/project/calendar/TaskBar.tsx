@@ -5,6 +5,7 @@ import { BiCheckCircle } from "react-icons/bi";
 import { AiOutlineDelete } from "react-icons/ai";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
+import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
 
 const TaskBar = ({
   index,
@@ -15,6 +16,8 @@ const TaskBar = ({
   setTaskHoverStatusObj,
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
   calendarIndex,
+  rowTaskPositionObj,
+  setRowTaskPositionObj,
 }: {
   index: number;
   task: Task;
@@ -24,6 +27,8 @@ const TaskBar = ({
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
   calendarIndex: number;
+  rowTaskPositionObj: any | undefined;
+  setRowTaskPositionObj: (c: any | undefined) => void;
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
   const handleTaskDelete = async (taskId: string) => {};
@@ -81,6 +86,91 @@ const TaskBar = ({
 
   // implement heigth or as you may say top
   const isMonday = calendarIndex === 0;
+
+  const mondayTop =
+    /* doesNotStartOnDay
+    ?*/ index * 36 /* height of taskbar */ +
+    40 /*hieght of top header */ +
+    index * 4; /* margin*/
+  // : (index -
+  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame +
+  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
+  //     36 /* height of taskbar */ +
+  //   40 /*hieght of top header */ +
+  //   (index -
+  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame +
+  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
+  //     4; /* margin*/
+  /*
+ useeffect
+ add to object all the details of the task
+*/
+  const calculateTop = () => {
+    if (isMonday) {
+      return mondayTop;
+    }
+    if (
+      typeof rowTaskPositionObj !== "object" ||
+      Object.keys(rowTaskPositionObj).length === 0
+    ) {
+      return 40;
+    }
+    for (const key in rowTaskPositionObj) {
+      const taskPositionObj = rowTaskPositionObj[key];
+      const taskTimeFrame = {
+        startDate: taskPositionObj.dateToStart,
+        dueDate: taskPositionObj.dueDate,
+      };
+      const currentTaskTimeFrame = {
+        startDate: task.dateToStart,
+        dueDate: task.dateToStart,
+      };
+      if (key === task._id) return taskPositionObj.top;
+      const fallsIntimeFrame = doTimeFramesOverlap(
+        taskTimeFrame,
+        currentTaskTimeFrame
+      );
+      if (fallsIntimeFrame) {
+        for (let i = 40; ; i += 40) {
+          // check if there is task that fall in timeframe with top of i
+          if (i !== taskPositionObj.top) {
+            console.log(i);
+            return i;
+          }
+          if (i === 200) return i;
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    setRowTaskPositionObj((prev: any) => {
+      if (typeof prev !== "object") {
+        return {
+          [task._id]: {
+            dateToStart: task.dateToStart,
+            dueDate: task.dueDate,
+            top: calculateTop(),
+          },
+        };
+      }
+
+      return {
+        ...prev,
+        [task._id]: {
+          dateToStart: task.dateToStart,
+          dueDate: task.dueDate,
+          top: calculateTop(),
+        },
+      };
+    });
+  }, []);
+
+  /*
+  NOTE: this will only run for all except mondays 
+  function that calculates top
+  1. first create new obj that gets all task that fall on timeframe
+  2. then use a for loop to increment from lowest top position and check if it is already occupied till top is found
+  */
   return (
     <div key={task._id + index}>
       <div
@@ -109,21 +199,7 @@ const TaskBar = ({
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
           left: doesNotStartOnDay ? 0 : padding / 2,
-          top: doesNotStartOnDay
-            ? index * 36 +
-              40 /*hieght of top header */ +
-              /* height of taskbar */ index * 4 /* margin*/
-            : ((isMonday
-                ? index - noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
-                : index) +
-                noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
-                36 +
-              40 /*hieght of top header */ +
-              /* height of taskbar */ ((isMonday
-                ? index - noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
-                : index) +
-                noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
-                4 /* margin*/,
+          top: isMonday ? mondayTop : mondayTop,
         }}
         onClick={() =>
           console.log(
