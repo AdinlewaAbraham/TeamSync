@@ -6,7 +6,7 @@ export default function findMinFreeRowNumber(
   dueDate: Date
 ) {
   if (allTasks.length === 0) {
-    console.log("allTasks was empty");
+    // console.log("allTasks was empty");
 
     return 1;
   }
@@ -14,12 +14,12 @@ export default function findMinFreeRowNumber(
     if (typeof task !== "object") return;
     const taskDateToStart = new Date(task.dateToStart);
     const taskDueDate = new Date(task.dueDate);
-    console.log(startDate, dueDate, taskDateToStart, taskDueDate)
+    // console.log(startDate, dueDate, taskDateToStart, taskDueDate)
     return taskDueDate >= startDate && taskDateToStart <= dueDate;
   });
-  console.log(allTaskThatFallsWithinTimeFrame);
+  // console.log(allTaskThatFallsWithinTimeFrame);
   if (allTaskThatFallsWithinTimeFrame.length === 0) {
-    console.log("allTaskThatFallsWithinTimeFrame was empty");
+    // console.log("allTaskThatFallsWithinTimeFrame was empty");
     return 1;
   }
   const rowNumbers = allTaskThatFallsWithinTimeFrame
@@ -30,7 +30,7 @@ export default function findMinFreeRowNumber(
     .filter((rowNumber): rowNumber is number => typeof rowNumber === "number");
 
   if (rowNumbers.length === 0) {
-    console.log("rownumber arr was empty");
+    // console.log("rownumber arr was empty");
 
     return 1;
   }

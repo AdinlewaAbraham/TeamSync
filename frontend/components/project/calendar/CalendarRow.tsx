@@ -28,10 +28,14 @@ const CalendarRow = ({
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
 }) => {
   const [rowTaskPositionObj, setRowTaskPositionObj] = useState<any>();
+  const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
+  const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
+
   return (
     <div
       className="grid grid-flow-row grid-cols-7"
-      onClick={() => console.log(rowTaskPositionObj)}
+      onClick={() => console.log(rowKey)}
+      key={rowKey}
     >
       {dateArr.map((date, index) => (
         <CalendarBox
@@ -52,8 +56,7 @@ const CalendarRow = ({
           setCurrentYear={setCurrentYear}
           taskHoverStatusObj={taskHoverStatusObj}
           setTaskHoverStatusObj={setTaskHoverStatusObj}
-          rowTaskPositionObj={rowTaskPositionObj}
-          setRowTaskPositionObj={setRowTaskPositionObj}
+          rowKey={rowKey}
         />
       ))}
     </div>

@@ -16,8 +16,7 @@ const TaskBar = ({
   setTaskHoverStatusObj,
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
   calendarIndex,
-  rowTaskPositionObj,
-  setRowTaskPositionObj,
+  rowKey,
 }: {
   index: number;
   task: Task;
@@ -27,8 +26,7 @@ const TaskBar = ({
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
   calendarIndex: number;
-  rowTaskPositionObj: any | undefined;
-  setRowTaskPositionObj: (c: any | undefined) => void;
+  rowKey: string;
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
   const handleTaskDelete = async (taskId: string) => {};
@@ -109,60 +107,84 @@ const TaskBar = ({
     if (isMonday) {
       return mondayTop;
     }
+    const localRowTaskPositionObj = localStorage.getItem(rowKey);
+    const rowTaskPositionObj = localRowTaskPositionObj
+      ? JSON.parse(localRowTaskPositionObj)
+      : undefined;
     if (
       typeof rowTaskPositionObj !== "object" ||
       Object.keys(rowTaskPositionObj).length === 0
     ) {
       return 40;
     }
-    for (const key in rowTaskPositionObj) {
-      const taskPositionObj = rowTaskPositionObj[key];
-      const taskTimeFrame = {
-        startDate: taskPositionObj.dateToStart,
-        dueDate: taskPositionObj.dueDate,
-      };
-      const currentTaskTimeFrame = {
-        startDate: task.dateToStart,
-        dueDate: task.dateToStart,
-      };
-      if (key === task._id) return taskPositionObj.top;
-      const fallsIntimeFrame = doTimeFramesOverlap(
-        taskTimeFrame,
-        currentTaskTimeFrame
-      );
-      if (fallsIntimeFrame) {
-        for (let i = 40; ; i += 40) {
-          // check if there is task that fall in timeframe with top of i
-          if (i !== taskPositionObj.top) {
-            console.log(i);
-            return i;
+
+    const taskTimeFrame = {
+      startDate: task.dateToStart,
+      dueDate: task.dueDate,
+    };
+
+    for (let i = 40; ; i += 40) {
+      let isAvailable = true;
+
+      for (const key in rowTaskPositionObj) {
+        const taskPositionObj = rowTaskPositionObj[key];
+        const currentTaskTimeFrame = {
+          startDate: taskPositionObj.dateToStart,
+          dueDate: taskPositionObj.dueDate,
+        };
+
+        if (key === task._id) return taskPositionObj.top;
+
+        if (doTimeFramesOverlap(taskTimeFrame, currentTaskTimeFrame)) {
+          if (i === taskPositionObj.top) {
+            isAvailable = false;
+            break; 
           }
-          if (i === 200) return i;
         }
+      }
+
+      if (isAvailable) {
+        return i; 
       }
     }
   };
-  useEffect(() => {
-    setRowTaskPositionObj((prev: any) => {
-      if (typeof prev !== "object") {
-        return {
-          [task._id]: {
-            dateToStart: task.dateToStart,
-            dueDate: task.dueDate,
-            top: calculateTop(),
-          },
-        };
-      }
 
-      return {
-        ...prev,
+  useEffect(() => {
+    // setRowTaskPositionObj((prev: any) => {
+    //   if (typeof prev !== "object") {
+    //     return {
+    //       [task._id]: {
+    //         dateToStart: task.dateToStart,
+    //         dueDate: task.dueDate,
+    //         top: calculateTop(),
+    //       },
+    //     };
+    //   }
+
+    //   return {
+    //     ...prev,
+    //     [task._id]: {
+    //       dateToStart: task.dateToStart,
+    //       dueDate: task.dueDate,
+    //       top: calculateTop(),
+    //     },
+    //   };
+    // });
+    const localRowTaskPositionObj = localStorage.getItem(rowKey);
+    const parsedLocalRowTaskPositionObj = localRowTaskPositionObj
+      ? JSON.parse(localRowTaskPositionObj)
+      : undefined;
+    localStorage.setItem(
+      rowKey,
+      JSON.stringify({
+        ...parsedLocalRowTaskPositionObj,
         [task._id]: {
           dateToStart: task.dateToStart,
           dueDate: task.dueDate,
           top: calculateTop(),
         },
-      };
-    });
+      })
+    );
   }, []);
 
   /*
@@ -171,6 +193,7 @@ const TaskBar = ({
   1. first create new obj that gets all task that fall on timeframe
   2. then use a for loop to increment from lowest top position and check if it is already occupied till top is found
   */
+  const goesAcross = daysRemainingFromSpillOver > 6;
   return (
     <div key={task._id + index}>
       <div
@@ -179,19 +202,23 @@ const TaskBar = ({
       />
       <div
         key={task._id}
-        className={`${
-          isLast ? "" : "mb-1"
-        } absolute z-50 bg-bg-secondary rounded-lg top-[${index * 36}px]
+        className={`
+         border-2 ${
+           isLast ? "" : "mb-1"
+         } absolute z-50 bg-bg-secondary rounded-lg top-[${index * 36}px]
          ${
            hasOverflowToRight &&
            !doesNotStartOnDay &&
            "rounded-r-none border-r-0"
-         } ${doesTaskRunThrough && "rounded-r-none"} ${
-          doesNotStartOnDay && "rounded-l-none border-l-0 "
-        }
-        
-         border-2 w-full border-border-default
-       ${taskHoverStatusObj?.[task._id] && "border-accent-blue"}
+         } ${goesAcross && "border-r-0"} ${
+          doesTaskRunThrough && "rounded-r-none"
+        } ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
+         w-full 
+       ${
+         taskHoverStatusObj?.[task._id]
+           ? "border-accent-blue"
+           : "border-border-default"
+       }
           transition-colors duration-150
       px-3 py-1 text-xs h-9 flex items-center cursor-pointer group  `}
         style={{
@@ -199,7 +226,7 @@ const TaskBar = ({
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
           left: doesNotStartOnDay ? 0 : padding / 2,
-          top: isMonday ? mondayTop : mondayTop,
+          top: isMonday ? mondayTop : calculateTop(),
         }}
         onClick={() =>
           console.log(
@@ -209,14 +236,16 @@ const TaskBar = ({
             new Date(task.dueDate).toDateString()
           )
         }
-        // onMouseEnter={() => {
-        //   setTaskHoverStatusObj({ ...taskHoverStatusObj, [task._id]: true });
-        //   setShowCheckMark(true);
-        // }}
-        // onMouseLeave={() => {
-        //   setTaskHoverStatusObj({ ...taskHoverStatusObj, [task._id]: false });
-        //   setShowCheckMark(false);
-        // }}
+        onMouseEnter={() => {
+          setTaskHoverStatusObj({ [task._id]: true });
+          setShowCheckMark(true);
+          console.log(taskHoverStatusObj);
+        }}
+        onMouseLeave={() => {
+          setTaskHoverStatusObj({ [task._id]: false });
+          setShowCheckMark(false);
+          console.log(taskHoverStatusObj);
+        }}
         draggable
       >
         {/* {dateIndex} */}

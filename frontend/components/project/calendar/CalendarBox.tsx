@@ -20,8 +20,7 @@ const CalendarBox = ({
   setCurrentYear,
   taskHoverStatusObj,
   setTaskHoverStatusObj,
-  rowTaskPositionObj,
-  setRowTaskPositionObj,
+  rowKey,
 }: {
   date: Date;
   projectId: string;
@@ -36,8 +35,7 @@ const CalendarBox = ({
   setCurrentYear: (c: number) => void;
   taskHoverStatusObj: TaskHoverStatusObj;
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
-  rowTaskPositionObj:any;
-  setRowTaskPositionObj: (c: any) => void;
+  rowKey: string;
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -233,8 +231,7 @@ const CalendarBox = ({
               noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
             }
             calendarIndex={dateIndex}
-            rowTaskPositionObj={rowTaskPositionObj}
-            setRowTaskPositionObj={setRowTaskPositionObj}
+            rowKey={rowKey}
           />
         );
       })}
