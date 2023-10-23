@@ -17,9 +17,17 @@ const createTask = asyncHandler(async (req, res) => {
     !taskName ||
     !projectId ||
     !sectionId ||
-    (dueDate && dateToStart && !rowNumber) 
+    (dueDate && dateToStart && !rowNumber && rowNumber !== 0)
   ) {
-    console.log("bad request")
+    console.log("bad request");
+    console.log(
+      taskName,
+      projectId,
+      sectionId,
+      dateToStart,
+      dueDate,
+      rowNumber
+    );
     return res.status(403).json({ message: "bad request" });
   }
   console.log(taskName, projectId, sectionId, dateToStart, dueDate);

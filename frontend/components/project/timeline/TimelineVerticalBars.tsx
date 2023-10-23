@@ -80,45 +80,13 @@ const TimelineVerticalBars = ({
   return (
     <div
       key={day.getUTCSeconds()}
-      className={`w-[40px] cursor-cell h-[calc(24*40px)] relative ${
+      className={`w-[40px] h-[calc(100dvh-360px)] relative ${
         (day.getDay() === 0 || day.getDay() === 6) && "bg-bg-primary"
       } `}
-      onClick={() => {
-        setShowInput(true);
-        const lastDay: Date = new Date(day);
-        lastDay.setDate(lastDay.getDate() + 4);
-        const selectedDateObject = { startDate: day, endDate: lastDay };
-        setSelectedDateObject(selectedDateObject);
-      }}
+   
     >
       {isToday && (
         <div className="absolute h-10 left-0 w-1 z-50 bg-green-500" />
-      )}
-      {tasksToMap.map((task) => {
-        if (typeof task !== "object") return;
-        return (
-          <div key={task._id} className="w-full pl-2">
-            <div
-              className={` bg-accent-primary relative left-0 z-50 h-9 mb-2 transition-opacity duration-150 hover:hidden flex 
-           items-center whitespace-nowrap w-[1px] cursor-pointer`}
-            >
-              {/* <p className="absolute left-[1pl-25px] ">{task.taskName}</p> */}
-            </div>
-          </div>
-        );
-      })}
-      {showInput && (
-        <input
-          type="text"
-          className="text-input  left-0 z-50 w-[calc(40px*5)]"
-          onBlur={() => {
-            handleAddTask();
-            setSelectedDateObject(null);
-          }}
-          onChange={(e) => setTaskName(e.target.value)}
-          autoFocus
-          placeholder="Write a task name"
-        />
       )}
     </div>
   );

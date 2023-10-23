@@ -6,19 +6,20 @@ import React, { useEffect, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineVerticalBars from "@/components/project/timeline/TimelineVerticalBars";
-import HourHorizontalColums from "@/components/project/timeline/HourHorizontalColums";
+import HourHorizontalColums from "@/components/project/timeline/HorizontalRowsForTaskMapping";
 import EditableComp from "@/components/EditableComp";
-import { IoMdArrowDropdown } from "react-icons/io";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
+import SectionHorizontalRow from "@/components/project/timeline/SectionHorizontalRow";
+import Section from "@/interfaces/section";
+import TimelineSideBarItem from "@/components/project/timeline/TimelineSideBarItem";
 
-// stuff to do when i get back from calendar comp break
-/*
-1. remove 24 task timeframe limit implement row numbers instead 
-2. improve the ux by making the height bigger make the whole page scrollable
-3. reguar stuff but when a user deletes the only task in a row just remove the row and update and the taks in row 
-   that are bigger than the row and minus one for the row number
-4. consider ,making it like asana
-*/
+export interface TimelineSectionObj {
+  [key: string]: {
+    showComponent: boolean;
+    componentHeight: number;
+  };
+}
+
 const page = ({ params }: { params: { projectId: string } }) => {
   const monthNames = [
     "January",
@@ -45,7 +46,13 @@ const page = ({ params }: { params: { projectId: string } }) => {
     startDate: Date;
     endDate: Date;
   } | null>(null);
+  const localStorageValue = localStorage.getItem("timelineSectionObj");
 
+  const defaultTimelineSectionObj = localStorageValue
+    ? JSON.parse(localStorageValue)
+    : undefined;
+  const [timelineSectionObj, setTimelineSectionObj] =
+    useState<TimelineSectionObj>(defaultTimelineSectionObj);
   const headerRef = useRef(null);
   const timelineRef = useRef(null);
 
@@ -99,6 +106,15 @@ const page = ({ params }: { params: { projectId: string } }) => {
     };
     resolveFuncSync();
   }, []);
+  useEffect(() => {
+    if (typeof timelineSectionObj === "object") {
+      console.log(timelineSectionObj);
+      localStorage.setItem(
+        "timelineSectionObj",
+        JSON.stringify(timelineSectionObj)
+      );
+    }
+  }, [timelineSectionObj]);
 
   const getPrevMonthDays = (year: number, month: number) => {
     if (month === 0) {
@@ -171,19 +187,15 @@ const page = ({ params }: { params: { projectId: string } }) => {
         <div className="h-9 flex justify-center items-center"> add task</div>
       </nav>
       <div className="border-t border-border-default h-full relative flex">
-        <div className="w-[200px] pt-[50px]">
+        <div className="w-[200px] pt-[48px]">
           <div className="border-t border-border-default">
-            {activeProject.sections.map((section) => {
-              if (typeof section !== "object") return;
-              return (
-                <div key={section._id} className="flex items-center">
-                  {/* <EditableComp text={section.sectionName} styles=""  /> */}
-
-                  <IoMdArrowDropdown />
-                  {section.sectionName}
-                </div>
-              );
-            })}
+            {activeProject.sections.map((section) => (
+              <TimelineSideBarItem
+                section={section}
+                timelineSectionObj={timelineSectionObj}
+                setTimelineSectionObj={setTimelineSectionObj}
+              />
+            ))}
           </div>
         </div>
         <div className="w-[900px] ">
@@ -235,20 +247,25 @@ const page = ({ params }: { params: { projectId: string } }) => {
             {months.map((month) => (
               <div key={month.name + month.year} className="">
                 <div className="flex relative">
-                  <div className=" absolute grid grid-rows-1 z-10 ">
-                    {Array.from({ length: 24 }).map((time, index) => (
-                      <HourHorizontalColums
-                        time={index + 1}
-                        index={index}
-                        projectId={params.projectId}
-                        setSelectedDateObject={setSelectedDateObject}
-                        month={monthNames.findIndex(
-                          (monthname) => monthname === month.name
-                        )}
-                        year={month.year}
-                        taskWithDateRange={taskWithDateRange}
-                      />
-                    ))}
+                  <div className="absolute z-10 w-full">
+                    {activeProject.sections.map((section) => {
+                      if (typeof section !== "object") return;
+                      return (
+                        <SectionHorizontalRow
+                          section={section}
+                          key={section._id}
+                          projectId={params.projectId}
+                          setSelectedDateObject={setSelectedDateObject}
+                          month={monthNames.findIndex(
+                            (monthname) => monthname === month.name
+                          )}
+                          year={month.year}
+                          taskWithDateRange={taskWithDateRange}
+                          timelineSectionObj={timelineSectionObj}
+                          setTimelineSectionObj={setTimelineSectionObj}
+                        />
+                      );
+                    })}
                   </div>
                   {month.dates.map((day, index) => (
                     <TimelineVerticalBars

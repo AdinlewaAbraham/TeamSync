@@ -10,6 +10,7 @@ export default interface Task {
   subTasks: string[];
   members: string[];
   projectId: string;
+  sectionId: string;
   isComplete: boolean;
   _id: string;
   rowNumber: number;

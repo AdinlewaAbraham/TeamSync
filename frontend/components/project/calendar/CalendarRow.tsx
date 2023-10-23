@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CalendarBox from "./CalendarBox";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Task from "@/interfaces/task";
@@ -30,11 +30,12 @@ const CalendarRow = ({
   const [rowTaskPositionObj, setRowTaskPositionObj] = useState<any>();
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
+ 
 
   return (
     <div
       className="grid grid-flow-row grid-cols-7"
-      onClick={() => console.log(rowKey)}
+      // onClick={() => console.log(JSON.parse(localStorage.getItem(rowKey)))}
       key={rowKey}
     >
       {dateArr.map((date, index) => (

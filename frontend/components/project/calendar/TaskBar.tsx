@@ -138,13 +138,13 @@ const TaskBar = ({
         if (doTimeFramesOverlap(taskTimeFrame, currentTaskTimeFrame)) {
           if (i === taskPositionObj.top) {
             isAvailable = false;
-            break; 
+            break;
           }
         }
       }
 
       if (isAvailable) {
-        return i; 
+        return i;
       }
     }
   };
@@ -195,7 +195,7 @@ const TaskBar = ({
   */
   const goesAcross = daysRemainingFromSpillOver > 6;
   return (
-    <div key={task._id + index}>
+    <div key={task._id + index} onClick={() => console.log(calculateTop())}>
       <div
         className="h-1 w-full bg-transparent absolute"
         ref={(element) => (boxRef.current = element)}

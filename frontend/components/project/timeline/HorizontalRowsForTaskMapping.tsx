@@ -2,24 +2,25 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
+import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import React, { useEffect, useState } from "react";
 
-const HourHorizontalColums = ({
-  time,
+const HorizontalRowsForTaskMapping = ({
   index,
   projectId,
   setSelectedDateObject,
   month,
   year,
   taskWithDateRange,
+  sectionTasks,
 }: {
-  time: number;
   index: number;
   projectId: string;
   setSelectedDateObject: (c: { startDate: Date; endDate: Date } | null) => void;
   month: number;
   year: number;
   taskWithDateRange: (string | Task | undefined)[];
+  sectionTasks: (Task | undefined | string)[];
 }) => {
   const { activeProject } = useGlobalContext();
   const [currentDay, setcurrentDay] = useState<number>(0);
@@ -44,7 +45,7 @@ const HourHorizontalColums = ({
         if (!task?.dateToStart) return false;
         const dateToStart = new Date(task.dateToStart);
         return (
-          index === dateToStart.getHours() &&
+          index === task.rowNumber &&
           month === dateToStart.getMonth() &&
           year === dateToStart.getFullYear()
         );
@@ -52,7 +53,6 @@ const HourHorizontalColums = ({
     setTasksToMap(tasksToMapuseEffect);
   }, [taskWithDateRange]);
   const handleAddTask = async (day: number) => {
-    setShowInput(false);
     setShowInput(false);
 
     if (!projectId || !taskName || !day) return;
@@ -62,14 +62,22 @@ const HourHorizontalColums = ({
       !activeProject?.sections
     )
       return;
-    const lastDay: Date = new Date(day);
+    const startDay: Date = new Date(year, month, day);
+    const lastDay: Date = new Date(startDay);
     lastDay.setDate(lastDay.getDate() + noOfDaysToAdd);
+    const calcRoowNumber = findMinFreeRowNumber(
+      sectionTasks,
+      startDay,
+      lastDay,
+      index
+    ) as number;
     const postBody = {
       taskName,
       projectId,
       sectionId: activeProject.sections[0]._id,
-      dateToStart: day,
+      dateToStart: startDay,
       dueDate: lastDay,
+      rowNumber: calcRoowNumber,
     };
     const response = await fetch("/api/task/", {
       method: "POST",
@@ -89,8 +97,9 @@ const HourHorizontalColums = ({
   return (
     <div
       key={index}
-      className="border-y border-border-default flex items-center h-[52px] w-full relative "
+      className="border-y border-border-default flex items-center h-[52px] w-full relative z-[99]"
       onClick={(event) => {
+        // console.log(index);
         const rect = event.currentTarget.getBoundingClientRect();
         const offsetX = event.clientX - rect.left;
         const dayColumnWidth = 40;
@@ -104,11 +113,7 @@ const HourHorizontalColums = ({
 
         const allTasksOnColum = taskWithDateRange.filter((task) => {
           if (typeof task !== "object") return false;
-          if (!task?.dateToStart) return false;
-          const dateToStart = new Date(task.dateToStart);
-          return (
-            index === dateToStart.getHours() 
-          );
+          return index === task.rowNumber;
         });
         const taskOnDay = allTasksOnColum.find((task) => {
           if (typeof task !== "object") return;
@@ -116,7 +121,10 @@ const HourHorizontalColums = ({
           const dateToStart = new Date(task.dateToStart);
           return dueDate >= day && dateToStart <= day;
         });
+
+        console.log(taskOnDay);
         if (!taskOnDay) {
+          console.log("is going to show");
           const firstTaskAfterDay = tasksToMap.find((task) => {
             if (typeof task !== "object") return false;
             return new Date(task.dateToStart) > new Date(day);
@@ -185,10 +193,7 @@ const HourHorizontalColums = ({
               width: width + "px",
               opacity: width < 0 ? 1 : 1,
             }}
-            onClick={() => {
-              console.log(new Date(task.dateToStart).getDay());
-              console.log(task);
-            }}
+            onClick={() => {}}
             draggable
           >
             <div className="rounded-lg w-full h-9 border border-red-400 flex items-center pl-2">
@@ -201,4 +206,4 @@ const HourHorizontalColums = ({
   );
 };
 
-export default HourHorizontalColums;
+export default HorizontalRowsForTaskMapping;

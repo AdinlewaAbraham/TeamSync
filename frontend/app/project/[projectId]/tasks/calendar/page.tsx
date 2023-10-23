@@ -304,21 +304,28 @@ const page = ({ params }: { params: { projectId: string } }) => {
               key={month.name + month.year}
               id="calendarBoxParent"
             >
-              {month.dates.map((dateArr: Date[], rowIndex: number) => (
-                <CalendarRow
-                  dateArr={dateArr}
-                  monthIndex={monthIndex}
-                  rowIndex={rowIndex}
-                  projectId={params.projectId}
-                  taskWithDateRange={taskWithDateRange}
-                  currentMonth={currentMonth}
-                  currentYear={currentYear}
-                  setCurrentMonth={setCurrentMonth}
-                  setCurrentYear={setCurrentYear}
-                  taskHoverStatusObj={taskHoverStatusObj}
-                  setTaskHoverStatusObj={setTaskHoverStatusObj}
-                />
-              ))}
+              {month.dates.map((dateArr: Date[], rowIndex: number) => {
+                const dateArrLastElementDate = new Date(
+                  dateArr[dateArr.length - 1]
+                );
+                const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
+                // localStorage.removeItem(rowKey);
+                return (
+                  <CalendarRow
+                    dateArr={dateArr}
+                    monthIndex={monthIndex}
+                    rowIndex={rowIndex}
+                    projectId={params.projectId}
+                    taskWithDateRange={taskWithDateRange}
+                    currentMonth={currentMonth}
+                    currentYear={currentYear}
+                    setCurrentMonth={setCurrentMonth}
+                    setCurrentYear={setCurrentYear}
+                    taskHoverStatusObj={taskHoverStatusObj}
+                    setTaskHoverStatusObj={setTaskHoverStatusObj}
+                  />
+                );
+              })}
             </div>
           ))}
         </div>

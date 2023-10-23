@@ -3,12 +3,13 @@ import Task from "@/interfaces/task";
 export default function findMinFreeRowNumber(
   allTasks: (Task | string | undefined)[],
   startDate: Date,
-  dueDate: Date
+  dueDate: Date,
+  currentRowNumber: number
 ) {
   if (allTasks.length === 0) {
     // console.log("allTasks was empty");
 
-    return 1;
+    return 0;
   }
   const allTaskThatFallsWithinTimeFrame = allTasks.filter((task) => {
     if (typeof task !== "object") return;
@@ -20,7 +21,7 @@ export default function findMinFreeRowNumber(
   // console.log(allTaskThatFallsWithinTimeFrame);
   if (allTaskThatFallsWithinTimeFrame.length === 0) {
     // console.log("allTaskThatFallsWithinTimeFrame was empty");
-    return 1;
+    return 0;
   }
   const rowNumbers = allTaskThatFallsWithinTimeFrame
     .map((task) => {
@@ -32,13 +33,14 @@ export default function findMinFreeRowNumber(
   if (rowNumbers.length === 0) {
     // console.log("rownumber arr was empty");
 
-    return 1;
+    return 0;
   }
 
-  for (let i = 1; i < Math.max(...rowNumbers); i++) {
+  for (let i = 0; i < Math.max(...rowNumbers); i++) {
     if (!rowNumbers.includes(i)) {
       return i;
     }
   }
-  return Math.max(...rowNumbers) + 1;
+
+  return Math.max(...rowNumbers) + 1 < currentRowNumber ? currentRowNumber : Math.max(...rowNumbers) + 1 ;
 }
