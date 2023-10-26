@@ -92,3 +92,12 @@ body {
   text-align: center;
   padding: 5px;
 }
+
+
+
+.ce-block {
+  /* background-color: red; */
+}
+.ce-popover {
+  background-color: #161719;
+}

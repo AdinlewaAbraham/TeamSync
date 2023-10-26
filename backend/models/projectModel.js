@@ -24,6 +24,22 @@ const projectSchema = mongoose.Schema({
     type: String,
     required: [false],
   },
+  projectRoles: {
+    type: Object,
+    required: [false],
+  },
+  projectResources: {
+    type: Array,
+    required: [false],
+  },
+  projectStatus: {
+    type: String,
+    required: [false],
+  },
+  projectDueDate: {
+    type: mongoose.Schema.Types.Date,
+    required: [false],
+  },
   sections: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,8 +49,8 @@ const projectSchema = mongoose.Schema({
   workspaceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "workspace",
-    required: [true, "workspace project belongs to required"]
-  }
+    required: [true, "workspace project belongs to required"],
+  },
 });
 
 const Project = mongoose.model("project", projectSchema);
