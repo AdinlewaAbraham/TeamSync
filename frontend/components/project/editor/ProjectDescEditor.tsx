@@ -1,10 +1,10 @@
 import React from "react";
-import RichEditor from "./RichTextEditor";
+import RichEditorProjectDesc from "./RichTextEditor";
 
 const ProjectDescEditor = () => {
   return (
     <div>
-      <RichEditor />
+      <RichEditorProjectDesc />
     </div>
   );
 };

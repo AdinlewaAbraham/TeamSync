@@ -4,7 +4,7 @@ import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect } from "react";
 import ProjectDescEditor from "@/components/project/editor/ProjectDescEditor";
-
+import { Editor, EditorState, convertFromRaw } from "draft-js";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
 
@@ -23,8 +23,59 @@ const page = ({ params }: { params: { projectId: string } }) => {
     syncProject();
   }, []);
   if (!activeProject) return <>loading comp</>;
+  const contentStateJSON = {
+    blocks: [
+      {
+        key: "8i090",
+        text: "Hello CodePulse!",
+        type: "unstyled",
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 16,
+            style: "BOLD",
+          },
+        ],
+        entityRanges: [],
+        data: {},
+      },
+      {
+        key: "42ncd",
+        text: "This text should be underlined.",
+        type: "unstyled",
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 31,
+            style: "UNDERLINE",
+          },
+        ],
+        entityRanges: [],
+        data: {},
+      },
+      {
+        key: "327r6",
+        text: "And this text should be italic.",
+        type: "unstyled",
+        depth: 0,
+        inlineStyleRanges: [
+          {
+            offset: 0,
+            length: 31,
+            style: "ITALIC",
+          },
+        ],
+        entityRanges: [],
+        data: {},
+      },
+    ],
+    entityMap: {},
+  };
+  const contentState = convertFromRaw(contentStateJSON);
+  const editorState = EditorState.createWithContent(contentState);
 
-  
   return (
     <div className=" items-center [&>div>div>h3]:text-[30px] ">
       <div className="p-10">
@@ -34,7 +85,13 @@ const page = ({ params }: { params: { projectId: string } }) => {
         </div>
         <div>
           <h3>project Roles</h3>
-          <div></div>
+          <div>
+            <Editor
+              editorState={editorState}
+              readOnly={true}
+              onChange={() => {}}
+            />
+          </div>
         </div>
         <div>
           <h3>Key resources</h3>

@@ -69,35 +69,65 @@ body {
 
 .timeline_col {
   display: grid;
-  grid-template-columns: repeat(
-    31,
-    1fr
-  ); 
-  grid-template-rows: repeat(
-    24,
-    1fr
-  );
+  grid-template-columns: repeat(31, 1fr);
+  grid-template-rows: repeat(24, 1fr);
   gap: 1px;
-  
 }
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(31, 1fr); /* Adjust for the number of days in the month */
-  grid-template-rows: repeat(24, 1fr); /* 24 rows for hours in a day, adjust as needed */
+  grid-template-columns: repeat(
+    31,
+    1fr
+  ); /* Adjust for the number of days in the month */
+  grid-template-rows: repeat(
+    24,
+    1fr
+  ); /* 24 rows for hours in a day, adjust as needed */
   gap: 1px; /* Optional gap between cells */
 }
 
-.day, .time-slot {
+.day,
+.time-slot {
   border: 1px solid #ccc;
   text-align: center;
   padding: 5px;
 }
-
-
 
 .ce-block {
   /* background-color: red; */
 }
 .ce-popover {
   background-color: #161719;
+}
+
+.DraftEditor-editorContainer h1 {
+  @apply text-4xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h2 {
+  @apply text-3xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h3 {
+  @apply text-2xl;
+  @apply font-bold;
+}
+.DraftEditor-editorContainer h4 {
+  @apply text-xl;
+  @apply font-semibold;
+}
+.DraftEditor-editorContainer h5 {
+  @apply text-lg;
+  @apply font-semibold;
+}
+.DraftEditor-editorContainer h6 {
+  @apply text-sm;
+  @apply font-semibold;
+}
+.DraftEditor-editorContainer ul {
+  @apply list-disc;
+}
+
+.DraftEditor-editorContainer ol {
+  @apply list-decimal;
 }
