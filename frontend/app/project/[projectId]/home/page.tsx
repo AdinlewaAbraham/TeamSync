@@ -4,7 +4,12 @@ import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect } from "react";
 import ProjectDescEditor from "@/components/project/editor/ProjectDescEditor";
-import { Editor, EditorState, convertFromRaw } from "draft-js";
+import {
+  Editor,
+  EditorState,
+  RawDraftContentState,
+  convertFromRaw,
+} from "draft-js";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
 
@@ -23,7 +28,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     syncProject();
   }, []);
   if (!activeProject) return <>loading comp</>;
-  const contentStateJSON = {
+  const contentStateJSON: RawDraftContentState = {
     blocks: [
       {
         key: "8i090",

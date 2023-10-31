@@ -35,12 +35,12 @@ export default function findMinFreeRowNumber(
 
     return 0;
   }
-
-  for (let i = 0; i < Math.max(...rowNumbers); i++) {
+const maxNumberInRowNumbers = Math.max(...rowNumbers)
+  for (let i = 0; i < maxNumberInRowNumbers; i++) {
     if (!rowNumbers.includes(i)) {
       return i;
     }
   }
 
-  return Math.max(...rowNumbers) + 1 < currentRowNumber ? currentRowNumber : Math.max(...rowNumbers) + 1 ;
+  return maxNumberInRowNumbers + 1 < currentRowNumber ? currentRowNumber : maxNumberInRowNumbers + 1 ;
 }

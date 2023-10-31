@@ -50,7 +50,7 @@ const BoardCard = ({
     lastDate.setDate(startDate.getDate() + 10);
     startDate.setDate(startDate.getDate());
 
-    const rowNumber = findMinFreeRowNumber(section.tasks, startDate, lastDate);
+    const rowNumber = findMinFreeRowNumber(section.tasks, startDate, lastDate, 0)
 
     console.log("this is rownumber " + rowNumber, section.tasks);
 

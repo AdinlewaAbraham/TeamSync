@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Draft from "draft-js";
 import "./rich.css";
+import { Fa500Px, FaCalculator } from "react-icons/fa";
+import { usePopper } from "react-popper";
 
-const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } = Draft;
+const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
+  Draft;
 
 export default class RichEditorProjectDesc extends React.Component {
   constructor(props) {
@@ -61,22 +64,7 @@ export default class RichEditorProjectDesc extends React.Component {
     const contentStateJSON = convertToRaw(editorContent);
 
     return (
-      <div className="RichEditor-root">
-        <button
-          onClick={() => console.log(contentStateJSON)}
-          className="p-4 bg-red-50"
-        >
-          {" "}
-          click me{" "}
-        </button>
-        <BlockStyleControls
-          editorState={editorState}
-          onToggle={this.toggleBlockType}
-        />
-        <InlineStyleControls
-          editorState={editorState}
-          onToggle={this.toggleInlineStyle}
-        />
+      <div className="bg-bg-secondary border-2 border-white rounded-lg px-2 py-1 ">
         <div className={className} onClick={this.focus}>
           <Editor
             blockStyleFn={getBlockStyle}
@@ -85,9 +73,19 @@ export default class RichEditorProjectDesc extends React.Component {
             handleKeyCommand={this.handleKeyCommand}
             keyBindingFn={this.mapKeyToEditorCommand}
             onChange={this.onChange}
-            placeholder="Tell a story..."
+            placeholder=""
             ref="editor"
             spellCheck={true}
+          />
+        </div>
+        <div className="flex">
+          <BlockStyleControls
+            editorState={editorState}
+            onToggle={this.toggleBlockType}
+          />
+          <InlineStyleControls
+            editorState={editorState}
+            onToggle={this.toggleInlineStyle}
           />
         </div>
       </div>
@@ -120,28 +118,30 @@ class StyleButton extends React.Component {
     };
   }
   render() {
-    let className = "RichEditor-styleButton";
-    if (this.props.active) {
-      className += " RichEditor-activeButton";
-    }
     return (
-      <span className={className} onMouseDown={this.onToggle}>
+      <span
+        className={` flex justify-center items-center px-2 ${
+          this.props.active ? "bg-blue-300" : " bg-transparent "
+        }`}
+        onMouseDown={this.onToggle}
+      >
         {this.props.label}
+        {this.props.icon}
       </span>
     );
   }
 }
 const BLOCK_TYPES = [
-  { label: "H1", style: "header-one" },
-  { label: "H2", style: "header-two" },
-  { label: "H3", style: "header-three" },
-  { label: "H4", style: "header-four" },
-  { label: "H5", style: "header-five" },
-  { label: "H6", style: "header-six" },
-  { label: "Blockquote", style: "blockquote" },
-  { label: "UL", style: "unordered-list-item" },
-  { label: "OL", style: "ordered-list-item" },
-  { label: "Code Block", style: "code-block" },
+  { label: "H1", style: "header-one", icon: <Fa500Px /> },
+  { label: "H2", style: "header-two", icon: <Fa500Px /> },
+  { label: "H3", style: "header-three", icon: <Fa500Px /> },
+  { label: "H4", style: "header-four", icon: <Fa500Px /> },
+  { label: "H5", style: "header-five", icon: <Fa500Px /> },
+  { label: "H6", style: "header-six", icon: <Fa500Px /> },
+  { label: "Blockquote", style: "blockquote", icon: <Fa500Px /> },
+  { label: "UL", style: "unordered-list-item", icon: <Fa500Px /> },
+  { label: "OL", style: "ordered-list-item", icon: <Fa500Px /> },
+  { label: "Code Block", style: "code-block", icon: <Fa500Px /> },
 ];
 const BlockStyleControls = (props) => {
   const { editorState } = props;
@@ -150,31 +150,67 @@ const BlockStyleControls = (props) => {
     .getCurrentContent()
     .getBlockForKey(selection.getStartKey())
     .getType();
+  const [showBlockStyles, setShowBlockStyles] = useState(false);
+  useEffect(() => {
+    const hanldeClick = (e) => {
+      if (!e.target.closest(".blockStyles")) {
+        setShowBlockStyles(false);
+      }
+    };
+    document.addEventListener("click", hanldeClick);
+    return () => document.removeEventListener("click", hanldeClick);
+  }, []);
+
+  const [referenceElement, setReferenceElement] = useState();
+  const [popperElement, setPopperElement] = useState();
+  const [arrowElement, setArrowElement] = useState();
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
+  });
+
   return (
-    <div className="RichEditor-controls">
-      {BLOCK_TYPES.map((type) => (
-        <StyleButton
-          key={type.label}
-          active={type.style === blockType}
-          label={type.label}
-          onToggle={props.onToggle}
-          style={type.style}
-        />
-      ))}
+    <div className=" flex blockStyles">
+      <i
+        onClick={() => setShowBlockStyles(true)}
+        className="mr-2"
+        ref={setReferenceElement}
+      >
+        show
+      </i>
+
+      {showBlockStyles && (
+        <div
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          {BLOCK_TYPES.map((type) => (
+            <StyleButton
+              key={type.label}
+              active={type.style === blockType}
+              label={type.label}
+              onToggle={props.onToggle}
+              style={type.style}
+              icon={type.icon}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 var INLINE_STYLES = [
-  { label: "Bold", style: "BOLD" },
-  { label: "Italic", style: "ITALIC" },
-  { label: "Underline", style: "UNDERLINE" },
-  { label: "Monospace", style: "CODE" },
+  { label: "Bold", style: "BOLD", icon: <FaCalculator /> },
+  { label: "Italic", style: "ITALIC", icon: <FaCalculator /> },
+  { label: "Underline", style: "UNDERLINE", icon: <FaCalculator /> },
+  { label: "Monospace", style: "CODE", icon: <FaCalculator /> },
 ];
 const InlineStyleControls = (props) => {
   const currentStyle = props.editorState.getCurrentInlineStyle();
 
   return (
-    <div className="RichEditor-controls">
+    <div className="flex">
       {INLINE_STYLES.map((type) => (
         <StyleButton
           key={type.label}
@@ -182,6 +218,7 @@ const InlineStyleControls = (props) => {
           label={type.label}
           onToggle={props.onToggle}
           style={type.style}
+          icon={type.icon}
         />
       ))}
     </div>

@@ -40,7 +40,7 @@ const HorizontalRowsForTaskMapping = ({
 
   useEffect(() => {
     const tasksToMapuseEffect: (string | Task | undefined)[] =
-      taskWithDateRange.filter((task) => {
+      sectionTasks.filter((task) => {
         if (typeof task !== "object") return false;
         if (!task?.dateToStart) return false;
         const dateToStart = new Date(task.dateToStart);
@@ -51,7 +51,7 @@ const HorizontalRowsForTaskMapping = ({
         );
       });
     setTasksToMap(tasksToMapuseEffect);
-  }, [taskWithDateRange]);
+  }, [sectionTasks]);
   const handleAddTask = async (day: number) => {
     setShowInput(false);
 

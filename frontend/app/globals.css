@@ -125,9 +125,9 @@ body {
   @apply font-semibold;
 }
 .DraftEditor-editorContainer ul {
-  @apply list-disc;
+  @apply list-disc ml-8;
 }
 
 .DraftEditor-editorContainer ol {
-  @apply list-decimal;
+  @apply list-decimal ml-8;
 }
