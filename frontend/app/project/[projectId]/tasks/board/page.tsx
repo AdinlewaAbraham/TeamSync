@@ -3,7 +3,7 @@ import BoardCard from "@/components/board/BoardCard";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { MdClose } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
@@ -79,46 +79,21 @@ const page = ({ params }: { params: { projectId: string } }) => {
     setShowAddSectionComponent(false);
   };
 
-  const [isHorizontalOverflow, setIsHorizontalOverflow] = useState(false);
-
-  useEffect(() => {
-    const divElement: HTMLElement | null =
-      document.getElementById("overflowElement");
-
-    if (divElement) {
-      const hasHorizontalOverflow: boolean =
-        divElement.scrollWidth > divElement.clientWidth;
-      // console.log(hasHorizontalOverflow);
-      setIsHorizontalOverflow(hasHorizontalOverflow);
-    }
-  }, []);
-
-  // useEffect(() => {
-  //   const handleClick = (e: MouseEvent) => {
-  //     const target = e.target as HTMLElement;
-  //     if (!target.closest(".addSectionComponent")) {
-  //       addSection();
-  //     }
-  //   };
-  //   window.addEventListener("click", handleClick);
-  //   return () => window.removeEventListener("click", handleClick);
-  // }, []);
-
-  useEffect(() => {}, []);
 
   if (!activeProject?.sections) return <>loading statee</>;
-
+  const { sidebarWidth } = useGlobalContext();
   return (
     <div
-      className="flex h-[calc(100dvh-229px)] overflow-auto overflow-x scrollBar "
+      className="flex flex-1 overflow-auto overflow-x h-full px-8 w-full "
       id="overflowElement"
+      style={{ width: `calc(100vw - ${sidebarWidth}px)` }}
     >
       {activeProject.sections.map((section, index) => (
-        <div key={index}>
+        <div className="" key={index}>
           <BoardCard
             section={section}
             projectId={params.projectId}
-            isHorizontalOverflow={isHorizontalOverflow}
+            key={index}
           />
         </div>
       ))}

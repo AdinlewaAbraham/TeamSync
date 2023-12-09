@@ -315,6 +315,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(true);
+  const { taskComponentHeight } = useGlobalContext();
   useEffect(() => {
     const fetchProjectFunc = async () => {
       const response = await fetchProject(params.projectId);
@@ -389,52 +390,53 @@ const page = ({ params }: { params: { projectId: string } }) => {
   };
   if (!activeProject?.sections) return <>loading state</>;
   return (
-    <div className="">
-      <div>
-        <div className="pr-[10px] w-full">
-          <ul
-            className="flex gutter w-full justify-between [&>li]:w-[20%] border border-border-default rounded-t-lg 
+    <div
+      className="pl-8 overflow-y-scroll relative"
+      style={{ height: taskComponentHeight }}
+    >
+      <header className="w-full sticky bg-inherit top-0  z-20">
+        <ul
+          className="flex gutter w-full justify-between bg-bg-secondary [&>li]:w-[20%] border border-border-default rounded-t-lg 
          [&>li]:py-2 text-sm text-muted-dark"
-          >
-            <li className="pl-2">Task name</li>
-            <li> Assignee</li>
-            <li> Due date </li>
-            <li> Priority </li>
-            <li> Status </li>
-          </ul>
-        </div>
-        <div className="h-[calc(100dvh-266px)] overflow-y-scroll scrollBar pb-1 ">
-          {activeProject.sections.map((section, index) => (
-            <TableDropdown
-              section={section}
-              projectId={params.projectId}
-              // isLast={activeProject.sections.length - 1 === index}
-            />
-          ))}
-          <div className="w-full border  border-border-default rounded-b-lg ">
-            {showAddSectionComponent ? (
-              <div
-                className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
-                onClick={() => setShowAddSectionComponent(false)}
-              >
-                <i className="mr-2">
-                  <IoMdAdd />
-                </i>
-                Add section
-              </div>
-            ) : (
-              <div className="addSectionInput w-full flex text-sm h-12">
-                <input
-                  type="text"
-                  autoFocus
-                  className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
-                  placeholder="Write a task name"
-                  onChange={(e) => setSectionName(e.target.value)}
-                  onBlur={async () => await addSection()}
-                />
-              </div>
-            )}
-          </div>
+        >
+          <li className="pl-2">Task name</li>
+          <li> Assignee</li>
+          <li> Due date </li>
+          <li> Priority </li>
+          <li> Status </li>
+        </ul>
+      </header>
+      <div className=" scrollBar pb-1 ">
+        {activeProject.sections.map((section, index) => (
+          <TableDropdown
+            section={section}
+            projectId={params.projectId}
+            // isLast={activeProject.sections.length - 1 === index}
+          />
+        ))}
+        <div className="w-full border  border-border-default rounded-b-lg ">
+          {showAddSectionComponent ? (
+            <div
+              className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
+              onClick={() => setShowAddSectionComponent(false)}
+            >
+              <i className="mr-2">
+                <IoMdAdd />
+              </i>
+              Add section
+            </div>
+          ) : (
+            <div className="addSectionInput w-full flex text-sm h-12">
+              <input
+                type="text"
+                autoFocus
+                className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
+                placeholder="Write a task name"
+                onChange={(e) => setSectionName(e.target.value)}
+                onBlur={async () => await addSection()}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

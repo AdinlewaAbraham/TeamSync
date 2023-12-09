@@ -7,11 +7,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import fetchUser from "@/helpers/fetchUser";
 import fetchWorkspace from "@/helpers/fetchWorkspace";
 
-const MainLayout = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+const MainLayout = ({ children }: { children: ReactNode }) => {
   const { showCreateWorkspaceModal, setUser, user, setActiveWorkspace } =
     useGlobalContext();
 
@@ -53,14 +49,15 @@ const MainLayout = ({
   }, []);
 
   return (
-    <div className=" ">
-      <nav>
+    <div className="flex flex-col flex-1">
+      <nav className="">
         <Navbar />
       </nav>
-      <div className="flex">
+      <div className="flex flex-1 ">
         <Sidebar />
-        <main className="bg-bg-secondary h-[calc(100dvh-50px)] w-full ">
-          {children} {showCreateWorkspaceModal && <CreateWorkspaceModal />}
+        <main className="bg-bg-secondary flex-1 flex overflow-y-auto">
+          {children}
+          {showCreateWorkspaceModal && <CreateWorkspaceModal />}
         </main>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import List from "@/interfaces/section";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SidebarIconComponent from "../sidebar/SidebarIconComponent";
 import { IoMdAdd } from "react-icons/io";
 import { BsThreeDots } from "react-icons/bs";
@@ -16,11 +16,9 @@ import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 const BoardCard = ({
   section,
   projectId,
-  isHorizontalOverflow,
 }: {
   section: Section | string;
   projectId: string;
-  isHorizontalOverflow: boolean;
 }) => {
   const [showAddTaskComponent, setShowAddTaskComponent] =
     useState<boolean>(false);
@@ -35,6 +33,7 @@ const BoardCard = ({
     null
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  const { taskComponentHeight } = useGlobalContext();
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
@@ -50,7 +49,12 @@ const BoardCard = ({
     lastDate.setDate(startDate.getDate() + 10);
     startDate.setDate(startDate.getDate());
 
-    const rowNumber = findMinFreeRowNumber(section.tasks, startDate, lastDate, 0)
+    const rowNumber = findMinFreeRowNumber(
+      section.tasks,
+      startDate,
+      lastDate,
+      0
+    );
 
     console.log("this is rownumber " + rowNumber, section.tasks);
 
@@ -117,7 +121,7 @@ const BoardCard = ({
 
   if (typeof localSection === "string") return <>loading this is a string </>;
   return (
-    <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2 ">
+    <div className="bg-bg-primary rounded-lg w-[280px] max-h-max py-2 mr-2 overflow-auto ">
       <header className="flex justify-between items-center px-4 py-2">
         <h1>{localSection.sectionName}</h1>
         <div className="flex items-start addTaskComponent">
@@ -160,50 +164,44 @@ const BoardCard = ({
         </div>
       </header>
       <div
-        className={` ${
-          isHorizontalOverflow
-            ? "max-h-[calc(100dvh-350px)]"
-            : "max-h-[calc(100dvh-295px)]"
-        }  overflow-auto scrollBar`}
+        className={`overflow-auto scrollBar `}
+        style={{ maxHeight: taskComponentHeight - 44 }}
       >
-        <main>
-          <ul>
-            {localSection.tasks.map((task) => (
-              <li>
-                {typeof task === "string" ? (
-                  <>loading</>
-                ) : (
-                  <div className="px-2 mb-2 " onClick={() => console.log(task)}>
-                    <div
-                      className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
+        <ul>
+          {localSection.tasks.map((task, index) => (
+            <li key={index}>
+              {typeof task === "string" ? (
+                <>loading</>
+              ) : (
+                <div className="px-2 mb-2 " onClick={() => console.log(task)}>
+                  <div
+                    className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
                      flex flex-col border border-border-default"
-                    >
-                      <p className="mb-4 leading-none"> {task.taskName}</p>
-                      <div className="flex items-center ">
-                        <div className=" [&>div]:rounded-xl [&>div]:text-sm [&>div]: text-black [&>div]: flex items-center">
-                          <div className="mr-1 [&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
-                            <RenderPriority Priority={task.Priority} />
-                          </div>
-
-                          <div className="[&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
-                            <RenderStatus status={task.status} />
-                          </div>
+                  >
+                    <p className="mb-4 leading-none"> {task.taskName}</p>
+                    <div className="flex items-center ">
+                      <div className=" [&>div]:rounded-xl [&>div]:text-sm [&>div]: text-black [&>div]: flex items-center">
+                        <div className="mr-1 [&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                          <RenderPriority Priority={task.Priority} />
                         </div>
-                      </div>
-                      <div className="flex items-center">
-                        <div className="w-5 h-5 bg-slate-600 rounded-full mr-2" />
-                        <div className="text-muted-light text-xs">
-                          today - sep 19
+
+                        <div className="[&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                          <RenderStatus status={task.status} />
                         </div>
                       </div>
                     </div>
+                    <div className="flex items-center">
+                      <div className="w-5 h-5 bg-slate-600 rounded-full mr-2" />
+                      <div className="text-muted-light text-xs">
+                        today - sep 19
+                      </div>
+                    </div>
                   </div>
-                )}
-              </li>
-            ))}
-          </ul>
-          {/* {localSection.tasks.map((task) =><>{task}</>)} */}
-        </main>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
         <footer className=" px-2 addTaskComponent">
           {showAddTaskComponent ? (
             <div className="text-base py-2">

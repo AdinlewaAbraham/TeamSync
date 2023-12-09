@@ -17,6 +17,10 @@ export type GeneralContextType = {
   setActiveWorkspace: (c: Workspace | null) => void;
   activeProject: Project | null;
   setActiveProject: (c: Project | null) => void;
+  sidebarWidth: number;
+  setSidebarWidth: (c: number) => void;
+  taskComponentHeight: number,
+  setTaskComponentHeight: (c: number) => void,
 };
 
 const GeneralContext = createContext<GeneralContextType>({
@@ -32,6 +36,10 @@ const GeneralContext = createContext<GeneralContextType>({
   setActiveWorkspace: () => {},
   activeProject: null,
   setActiveProject: () => {},
+  sidebarWidth: 0,
+  setSidebarWidth: () => {},
+  taskComponentHeight: 0,
+  setTaskComponentHeight: () => {},
 });
 
 export const GeneralContextProvider = ({
@@ -48,6 +56,8 @@ export const GeneralContextProvider = ({
     null
   );
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const [taskComponentHeight, setTaskComponentHeight] = useState(0);
 
   return (
     <GeneralContext.Provider
@@ -64,6 +74,10 @@ export const GeneralContextProvider = ({
         setActiveWorkspace,
         activeProject,
         setActiveProject,
+        sidebarWidth,
+        setSidebarWidth,
+        taskComponentHeight,
+        setTaskComponentHeight,
       }}
     >
       {children}

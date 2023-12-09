@@ -82,25 +82,42 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const editorState = EditorState.createWithContent(contentState);
 
   return (
-    <div className=" items-center [&>div>div>h3]:text-[30px] ">
-      <div className="p-10">
-        <div className="">
-          <h3>Project description</h3>
-          <ProjectDescEditor />
-        </div>
-        <div>
-          <h3>project Roles</h3>
+    <div className="absolute inset-0 overflow-y-auto flex [&>div>div>div>h3]:font-medium [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:text-[20px flex-1 ">
+      <div className="flex-1">
+        <div className="p-10">
+          <div className="">
+            <h3>Project description</h3>
+            <ProjectDescEditor />
+          </div>
           <div>
-            <Editor
-              editorState={editorState}
-              readOnly={true}
-              onChange={() => {}}
-            />
+            <h3 className="mb-10">Key resources</h3>
+            <div>
+              {activeProject.projectResources.length === 0 ? (
+                <div className="flex h-[160px] p-2 border border-border-default rounded-lg items-center justify-center">
+                  <div></div>
+                  <div>
+                    <p className="text-sm">
+                      Align your team around a shared vision with a project
+                      brief and supporting resources.
+                    </p>
+                    <div>
+                      <div>create project brief</div> <div>Add link</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>
           </div>
         </div>
-        <div>
-          <h3>Key resources</h3>
-          <div></div>
+        <div className="p-10">
+          <div>
+            <h3 className="text-[20px] font-medium mb-2">
+              What is the status?
+            </h3>{" "}
+            <div></div>
+          </div>
         </div>
       </div>
     </div>

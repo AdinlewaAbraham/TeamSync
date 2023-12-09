@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback, useEffect, useRef } from "react";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaRegCalendar, FaChartLine, FaRegListAlt } from "react-icons/fa";
 import {} from "react-icons/";
 import { PiFlowArrowBold } from "react-icons/pi";
 import {} from "react-icons/";
+import { useGlobalContext } from "@/context/GeneralContext";
 
 const NavbarItem = ({
   title,
@@ -48,9 +49,34 @@ const layout = ({
   children: ReactNode;
   params: { projectId: string };
 }) => {
+  const parentRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  const { setTaskComponentHeight } = useGlobalContext();
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (parentRef.current) {
+        const height = parentRef.current.offsetHeight - 60;
+        setTaskComponentHeight(height);
+      }
+    };
+
+    updateHeight();
+
+    const handleResize = () => {
+      updateHeight();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [parentRef]);
+
   return (
-    <div className="pl-8">
-      <nav className="py-4">
+    <div className="flex-1 flex flex-col">
+      <nav className="py-4 ml-8 ">
         <ul className="max-w-max h-9 flex justify-center items-center p-1 bg-bg-primary rounded-lg">
           {[
             { title: "Board", icon: <BiSolidBarChartAlt2 /> },
@@ -67,7 +93,9 @@ const layout = ({
           ))}
         </ul>
       </nav>
-      <main className="">{children}</main>
+      <main className="flex-1" ref={parentRef}>
+        {children}
+      </main>
     </div>
   );
 };

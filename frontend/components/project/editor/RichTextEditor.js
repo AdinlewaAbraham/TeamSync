@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Draft from "draft-js";
 import "./rich.css";
-import { Fa500Px, FaCalculator } from "react-icons/fa";
+import {
+  Fa500Px,
+  FaCalculator,
+  FaBold,
+  FaUnderline,
+  FaItalic,
+} from "react-icons/fa";
 import { usePopper } from "react-popper";
 
 const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
@@ -10,7 +16,9 @@ const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
 export default class RichEditorProjectDesc extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+    this.state = {
+      editorState: this.props.editorState || EditorState.createEmpty(),
+    };
     this.focus = () => this.refs.editor.focus();
     this.onChange = (editorState) => this.setState({ editorState });
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
@@ -52,7 +60,7 @@ export default class RichEditorProjectDesc extends React.Component {
     const { editorState } = this.state;
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
-    let className = "RichEditor-editor";
+    let className = "RichEditor-editorr";
     var contentState = editorState.getCurrentContent();
     if (!contentState.hasText()) {
       if (contentState.getBlockMap().first().getType() !== "unstyled") {
@@ -62,10 +70,18 @@ export default class RichEditorProjectDesc extends React.Component {
 
     const editorContent = editorState.getCurrentContent();
     const contentStateJSON = convertToRaw(editorContent);
-
+    const handleBlur = () => {
+      localStorage.setItem(
+        "projectDescriptionJson",
+        JSON.stringify(contentStateJSON)
+      );
+    };
     return (
-      <div className="bg-bg-secondary border-2 border-white rounded-lg px-2 py-1 ">
-        <div className={className} onClick={this.focus}>
+      <div
+        className="bg-bg-secondary border-2 border-white rounded-lg p-3 min-h-[131px]
+       box-content flex flex-col justify-between"
+      >
+        <div className={`${className} mb-3`} onClick={this.focus}>
           <Editor
             blockStyleFn={getBlockStyle}
             customStyleMap={styleMap}
@@ -76,6 +92,7 @@ export default class RichEditorProjectDesc extends React.Component {
             placeholder=""
             ref="editor"
             spellCheck={true}
+            onBlur={handleBlur}
           />
         </div>
         <div className="flex">
@@ -120,12 +137,12 @@ class StyleButton extends React.Component {
   render() {
     return (
       <span
-        className={` flex justify-center items-center px-2 ${
+        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md ml-1 
+        cursor-pointer hover:bg-pink-100 ${
           this.props.active ? "bg-blue-300" : " bg-transparent "
         }`}
         onMouseDown={this.onToggle}
       >
-        {this.props.label}
         {this.props.icon}
       </span>
     );
@@ -201,9 +218,9 @@ const BlockStyleControls = (props) => {
   );
 };
 var INLINE_STYLES = [
-  { label: "Bold", style: "BOLD", icon: <FaCalculator /> },
-  { label: "Italic", style: "ITALIC", icon: <FaCalculator /> },
-  { label: "Underline", style: "UNDERLINE", icon: <FaCalculator /> },
+  { label: "Bold", style: "BOLD", icon: <FaBold /> },
+  { label: "Italic", style: "ITALIC", icon: <FaItalic /> },
+  { label: "Underline", style: "UNDERLINE", icon: <FaUnderline /> },
   { label: "Monospace", style: "CODE", icon: <FaCalculator /> },
 ];
 const InlineStyleControls = (props) => {

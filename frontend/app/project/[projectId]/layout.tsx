@@ -4,7 +4,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { FaChartLine } from "react-icons/fa";
 import { LuClipboardCheck } from "react-icons/lu";
 import { PiFlowArrowBold } from "react-icons/pi";
@@ -51,6 +51,7 @@ const layout = ({
   children: ReactNode;
 }) => {
   const { user, activeWorkspace, activeProject } = useGlobalContext();
+  const [showNavbar, setShowNavbar] = useState(true);
   const router = useRouter();
   useEffect(() => {
     const getProject = async () => {
@@ -69,50 +70,57 @@ const layout = ({
     };
     getProject();
   }, []);
-
   return (
-    <section>
-      <nav className="w-full p-4 pb-0 border-b border-border-default">
-        <div className="flex items-center">
-          <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
-          {activeProject ? (
-            <h1 className="text-xl">
-              <EditableComp
-                text={activeProject?.projectName}
-                styles="px-2 py-1"
-              />
-            </h1>
-          ) : (
-            <div className="text-xl">loading</div>
-          )}
-        </div>
-        {activeProject ? (
-          <ul className="flex rounded-lg p-2 pl-0 pb-0">
-            {[
-              { title: "Home", icon: <BiHomeAlt2 /> },
-              { title: "Dashboard", icon: <FaChartLine /> },
-              { title: "Tasks", icon: <LuClipboardCheck /> },
-              { title: "files", icon: <FaChartLine /> },
-            ].map((item, index) => (
-              <div key={item.title + index}>
-                <NavbarItem
-                  title={item.title}
-                  projectId={params.projectId}
-                  icon={item.icon}
+    <section className="flex-1 flex flex-col relative overflow-x-hidden">
+      {showNavbar && (
+        <nav className="w-full p-4 pb-0 border-b border-border-default flex-shrink-0">
+          <div className="flex items-center">
+            <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+            {activeProject ? (
+              <h1 className="text-xl">
+                <EditableComp
+                  text={activeProject?.projectName}
+                  styles="px-2 py-1"
                 />
-              </div>
-            ))}
-          </ul>
-        ) : (
-          <div className="flex">
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item}>loading</div>
-            ))}
+              </h1>
+            ) : (
+              <div className="text-xl">loading</div>
+            )}
           </div>
-        )}
-      </nav>
+          {activeProject ? (
+            <ul className="flex rounded-lg p-2 pl-0 pb-0">
+              {[
+                { title: "Home", icon: <BiHomeAlt2 /> },
+                { title: "Dashboard", icon: <FaChartLine /> },
+                { title: "Tasks", icon: <LuClipboardCheck /> },
+                { title: "files", icon: <FaChartLine /> },
+              ].map((item, index) => (
+                <div key={item.title + index}>
+                  <NavbarItem
+                    title={item.title}
+                    projectId={params.projectId}
+                    icon={item.icon}
+                  />
+                </div>
+              ))}
+            </ul>
+          ) : (
+            <div className="flex">
+              {[1, 2, 3, 4].map((item) => (
+                <div key={item}>loading</div>
+              ))}
+            </div>
+          )}
+        </nav>
+      )}
+      <button
+        onClick={() => setShowNavbar(!showNavbar)}
+        className="absolute right-5 top-5 z-50"
+      >
+        toggle nav
+      </button>
 
-      <main className=" h-[calc(100dvh-200px)]">{children}</main>
+      <main className="flex-1 relative">{children}</main>
     </section>
   );
 };

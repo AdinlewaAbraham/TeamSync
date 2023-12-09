@@ -59,7 +59,7 @@ const Sidebar = () => {
   const [showSortOptions, setShowSortOptions] = useState<boolean>(false);
 
   const [initialX, setInitialX] = useState<number>(0);
-  const [sidebarWidth, setSidebarWidth] = useState<number>(250);
+  const { sidebarWidth, setSidebarWidth } = useGlobalContext();
 
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
@@ -173,7 +173,7 @@ const Sidebar = () => {
           animate={{ width: sidebarWidth }}
           exit={{ width: 0 }}
           transition={{ duration: isResizing ? 0 : 0.15 }}
-          className="relative flex flex-col justify-between overflow-hidden bg-bg-primary h-[calc(100dvh-50px)]"
+          className="relative flex flex-col justify-between overflow-hidden bg-bg-primary"
           style={{ width: sidebarWidth }}
         >
           <div>
@@ -187,8 +187,9 @@ const Sidebar = () => {
                 setIsResizing(false);
                 document.body.classList.remove("select-none");
               }}
-              className={`${isResizing?
-                "bg-accent-blue":"bg-transparent"} absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize`}
+              className={`${
+                isResizing ? "bg-accent-blue" : "bg-transparent"
+              } absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize`}
             />
             <div className="border-b-[1px] border-border-default p-4">
               <SidebarComponent
