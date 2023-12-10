@@ -13,6 +13,7 @@ import {} from "react-icons/";
 import {} from "react-icons/";
 import {} from "react-icons/";
 import {} from "react-icons/";
+import { AnimatePresence, motion } from "framer-motion";
 
 const NavbarItem = ({
   title,
@@ -72,47 +73,74 @@ const layout = ({
   }, []);
   return (
     <section className="flex-1 flex flex-col relative overflow-x-hidden">
-      {showNavbar && (
-        <nav className="w-full p-4 pb-0 border-b border-border-default flex-shrink-0">
-          <div className="flex items-center">
-            <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
-            {activeProject ? (
-              <h1 className="text-xl">
-                <EditableComp
-                  text={activeProject?.projectName}
-                  styles="px-2 py-1"
-                />
-              </h1>
-            ) : (
-              <div className="text-xl">loading</div>
+      <AnimatePresence>
+        {showNavbar && (
+          <motion.nav
+            style={{ willChange: "height, opacity" }}
+            initial={{
+              height: 0,
+              opacity: 0,
+              // padding: "0px",
+              // paddingBottom: "0px",
+            }}
+            animate={{
+              height: "auto",
+              opacity: 1,
+              // paddingTop: "16px",
+              // paddingLeft: "16px",
+              // paddingRight: "16px",
+              // paddingBottom: "0px",
+            }}
+            exit={{
+              height: 0,
+              opacity: 0,
+              // padding: "0px",
+              // paddingBottom: "0px",
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full p- pb-0 border-b border-border-default flex-shrink-0 overflow-hidden"
+          >
+            {activeProject && (
+              <div className="flex items-center ml-4 mt-4">
+                <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+                <h1 className="text-xl">
+                  <EditableComp
+                    text={activeProject.projectName}
+                    styles="mx-2 my-1"
+                  />
+                </h1>
+              </div>
             )}
-          </div>
-          {activeProject ? (
-            <ul className="flex rounded-lg p-2 pl-0 pb-0">
-              {[
-                { title: "Home", icon: <BiHomeAlt2 /> },
-                { title: "Dashboard", icon: <FaChartLine /> },
-                { title: "Tasks", icon: <LuClipboardCheck /> },
-                { title: "files", icon: <FaChartLine /> },
-              ].map((item, index) => (
-                <div key={item.title + index}>
+
+            {activeProject && (
+              <ul className="flex rounded-lg ml-4 p-2 pl-0 pb-0">
+                {[
+                  { title: "Home", icon: <BiHomeAlt2 /> },
+                  { title: "Dashboard", icon: <FaChartLine /> },
+                  { title: "Tasks", icon: <LuClipboardCheck /> },
+                  { title: "Files", icon: <FaChartLine /> },
+                ].map((item, index) => (
                   <NavbarItem
+                    key={item.title + index}
                     title={item.title}
                     projectId={params.projectId}
                     icon={item.icon}
                   />
-                </div>
-              ))}
-            </ul>
-          ) : (
-            <div className="flex">
-              {[1, 2, 3, 4].map((item) => (
-                <div key={item}>loading</div>
-              ))}
-            </div>
-          )}
-        </nav>
-      )}
+                ))}
+              </ul>
+            )}
+
+            {!activeProject && (
+              <div className="flex">
+                {[1, 2, 3, 4].map((item) => (
+                  <div key={item}>loading</div>
+                ))}
+              </div>
+            )}
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
       <button
         onClick={() => setShowNavbar(!showNavbar)}
         className="absolute right-5 top-5 z-50"

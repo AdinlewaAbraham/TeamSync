@@ -3,11 +3,23 @@ import Draft from "draft-js";
 import "./rich.css";
 import {
   Fa500Px,
-  FaCalculator,
   FaBold,
   FaUnderline,
   FaItalic,
+  FaListOl,
+  FaList,
+  FaCode,
+  FaPlus,
 } from "react-icons/fa";
+import {
+  LuHeading1,
+  LuHeading2,
+  LuHeading3,
+  LuHeading4,
+  LuHeading5,
+  LuHeading6,
+} from "react-icons/lu";
+import { RxDividerVertical } from "react-icons/rx";
 import { usePopper } from "react-popper";
 
 const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
@@ -60,7 +72,7 @@ export default class RichEditorProjectDesc extends React.Component {
     const { editorState } = this.state;
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
-    let className = "RichEditor-editorr";
+    let className = "RichEditor-editor";
     var contentState = editorState.getCurrentContent();
     if (!contentState.hasText()) {
       if (contentState.getBlockMap().first().getType() !== "unstyled") {
@@ -110,7 +122,7 @@ export default class RichEditorProjectDesc extends React.Component {
   }
 }
 // Custom overrides for "code" style.
-const styleMap = {
+export const styleMap = {
   CODE: {
     backgroundColor: "rgba(0, 0, 0, 0.05)",
     fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
@@ -118,7 +130,7 @@ const styleMap = {
     padding: 2,
   },
 };
-function getBlockStyle(block) {
+export function getBlockStyle(block) {
   switch (block.getType()) {
     case "blockquote":
       return "RichEditor-blockquote";
@@ -137,28 +149,68 @@ class StyleButton extends React.Component {
   render() {
     return (
       <span
-        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md ml-1 
-        cursor-pointer hover:bg-pink-100 ${
-          this.props.active ? "bg-blue-300" : " bg-transparent "
+        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md mr-1 
+        cursor-pointer ${
+          this.props.active
+            ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
+            : " bg-transparent hover:bg-menuItem-active"
         }`}
         onMouseDown={this.onToggle}
       >
-        {this.props.icon}
+        <i
+          className={` ${
+            this.props.active ? "text-accent-blue" : "text-muted-border"
+          }`}
+        >
+          {this.props.icon}
+        </i>
+      </span>
+    );
+  }
+}
+
+class ButtonListItem extends React.Component {
+  constructor() {
+    super();
+    this.onToggle = (e) => {
+      e.preventDefault();
+      this.props.onToggle(this.props.style);
+    };
+  }
+  render() {
+    return (
+      <span
+        className={` flex items-center h-[40px] rounded-lg px-2 text-sm
+        cursor-pointer ${
+          this.props.active
+            ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
+            : " bg-transparent hover:bg-menuItem-active"
+        }`}
+        onMouseDown={this.onToggle}
+      >
+        <i
+          className={`mr-2 ${
+            this.props.label.endsWith("list") ? "text-[17x]" : "text-[20px]"
+          } ${this.props.active ? "text-accent-blue" : "text-muted-border"}`}
+        >
+          {this.props.icon}
+        </i>
+        {this.props.label}
       </span>
     );
   }
 }
 const BLOCK_TYPES = [
-  { label: "H1", style: "header-one", icon: <Fa500Px /> },
-  { label: "H2", style: "header-two", icon: <Fa500Px /> },
-  { label: "H3", style: "header-three", icon: <Fa500Px /> },
-  { label: "H4", style: "header-four", icon: <Fa500Px /> },
-  { label: "H5", style: "header-five", icon: <Fa500Px /> },
-  { label: "H6", style: "header-six", icon: <Fa500Px /> },
-  { label: "Blockquote", style: "blockquote", icon: <Fa500Px /> },
-  { label: "UL", style: "unordered-list-item", icon: <Fa500Px /> },
-  { label: "OL", style: "ordered-list-item", icon: <Fa500Px /> },
-  { label: "Code Block", style: "code-block", icon: <Fa500Px /> },
+  { label: "Heading 1", style: "header-one", icon: <LuHeading1 /> },
+  { label: "Heading 2", style: "header-two", icon: <LuHeading2 /> },
+  { label: "Heading 3", style: "header-three", icon: <LuHeading3 /> },
+  { label: "Heading 4", style: "header-four", icon: <LuHeading4 /> },
+  { label: "Heading 5", style: "header-five", icon: <LuHeading5 /> },
+  { label: "Heading 6", style: "header-six", icon: <LuHeading6 /> },
+  // { label: "Blockquote", style: "blockquote", icon: <Fa500Px /> },
+  { label: "Bulleted list", style: "unordered-list-item", icon: <FaList /> },
+  { label: "Numbered list", style: "ordered-list-item", icon: <FaListOl /> },
+  { label: "Code Block", style: "code-block", icon: <FaCode /> },
 ];
 const BlockStyleControls = (props) => {
   const { editorState } = props;
@@ -188,22 +240,35 @@ const BlockStyleControls = (props) => {
 
   return (
     <div className=" flex blockStyles">
-      <i
-        onClick={() => setShowBlockStyles(true)}
-        className="mr-2"
+      <span
+        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md 
+        cursor-pointer ${
+          showBlockStyles
+            ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
+            : " bg-transparent hover:bg-menuItem-active"
+        }`}
+        onClick={() => setShowBlockStyles(!showBlockStyles)}
         ref={setReferenceElement}
       >
-        show
-      </i>
-
+        <i
+          className={` ${
+            showBlockStyles ? "text-accent-blue" : "text-muted-border"
+          }`}
+        >
+          <FaPlus />
+        </i>
+      </span>
+      <i className="flex justify-center items-center w-[1px] h-[28px] bg-muted-dark
+       mx-1" />
       {showBlockStyles && (
         <div
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
+          className="p-2 bg-bg-secondary border border-border-default rounded-lg "
         >
           {BLOCK_TYPES.map((type) => (
-            <StyleButton
+            <ButtonListItem
               key={type.label}
               active={type.style === blockType}
               label={type.label}
@@ -221,7 +286,6 @@ var INLINE_STYLES = [
   { label: "Bold", style: "BOLD", icon: <FaBold /> },
   { label: "Italic", style: "ITALIC", icon: <FaItalic /> },
   { label: "Underline", style: "UNDERLINE", icon: <FaUnderline /> },
-  { label: "Monospace", style: "CODE", icon: <FaCalculator /> },
 ];
 const InlineStyleControls = (props) => {
   const currentStyle = props.editorState.getCurrentInlineStyle();

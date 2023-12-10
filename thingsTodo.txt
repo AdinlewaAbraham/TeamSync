@@ -1,0 +1,4 @@
+1. add res people can't view workspace or project that they are not allowed in
+
+
+curent task: finish project home/overview page

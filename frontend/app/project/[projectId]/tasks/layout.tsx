@@ -53,26 +53,26 @@ const layout = ({
   const observerRef = useRef<ResizeObserver | null>(null);
   const { setTaskComponentHeight } = useGlobalContext();
 
-  useEffect(() => {
-    const updateHeight = () => {
-      if (parentRef.current) {
-        const height = parentRef.current.offsetHeight - 60;
-        setTaskComponentHeight(height);
-      }
-    };
+  // useEffect(() => {
+  //   const updateHeight = () => {
+  //     if (parentRef.current) {
+  //       const height = parentRef.current.offsetHeight - 60;
+  //       setTaskComponentHeight(height);
+  //     }
+  //   };
 
-    updateHeight();
+  //   updateHeight();
 
-    const handleResize = () => {
-      updateHeight();
-    };
+  //   const handleResize = () => {
+  //     updateHeight();
+  //   };
 
-    window.addEventListener("resize", handleResize);
+  //   window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [parentRef]);
+  //   return () => {
+  //     window.removeEventListener("resize", handleResize);
+  //   };
+  // }, [parentRef]);
 
   return (
     <div className="flex-1 flex flex-col">

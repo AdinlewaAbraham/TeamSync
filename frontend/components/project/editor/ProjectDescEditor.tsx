@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import RichEditorProjectDesc from "./RichTextEditor";
+import RichEditorProjectDesc, {
+  getBlockStyle,
+  styleMap,
+} from "./RichTextEditor";
 import {
   Editor,
   EditorState,
@@ -7,6 +10,7 @@ import {
   convertFromRaw,
   convertToRaw,
 } from "draft-js";
+import "@/components/project/editor/rich.css";
 
 const ProjectDescEditor = () => {
   const [inEditMode, setInEditMode] = useState(false);
@@ -64,12 +68,18 @@ const ProjectDescEditor = () => {
               console.log("clicked on div");
             }}
           >
-            <div className="mb-[40px] ">
+            <div
+              className="RichEditor-editor mb-[40px] "
+              style={{ marginBottom: "38px" }}
+            >
               <Editor
+                blockStyleFn={getBlockStyle}
+                customStyleMap={styleMap}
                 editorState={editorState}
                 // readOnly={true}
                 onFocus={() => setInEditMode(true)}
                 onChange={() => {}}
+                // placeholder="what can i write"
               />
             </div>
           </div>
