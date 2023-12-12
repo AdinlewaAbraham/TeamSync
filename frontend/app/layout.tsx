@@ -20,14 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
+  console.log(pathname);
   return (
     <html lang="en" className="h-full w-full ">
       <body className={`${inter.className} flex-1`}>
         <GeneralContextProvider>
           {pathname.startsWith("/login") ||
           pathname.startsWith("/signup") ||
-          pathname.startsWith("/home") ? (
+          pathname.startsWith("/home") ||
+          pathname === "/" ? (
             <>{children}</>
           ) : (
             <MainLayout>{children}</MainLayout>

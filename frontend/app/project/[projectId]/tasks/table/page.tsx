@@ -388,13 +388,15 @@ const page = ({ params }: { params: { projectId: string } }) => {
       // isError = true;
     }
   };
-  if (!activeProject?.sections) return <>loading state</>;
+  if (!activeProject?.sections)
+    return (
+      <div className="flex-1 flex justify-center items-center">
+        loading state
+      </div>
+    );
   return (
-    <div
-      className="pl-8 overflow-y-scroll relative"
-      style={{ height: taskComponentHeight }}
-    >
-      <header className="w-full sticky bg-inherit top-0  z-20">
+    <div className="pl-8 flex-1 flex flex-col">
+      <header className="w-full  bg-inherit ">
         <ul
           className="flex gutter w-full justify-between bg-bg-secondary [&>li]:w-[20%] border border-border-default rounded-t-lg 
          [&>li]:py-2 text-sm text-muted-dark"
@@ -406,7 +408,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <li> Status </li>
         </ul>
       </header>
-      <div className=" scrollBar pb-1 ">
+      <div className="  overflow-y-auto max-h-full">
         {activeProject.sections.map((section, index) => (
           <TableDropdown
             section={section}
@@ -414,31 +416,31 @@ const page = ({ params }: { params: { projectId: string } }) => {
             // isLast={activeProject.sections.length - 1 === index}
           />
         ))}
-        <div className="w-full border  border-border-default rounded-b-lg ">
-          {showAddSectionComponent ? (
-            <div
-              className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
-              onClick={() => setShowAddSectionComponent(false)}
-            >
-              <i className="mr-2">
-                <IoMdAdd />
-              </i>
-              Add section
-            </div>
-          ) : (
-            <div className="addSectionInput w-full flex text-sm h-12">
-              <input
-                type="text"
-                autoFocus
-                className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
-                placeholder="Write a task name"
-                onChange={(e) => setSectionName(e.target.value)}
-                onBlur={async () => await addSection()}
-              />
-            </div>
-          )}
-        </div>
       </div>
+      <footer className="w-full border  border-border-default rounded-b-lg ">
+        {showAddSectionComponent ? (
+          <div
+            className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
+            onClick={() => setShowAddSectionComponent(false)}
+          >
+            <i className="mr-2">
+              <IoMdAdd />
+            </i>
+            Add section
+          </div>
+        ) : (
+          <div className="addSectionInput w-full flex text-sm h-12">
+            <input
+              type="text"
+              autoFocus
+              className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
+              placeholder="Write a task name"
+              onChange={(e) => setSectionName(e.target.value)}
+              onBlur={async () => await addSection()}
+            />
+          </div>
+        )}
+      </footer>
     </div>
   );
 };

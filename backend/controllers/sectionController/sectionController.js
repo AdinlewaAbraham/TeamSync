@@ -10,24 +10,21 @@ const deleteSection = asyncHandler(async (req, res) => {
   console.log(sectionID);
   console.log(projectId);
 
-  if (!sectionID) {
+  if (!sectionID || !projectId) {
     res.status(400).json({ message: "bad request" });
 
     console.log("Bad request");
   } else {
     try {
       await Section.findByIdAndRemove(sectionID);
-      if (projectId) {
-        const project = await Project.findById(projectId);
+      const project = await Project.findById(projectId);
 
-        await project.updateOne({
-          $pull: {
-            sections: sectionID,
-          },
-        });
-      }else{
-        console.log("no project id")
-      }
+      await project.updateOne({
+        $pull: {
+          sections: sectionID,
+        },
+      });
+
       res.status(200).json({ message: "Section deleted successfully" });
       console.log("Document deleted successfully");
     } catch (error) {
@@ -35,7 +32,7 @@ const deleteSection = asyncHandler(async (req, res) => {
       console.error("Error deleting document:", error);
     }
   }
-})
+});
 const createSection = asyncHandler(async (req, res) => {
   const postBody = req.body;
   const { sectionName, projectId } = postBody;
@@ -53,9 +50,18 @@ const createSection = asyncHandler(async (req, res) => {
   if (!project) {
     return res.status(404).json({ error: "Project not found" });
   }
-
-  project.sections.push(section.id);
-  await Promise.all([section.save(), project.save()]);
+  if (!project.sections) {
+    project.sections = [];
+  }
+  console.log(project);
+  await Promise.all([
+    await section.save(),
+    await project.updateOne({
+      $push: {
+        sections: section.id,
+      },
+    }),
+  ]);
   res.status(200).json(section);
 });
 

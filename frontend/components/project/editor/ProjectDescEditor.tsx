@@ -4,6 +4,7 @@ import RichEditorProjectDesc, {
   styleMap,
 } from "./RichTextEditor";
 import {
+  ContentBlock,
   Editor,
   EditorState,
   RawDraftContentState,
@@ -11,13 +12,16 @@ import {
   convertToRaw,
 } from "draft-js";
 import "@/components/project/editor/rich.css";
+import { useGlobalContext } from "@/context/GeneralContext";
 
 const ProjectDescEditor = () => {
   const [inEditMode, setInEditMode] = useState(false);
   const emptyContentStateJSON = EditorState.createEmpty();
+  const { activeProject } = useGlobalContext();
   const [contentStateJSON, setContentStateJSON] =
     useState<RawDraftContentState>(
-      convertToRaw(EditorState.createEmpty().getCurrentContent())
+      (activeProject?.description as RawDraftContentState) ||
+        convertToRaw(EditorState.createEmpty().getCurrentContent())
     );
 
   const contentState = convertFromRaw(contentStateJSON);
@@ -60,27 +64,31 @@ const ProjectDescEditor = () => {
             />
           </div>
         ) : (
-          <div
-            className="RichEditorProjectDesc p-3 hover:border-border-default border-2
-            border-transparent cursor-text rounded-lg min-h-[131px] box-content"
-            onClick={() => {
-              setInEditMode(true);
-              console.log("clicked on div");
-            }}
-          >
+          <div className="border border-transparent">
             <div
-              className="RichEditor-editor mb-[40px] "
-              style={{ marginBottom: "38px" }}
+              className="RichEditorProjectDesc p-3 hover:border-border-default border
+            border-transparent cursor-text rounded-lg min-h-[131px] box-content"
+              onClick={() => {
+                setInEditMode(true);
+                console.log("clicked on div");
+              }}
             >
-              <Editor
-                blockStyleFn={getBlockStyle}
-                customStyleMap={styleMap}
-                editorState={editorState}
-                // readOnly={true}
-                onFocus={() => setInEditMode(true)}
-                onChange={() => {}}
-                // placeholder="what can i write"
-              />
+              <div
+                className="RichEditor-editor mb-[40px] "
+                style={{ marginBottom: "38px" }}
+              >
+                <Editor
+                  blockStyleFn={
+                    getBlockStyle as (block: ContentBlock) => string
+                  }
+                  customStyleMap={styleMap}
+                  editorState={editorState}
+                  // readOnly={true}
+                  onFocus={() => setInEditMode(true)}
+                  onChange={() => {}}
+                  // placeholder="what can i write"
+                />
+              </div>
             </div>
           </div>
         )}

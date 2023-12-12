@@ -221,11 +221,11 @@ const page = ({ params }: { params: { projectId: string } }) => {
     taskWithDateRange.every((item) => typeof item === "object")
   ) {
     const taskArray: Task[] = taskWithDateRange as Task[];
-    const rowNumber = findMinFreeRowNumber(
-      taskArray,
-      new Date("2023-10-02T23:00:00.000Z"),
-      new Date("2023-10-11T23:00:00.000Z")
-    );
+    // const rowNumber = findMinFreeRowNumber(
+    //   taskArray,
+    //   new Date("2023-10-02T23:00:00.000Z"),
+    //   new Date("2023-10-11T23:00:00.000Z")
+    // );
   }
 
   //   const allTaskThatFallsWithinTimeFrame = allTasks.filter((task) => {
@@ -240,7 +240,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
   //  if it does not start or end with that day it has no padding
 
   return (
-    <div className="select-none">
+    <div className="select-none flex-1 flex flex-col">
       <nav className="flex justify-between py-2 text-sm items-center border-t border-border-default">
         <div
           className="flex items-center text-muted-dark 
@@ -274,7 +274,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <div>color</div>
         </div>
       </nav>
-      <div className=" rounded-l-lg border-b border-t  border-l border-border-default  ">
+      <div className=" rounded-l-lg border-b border-t flex-1 flex flex-col  border-l border-border-defaultt  ">
         <header>
           <ul
             className="flex [&>li]:text-muted-dark w-full [&>li]:w-[calc(100%/7)]
@@ -293,41 +293,43 @@ const page = ({ params }: { params: { projectId: string } }) => {
             ))}
           </ul>
         </header>
-        <div
-          className="overflow-y-auto h-[calc(100dvh-310px)] calendarScrollBar"
-          id="calendarBoxScollParent"
-          ref={calendarBoxScollParent}
-        >
-          {filledMonthsDates.map((month, monthIndex) => (
-            <div
-              className="grid grid-flow-row  "
-              key={month.name + month.year}
-              id="calendarBoxParent"
-            >
-              {month.dates.map((dateArr: Date[], rowIndex: number) => {
-                const dateArrLastElementDate = new Date(
-                  dateArr[dateArr.length - 1]
-                );
-                const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
-                // localStorage.removeItem(rowKey);
-                return (
-                  <CalendarRow
-                    dateArr={dateArr}
-                    monthIndex={monthIndex}
-                    rowIndex={rowIndex}
-                    projectId={params.projectId}
-                    taskWithDateRange={taskWithDateRange}
-                    currentMonth={currentMonth}
-                    currentYear={currentYear}
-                    setCurrentMonth={setCurrentMonth}
-                    setCurrentYear={setCurrentYear}
-                    taskHoverStatusObj={taskHoverStatusObj}
-                    setTaskHoverStatusObj={setTaskHoverStatusObj}
-                  />
-                );
-              })}
-            </div>
-          ))}
+        <div className="relative flex-1 flex">
+          <ul
+            className="absolute inset-0 overflow-y-auto h-full calendarScrollBar"
+            id="calendarBoxScollParent"
+            ref={calendarBoxScollParent}
+          >
+            {filledMonthsDates.map((month, monthIndex) => (
+              <li
+                className="grid grid-flow-row  "
+                key={month.name + month.year}
+                id="calendarBoxParent"
+              >
+                {month.dates.map((dateArr: Date[], rowIndex: number) => {
+                  const dateArrLastElementDate = new Date(
+                    dateArr[dateArr.length - 1]
+                  );
+                  const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
+                  // localStorage.removeItem(rowKey);
+                  return (
+                    <CalendarRow
+                      dateArr={dateArr}
+                      monthIndex={monthIndex}
+                      rowIndex={rowIndex}
+                      projectId={params.projectId}
+                      taskWithDateRange={taskWithDateRange}
+                      currentMonth={currentMonth}
+                      currentYear={currentYear}
+                      setCurrentMonth={setCurrentMonth}
+                      setCurrentYear={setCurrentYear}
+                      taskHoverStatusObj={taskHoverStatusObj}
+                      setTaskHoverStatusObj={setTaskHoverStatusObj}
+                    />
+                  );
+                })}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

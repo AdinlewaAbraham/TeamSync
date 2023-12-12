@@ -49,33 +49,12 @@ const layout = ({
   children: ReactNode;
   params: { projectId: string };
 }) => {
-  const parentRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<ResizeObserver | null>(null);
   const { setTaskComponentHeight } = useGlobalContext();
 
-  // useEffect(() => {
-  //   const updateHeight = () => {
-  //     if (parentRef.current) {
-  //       const height = parentRef.current.offsetHeight - 60;
-  //       setTaskComponentHeight(height);
-  //     }
-  //   };
-
-  //   updateHeight();
-
-  //   const handleResize = () => {
-  //     updateHeight();
-  //   };
-
-  //   window.addEventListener("resize", handleResize);
-
-  //   return () => {
-  //     window.removeEventListener("resize", handleResize);
-  //   };
-  // }, [parentRef]);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-full ">
       <nav className="py-4 ml-8 ">
         <ul className="max-w-max h-9 flex justify-center items-center p-1 bg-bg-primary rounded-lg">
           {[
@@ -93,8 +72,8 @@ const layout = ({
           ))}
         </ul>
       </nav>
-      <main className="flex-1" ref={parentRef}>
-        {children}
+      <main className="flex-1 relative overflow-auto" >
+        <div className="absolute inset-0 flex"> {children}</div>
       </main>
     </div>
   );

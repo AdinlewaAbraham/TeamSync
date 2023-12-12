@@ -87,6 +87,7 @@ const BoardCard = ({
     } else {
       console.log("something went wrong");
     }
+    setTaskName("");
   };
   const deleteSectionFunc = async () => {
     if (typeof section === "string") return;
@@ -121,88 +122,90 @@ const BoardCard = ({
 
   if (typeof localSection === "string") return <>loading this is a string </>;
   return (
-    <div className="bg-bg-primary rounded-lg w-[280px] max-h-max py-2 mr-2 overflow-auto ">
-      <header className="flex justify-between items-center px-4 py-2">
-        <h1>{localSection.sectionName}</h1>
-        <div className="flex items-start addTaskComponent">
-          <div
-            onClick={() => {
-              setShowAddTaskComponent(!showAddTaskComponent);
-            }}
-            className="cursor-pointer"
-          >
-            <SidebarIconComponent
-              icon={<IoMdAdd />}
-              toolTipText={"Add project"}
-            />
-          </div>
-          <div
-            onClick={() => setShowBoardMenu(!showBoardMenu)}
-            className="cursor-pointer"
-            ref={setReferenceElement}
-          >
-            <SidebarIconComponent
-              icon={<BsThreeDots />}
-              toolTipText="Show options"
-            />
-          </div>
-          {showBoardMenu && (
+    <div>
+      <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2 overflow-auto flex-1 flex flex-col max-h-full">
+        <header className="flex justify-between items-center px-4 py-2">
+          <h1>{localSection.sectionName}</h1>
+          <div className="flex items-start addTaskComponent">
             <div
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-              className="[&>div]:px-4  [&>div]:py-2 hover:[&>div]:bg-menuItem-hover [&>div]:cursor-pointer [&>div]: [&>div]:  
-              bg-bg-primary border border-border-default rounded-lg "
+              onClick={() => {
+                setShowAddTaskComponent(!showAddTaskComponent);
+              }}
+              className="cursor-pointer"
             >
-              <div>rename section</div>
-              <div onClick={() => deleteSectionFunc()} className="">
-                {" "}
-                delete section
-              </div>
+              <SidebarIconComponent
+                icon={<IoMdAdd />}
+                toolTipText={"Add project"}
+              />
             </div>
-          )}
-        </div>
-      </header>
-      <div
-        className={`overflow-auto scrollBar `}
-        style={{ maxHeight: taskComponentHeight - 44 }}
-      >
-        <ul>
-          {localSection.tasks.map((task, index) => (
-            <li key={index}>
-              {typeof task === "string" ? (
-                <>loading</>
-              ) : (
-                <div className="px-2 mb-2 " onClick={() => console.log(task)}>
+            <div
+              onClick={() => setShowBoardMenu(!showBoardMenu)}
+              className="cursor-pointer"
+              ref={setReferenceElement}
+            >
+              <SidebarIconComponent
+                icon={<BsThreeDots />}
+                toolTipText="Show options"
+              />
+            </div>
+            {showBoardMenu && (
+              <div
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+                className="[&>div]:px-4  [&>div]:py-2 hover:[&>div]:bg-menuItem-hover [&>div]:cursor-pointer [&>div]: [&>div]:  
+              bg-bg-primary border border-border-default rounded-lg "
+              >
+                <div>rename section</div>
+                <div onClick={() => deleteSectionFunc()} className="">
+                  {" "}
+                  delete section
+                </div>
+              </div>
+            )}
+          </div>
+        </header>
+        <div className={`scrollBar flex-1 overflow-y-auto max-h-full `}>
+          <ul>
+            {localSection.tasks.map((task, index) => (
+              <li key={index}>
+                {typeof task === "string" ? (
+                  <>loading</>
+                ) : (
                   <div
-                    className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
-                     flex flex-col border border-border-default"
+                    className="px-2 mb-2 "
+                    onClick={() => console.log(taskComponentHeight)}
                   >
-                    <p className="mb-4 leading-none"> {task.taskName}</p>
-                    <div className="flex items-center ">
-                      <div className=" [&>div]:rounded-xl [&>div]:text-sm [&>div]: text-black [&>div]: flex items-center">
-                        <div className="mr-1 [&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
-                          <RenderPriority Priority={task.Priority} />
-                        </div>
+                    <div
+                      className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
+                     flex flex-col border border-border-default"
+                    >
+                      <p className="mb-4 leading-none"> {task.taskName}</p>
+                      <div className="flex items-center ">
+                        <div className=" [&>div]:rounded-xl [&>div]:text-sm [&>div]: text-black [&>div]: flex items-center">
+                          <div className="mr-1 [&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                            <RenderPriority Priority={task.Priority} />
+                          </div>
 
-                        <div className="[&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
-                          <RenderStatus status={task.status} />
+                          <div className="[&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                            <RenderStatus status={task.status} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-5 h-5 bg-slate-600 rounded-full mr-2" />
-                      <div className="text-muted-light text-xs">
-                        today - sep 19
+                      <div className="flex items-center">
+                        <div className="w-5 h-5 bg-slate-600 rounded-full mr-2" />
+                        <div className="text-muted-light text-xs">
+                          today - sep 19
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-        <footer className=" px-2 addTaskComponent">
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <footer className="px-2 addTaskComponent">
           {showAddTaskComponent ? (
             <div className="text-base py-2">
               <textarea
@@ -212,6 +215,7 @@ const BoardCard = ({
                 className="text-input focus:ring-0 bg-bg-secondary w-full p-2 h-[90px] resize-none"
                 placeholder="provide task name"
                 onChange={(e) => setTaskName(e.target.value)}
+                value={taskName}
                 onBlur={async () => await handleAddTask()}
               />
               <div className="flex items-center">

@@ -1,4 +1,21 @@
 1. add res people can't view workspace or project that they are not allowed in
-
+2. move auth change to root of app layout and skip that stupid redirectToLogin nonsense
 
 curent task: finish project home/overview page
+                1.add project resources 
+                    project brief
+                    and
+                    links(display favicon && (name || tittle) && domain name ) 
+                    and 
+                    files(file icon && file name && file ext type)
+                2.project description
+                    add tooltip and hotkey instrutions to tooltip
+
+
+
+
+issues: 
+    1. board section tooltip not working properly                      
+
+
+look up fc icons for empty key resources comp

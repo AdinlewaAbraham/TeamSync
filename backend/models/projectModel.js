@@ -21,7 +21,11 @@ const projectSchema = mongoose.Schema({
     required: [false],
   },
   description: {
-    type: String,
+    type: Object,
+    required: [false],
+  },
+  projectBrief: {
+    type: Object,
     required: [false],
   },
   projectRoles: {

@@ -13,8 +13,11 @@ import Section from "@/interfaces/section";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
   const [sectionName, setSectionName] = useState<string>("");
+  const [addingSection, setAddingSection] = useState(false);
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(false);
+  const parentRef = useRef<HTMLDivElement>(null);
+  const { sidebarWidth, setTaskComponentHeight } = useGlobalContext();
   useEffect(() => {
     const fetchProjectFunc = async () => {
       const response = await fetchProject(params.projectId);
@@ -50,9 +53,11 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, []);
 
   const addSection = async () => {
-    if (sectionName === "") {
+    setAddingSection(true);
+    if (sectionName === "" || addingSection) {
       return;
     }
+    console.log("add section");
     if (!activeProject) return;
     try {
       const response = await fetch("/api/section/", {
@@ -76,26 +81,24 @@ const page = ({ params }: { params: { projectId: string } }) => {
       // isError = true;
     }
 
+    setAddingSection(false);
     setShowAddSectionComponent(false);
   };
 
-
   if (!activeProject?.sections) return <>loading statee</>;
-  const { sidebarWidth } = useGlobalContext();
+
   return (
     <div
-      className="flex flex-1 overflow-auto overflow-x h-full px-8 w-full "
+      className="flex relative flex-1 overflow-auto overflow-x  px-8 "
       id="overflowElement"
-      style={{ width: `calc(100vw - ${sidebarWidth}px)` }}
+      // style={{ width: `calc(100vw - ${sidebarWidth}px)` }}
     >
       {activeProject.sections.map((section, index) => (
-        <div className="" key={index}>
           <BoardCard
             section={section}
             projectId={params.projectId}
             key={index}
           />
-        </div>
       ))}
       <div>
         {showAddSectionComponent ? (
