@@ -12,8 +12,10 @@ import {
 } from "draft-js";
 import { useRouter } from "next/navigation";
 import NoResourceComp from "@/components/project/resources/NoResourceComp";
+import MemberCard from "@/components/project/home/MemberCard";
 const page = ({ params }: { params: { projectId: string } }) => {
-  const { activeProject, setActiveProject } = useGlobalContext();
+  const { activeProject, setActiveProject, activeWorkspace } =
+    useGlobalContext();
   const [showAddLinkModal, setShowAddLinkModal] = useState(false);
 
   useEffect(() => {
@@ -31,87 +33,48 @@ const page = ({ params }: { params: { projectId: string } }) => {
     syncProject();
   }, []);
   if (!activeProject) return <>loading comp</>;
-  const contentStateJSON: RawDraftContentState = {
-    blocks: [
-      {
-        key: "8i090",
-        text: "Hello CodePulse!",
-        type: "unstyled",
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 16,
-            style: "BOLD",
-          },
-        ],
-        entityRanges: [],
-        data: {},
-      },
-      {
-        key: "42ncd",
-        text: "This text should be underlined.",
-        type: "unstyled",
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 31,
-            style: "UNDERLINE",
-          },
-        ],
-        entityRanges: [],
-        data: {},
-      },
-      {
-        key: "327r6",
-        text: "And this text should be italic.",
-        type: "unstyled",
-        depth: 0,
-        inlineStyleRanges: [
-          {
-            offset: 0,
-            length: 31,
-            style: "ITALIC",
-          },
-        ],
-        entityRanges: [],
-        data: {},
-      },
-    ],
-    entityMap: {},
-  };
-  const contentState = convertFromRaw(contentStateJSON);
-  const editorState = EditorState.createWithContent(contentState);
-
   return (
     <div className="absolute inset-0 overflow-y-auto flex [&>div>div>div>h3]:font-medium [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:text-[20px flex-1 ">
       <div className="flex-1 flex">
-        <div className="p-10 flex flex-col justify-center max-w-3xl h-full overflow-y-auto">
-          <div className="">
-            <h3>Project description</h3>
-            <ProjectDescEditor />
-          </div>
-          <div className="">
-            <h3>Project admins</h3>
-          </div>
-          <div>
-            <h3 className="mb-10">Key resources</h3>
-            <div>
-              {activeProject.projectResources.length === 0 &&
-              !activeProject?.projectBrief ? (
-                <NoResourceComp
-                  activeProject={activeProject}
-                  showAddLinkModal={showAddLinkModal}
-                  setShowAddLinkModal={setShowAddLinkModal}
-                />
-              ) : (
-                <div></div>
-              )}
+        <div className="p-10 flex flex-1 justify-center max-h-full overflow-y-auto">
+          <div className=" flex flex-col max-w-3xl [&>div]:mb-8 [&>div>h3]:mb-2 [&>div>h3]:text-[20px] [&>div>h3]:font-medium">
+            <div className="">
+              <h3>Project description</h3>
+              <ProjectDescEditor />
+            </div>
+            <div className="">
+              <h3>Project members</h3>
+              <div className="projectMembers">
+                <div className="flex">
+                  <i></i>
+                  <span>Add member</span>
+                </div>
+                {Array(5)
+                  .fill(activeProject.members[0])
+                  .map((member) => {
+                    if (typeof member === "object")
+                      return <MemberCard member={member} />;
+                  })}
+              </div>
+            </div>
+            <div className="">
+              <h3 className="">Key resources</h3>
+              <div>
+                {activeProject.projectResources.length === 0 &&
+                !activeProject?.projectBrief ? (
+                  <NoResourceComp
+                    activeProject={activeProject}
+                    showAddLinkModal={showAddLinkModal}
+                    setShowAddLinkModal={setShowAddLinkModal}
+                  />
+                ) : (
+                  <div></div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <div className="p-10 border-l border-border-default overflow-y-auto">
+        <div className="p-10 border-l border border-border-default overflow-y-auto">
           <div className="mb-[3000px]">
             <h3 className="text-[20px] font-medium mb-2 ">
               What is the status?

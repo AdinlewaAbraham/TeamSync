@@ -24,11 +24,19 @@ const projectSchema = mongoose.Schema({
     type: Object,
     required: [false],
   },
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+  admins: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
   projectBrief: {
-    type: Object,
-    required: [false],
-  },
-  projectRoles: {
     type: Object,
     required: [false],
   },

@@ -12,7 +12,7 @@
     focus:ring-2 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50;
   }
   .button-default {
-    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center ;
+    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center;
   }
 }
 :root {
@@ -139,4 +139,10 @@ body {
 
 .DraftEditor-editorContainer ol {
   @apply list-decimal ml-8;
+}
+
+.projectMembers {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(181px, 1fr));
 }

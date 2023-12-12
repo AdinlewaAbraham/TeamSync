@@ -20,6 +20,9 @@ const config: Config = {
       "2xl": "1536px",
       idle: { min: "800px", max: "1023px" },
     },
+    gridTemplateColumns: {
+      projectMembers: "repeat(auto-fill, minmax(181px, 1fr))",
+    },
     extend: {
       colors: {
         bg: {

@@ -3,6 +3,7 @@ const { Project } = require("../../models/projectModel");
 const { Workspace } = require("../../models/workspaceModel");
 const { Section } = require("../../models/sectionModel");
 const { Task } = require("../../models/taskModel");
+const { User } = require("../../models/userModel");
 
 const editProject = asyncHandler((req, res) => {});
 
@@ -46,11 +47,16 @@ const getProject = asyncHandler(async (req, res) => {
   const project = await Project.findById(projectId)
     .populate({
       path: "sections",
-      model: Section, // Specify the section model
+      model: Section, 
       populate: {
         path: "tasks",
-        model: Task, // Adjust the task model name if needed
+        model: Task,
       },
+    })
+    .populate({
+      path: "members",
+      model: User,
+      options: { limit: 20 },
     })
     .exec();
   console.log(project);
