@@ -4,15 +4,18 @@
 
 @layer components {
   .accent-color {
-    @apply bg-accent-primary hover:bg-accent-primary/90 text-black;
+    @apply bg-accent-primary text-black hover:bg-accent-primary/90;
   }
   .text-input {
     @apply h-9 rounded-lg border border-border-default bg-transparent px-3 py-1 
-    text-sm shadow-sm transition-colors placeholder-muted-dark focus:outline-none 
+    text-sm placeholder-muted-dark shadow-sm transition-colors focus:outline-none 
     focus:ring-2 focus:ring-white disabled:cursor-not-allowed disabled:opacity-50;
   }
   .button-default {
-    @apply h-9 px-4 py-2 rounded-lg flex justify-center items-center;
+    @apply flex h-9 items-center justify-center rounded-lg px-4 py-2;
+  }
+  .modalBG {
+    @apply bg-bg-primary bg-opacity-50;
   }
 }
 :root {
@@ -134,11 +137,11 @@ body {
   @apply font-semibold;
 }
 .DraftEditor-editorContainer ul {
-  @apply list-disc ml-8;
+  @apply ml-8 list-disc;
 }
 
 .DraftEditor-editorContainer ol {
-  @apply list-decimal ml-8;
+  @apply ml-8 list-decimal;
 }
 
 .projectMembers {

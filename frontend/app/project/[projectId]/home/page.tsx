@@ -13,6 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import NoResourceComp from "@/components/project/resources/NoResourceComp";
 import MemberCard from "@/components/project/home/MemberCard";
+import ProjectMembersComponent from "@/components/project/home/ProjectMembersComponent";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject, activeWorkspace } =
     useGlobalContext();
@@ -34,28 +35,17 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, []);
   if (!activeProject) return <>loading comp</>;
   return (
-    <div className="absolute inset-0 overflow-y-auto flex [&>div>div>div>h3]:font-medium [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:text-[20px flex-1 ">
-      <div className="flex-1 flex">
-        <div className="p-10 flex flex-1 justify-center max-h-full overflow-y-auto">
-          <div className=" flex flex-col max-w-3xl [&>div]:mb-8 [&>div>h3]:mb-2 [&>div>h3]:text-[20px] [&>div>h3]:font-medium">
+    <div className="[&>div>div>div>h3]:text-[20px absolute inset-0 flex flex-1 overflow-y-auto [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:font-medium ">
+      <div className="flex flex-1">
+        <div className="flex max-h-full flex-1 justify-center overflow-y-auto p-10">
+          <div className=" flex max-w-3xl flex-col [&>div>h3]:mb-2 [&>div>h3]:text-[20px] [&>div>h3]:font-medium [&>div]:mb-8">
             <div className="">
               <h3>Project description</h3>
               <ProjectDescEditor />
             </div>
             <div className="">
               <h3>Project members</h3>
-              <div className="projectMembers">
-                <div className="flex">
-                  <i></i>
-                  <span>Add member</span>
-                </div>
-                {Array(5)
-                  .fill(activeProject.members[0])
-                  .map((member) => {
-                    if (typeof member === "object")
-                      return <MemberCard member={member} />;
-                  })}
-              </div>
+              <ProjectMembersComponent activeProject={activeProject} />
             </div>
             <div className="">
               <h3 className="">Key resources</h3>
@@ -72,11 +62,20 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 )}
               </div>
             </div>
+            <div>
+              <h3>project privacy</h3>
+              <div>
+                only visible to members
+              </div>
+              <div>
+                visible to workspace
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-10 border-l border border-border-default overflow-y-auto">
+        <div className="overflow-y-auto border border-l border-border-default p-10">
           <div className="mb-[3000px]">
-            <h3 className="text-[20px] font-medium mb-2 ">
+            <h3 className="mb-2 text-[20px] font-medium ">
               What is the status?
             </h3>
             <div></div>

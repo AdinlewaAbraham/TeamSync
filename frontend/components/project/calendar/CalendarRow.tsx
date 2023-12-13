@@ -33,8 +33,8 @@ const CalendarRow = ({
  
 
   return (
-    <div
-      className="grid grid-flow-row grid-cols-7"
+    <ul
+      className="grid grid-flow-col  grid-cols-[7]"
       // onClick={() => console.log(JSON.parse(localStorage.getItem(rowKey)))}
       key={rowKey}
     >
@@ -60,7 +60,7 @@ const CalendarRow = ({
           rowKey={rowKey}
         />
       ))}
-    </div>
+    </ul>
   );
 };
 

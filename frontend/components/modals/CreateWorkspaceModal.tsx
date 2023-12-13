@@ -52,7 +52,7 @@ const CreateWorkspaceModal = () => {
     }
   };
   return (
-    <div className="flex w-full h-full fixed justify-center items-center inset-0 bg-red-400">
+    <div className="flex w-full h-full fixed justify-center items-center inset-0 modalBG">
       <div className="flex bg-bg-primary workspaceModal p-4">
         <div className="bg-blue-400"></div>
         <div className="grid grid-flow-row gap-y-2">

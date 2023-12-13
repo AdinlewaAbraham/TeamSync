@@ -186,7 +186,7 @@ const CalendarBox = ({
   const calendarBoxDate = new Date(date).getDate();
 
   return (
-    <div
+    <li
       id={isToday ? "today" : calendarBoxDate.toString()}
       className={` ${
         date.getDate() === 1 &&
@@ -253,7 +253,7 @@ const CalendarBox = ({
           />
         </div>
       )}
-    </div>
+    </li>
   );
 };
 

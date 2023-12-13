@@ -22,7 +22,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   const [currentMonth, setCurrentMonth] = useState<number>(cM);
   const [monthsDates, setmonthsDates] = useState(
-    generateDatesForFourMonths(cY, cM)
+    generateDatesForFourMonths(cY, cM),
   );
 
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
@@ -55,7 +55,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     const noOfDaysToUnshift = days.indexOf(firstDay);
     const prevMonthDays = getPrevMonthDays(
       firstDayInDates.getMonth(),
-      firstDayInDates.getFullYear()
+      firstDayInDates.getFullYear(),
     );
     let daysToUnshit;
     if (lastDayPushed) {
@@ -72,7 +72,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       if (daysToUnshit.length !== 0) {
         // remove unwanted begining dates
         const lastdayInDaysToUnshit = new Date(
-          daysToUnshit[daysToUnshit.length - 1]
+          daysToUnshit[daysToUnshit.length - 1],
         );
         dates.splice(0, lastdayInDaysToUnshit.getDate());
       }
@@ -85,7 +85,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     if (dates.length % 7 !== 0) {
       const nextMonthDays = getNextMonthDays(
         firstDayInDates.getMonth(),
-        firstDayInDates.getFullYear()
+        firstDayInDates.getFullYear(),
       );
       const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
       dates.push(...daysToFill);
@@ -109,7 +109,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
     // }
     const scrollToElement = document.getElementsByClassName(
-      "currentMonthFirstDate"
+      "currentMonthFirstDate",
     );
 
     if (scrollToElement[0] && !havescrolled) {
@@ -240,17 +240,17 @@ const page = ({ params }: { params: { projectId: string } }) => {
   //  if it does not start or end with that day it has no padding
 
   return (
-    <div className="select-none flex-1 flex flex-col">
-      <nav className="flex justify-between py-2 text-sm items-center border-t border-border-default">
+    <div className="flex flex-1 select-none flex-col">
+      <nav className="flex items-center justify-between border-t border-border-default py-2 text-sm">
         <div
           className="flex items-center text-muted-dark 
-           [&>i]:rounded-lg hover:[&>i]:bg-menuItem-active [&>i]:h-9
-       [&>i]:w-7 [&>i]:flex [&>i]:items-center  [&>i]:justify-center  [&>i]:text-muted-dark 
-       hover:[&>i]:text-white [&>i]:duration-150 [&>i]:transition-colors  [&>i]:text-lg [&>i]:cursor-pointer   "
+           [&>i]:flex [&>i]:h-9 [&>i]:w-7
+       [&>i]:cursor-pointer [&>i]:items-center [&>i]:justify-center  [&>i]:rounded-lg  [&>i]:text-lg 
+       [&>i]:text-muted-dark [&>i]:transition-colors [&>i]:duration-150  hover:[&>i]:bg-menuItem-active hover:[&>i]:text-white   "
         >
           <button
-            className="h-9 border border-border-default rounded-lg px-2 hover:text-white hover:border-white hover:bg-menuItem-hover
-        flex items-center justify-center"
+            className="flex h-9 items-center justify-center rounded-lg border border-border-default px-2
+        hover:border-white hover:bg-menuItem-hover hover:text-white"
             onClick={() => {
               const element = document.getElementById("today");
               element?.scrollIntoView({ behavior: "smooth" });
@@ -274,12 +274,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <div>color</div>
         </div>
       </nav>
-      <div className=" rounded-l-lg border-b border-t flex-1 flex flex-col  border-l border-border-defaultt  ">
+      <div className=" border-border-defaultt flex flex-1 flex-col rounded-l-lg  ">
         <header>
           <ul
-            className="flex [&>li]:text-muted-dark w-full [&>li]:w-[calc(100%/7)]
-           pr-[18px] [&>li]:pl-2 border-b  text-sm py-1
-         border-border-default last:border-r-0"
+            className="flex w-full border-b border-border-default
+           py-1 pr-[18px] text-sm  last:border-r-0 [&>li]:w-[calc(100%/7)]
+         [&>li]:pl-2 [&>li]:text-muted-dark"
           >
             {days.map((day, index) => (
               <li
@@ -293,9 +293,9 @@ const page = ({ params }: { params: { projectId: string } }) => {
             ))}
           </ul>
         </header>
-        <div className="relative flex-1 flex">
+        <div className="relative flex flex-1">
           <ul
-            className="absolute inset-0 overflow-y-auto h-full calendarScrollBar"
+            className="calendarScrollBar absolute inset-0 h-full overflow-y-auto"
             id="calendarBoxScollParent"
             ref={calendarBoxScollParent}
           >
@@ -307,7 +307,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
               >
                 {month.dates.map((dateArr: Date[], rowIndex: number) => {
                   const dateArrLastElementDate = new Date(
-                    dateArr[dateArr.length - 1]
+                    dateArr[dateArr.length - 1],
                   );
                   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
                   // localStorage.removeItem(rowKey);
