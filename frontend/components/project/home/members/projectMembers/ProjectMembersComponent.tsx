@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MemberCard from "./MemberCard";
 import Project from "@/interfaces/project";
 import { IoMdAdd } from "react-icons/io";
-import AddMemberModal from "./AddMemberModal";
+import AddMemberModal from "../addMembers/AddMemberModal";
 
 const ProjectMembersComponent = ({
   activeProject,
@@ -13,10 +13,7 @@ const ProjectMembersComponent = ({
   return (
     <div className="projectMembers">
       {showAddMemberModal && (
-        <AddMemberModal
-          activeProject={activeProject}
-          setShowAddMemberModal={setShowAddMemberModal}
-        />
+        <AddMemberModal setShowAddMemberModal={setShowAddMemberModal} />
       )}
       <div
         onClick={() => setShowAddMemberModal(true)}

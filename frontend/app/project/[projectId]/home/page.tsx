@@ -3,7 +3,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useState } from "react";
-import ProjectDescEditor from "@/components/project/editor/ProjectDescEditor";
+import ProjectDescEditor from "@/components/project/home/editor/ProjectDescEditor";
 import {
   Editor,
   EditorState,
@@ -11,9 +11,10 @@ import {
   convertFromRaw,
 } from "draft-js";
 import { useRouter } from "next/navigation";
-import NoResourceComp from "@/components/project/resources/NoResourceComp";
-import MemberCard from "@/components/project/home/MemberCard";
-import ProjectMembersComponent from "@/components/project/home/ProjectMembersComponent";
+import NoResourceComp from "@/components/project/home/resources/NoResourceComp";
+import MemberCard from "@/components/project/home/members/projectMembers/MemberCard";
+import ProjectMembersComponent from "@/components/project/home/members/projectMembers/ProjectMembersComponent";
+import ProjectPrivacyComponent from "@/components/project/home/projectPrivacy/ProjectPrivacyComponent";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject, activeWorkspace } =
     useGlobalContext();
@@ -64,17 +65,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
             </div>
             <div>
               <h3>project privacy</h3>
-              <div>
-                only visible to members
-              </div>
-              <div>
-                visible to workspace
-              </div>
+              <ProjectPrivacyComponent />
             </div>
           </div>
         </div>
         <div className="overflow-y-auto border border-l border-border-default p-10">
-          <div className="mb-[3000px]">
+          <div className="">
             <h3 className="mb-2 text-[20px] font-medium ">
               What is the status?
             </h3>

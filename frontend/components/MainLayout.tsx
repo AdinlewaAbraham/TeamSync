@@ -48,6 +48,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     updateUser();
   }, []);
 
+  // const { sidebarWidth, setTaskComponentHeight } = useGlobalContext();
   return (
     <div className="flex flex-col flex-1">
       <nav className="">

@@ -15,12 +15,14 @@ const CreateProjectMOdal = () => {
 
   const handleProjectCreation = async () => {
     setLoading(true);
+    if (!user) return;
     const response = await fetch("/api/project/", {
       method: "POST",
       body: JSON.stringify({
         projectName,
         projectDescription,
         workspaceId: user?.activeWorkspaceId,
+        creatorId: user?._id
       }),
     });
     const data = await response.json();
@@ -50,7 +52,7 @@ const CreateProjectMOdal = () => {
     setLoading(false);
   };
   return (
-    <div className=" flex flex-col gap-y-2 p-4 bg-bg-primary border border-border-default ml-3">
+    <div className=" flex flex-col gap-y-2 p-4 bg-bg-primary border border-border-default ml-3 z-50">
       <h1>create project</h1>
       <input
         type="text"

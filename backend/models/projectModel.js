@@ -24,16 +24,15 @@ const projectSchema = mongoose.Schema({
     type: Object,
     required: [false],
   },
+  isProjectPrivate: { type: Boolean, default: false },
   members: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
-  ],
-  admins: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+      role: {
+        type: String,
+        enum: ["manager", "creator", "member"],
+        default: "member",
+      },
     },
   ],
   projectBrief: {

@@ -8,7 +8,8 @@ const { User } = require("../../models/userModel");
 const editProject = asyncHandler((req, res) => {});
 
 const createProject = asyncHandler(async (req, res) => {
-  const { projectName, projectDescription, workspaceId } = await req.body;
+  const { projectName, projectDescription, workspaceId, creatorId } =
+    await req.body;
 
   const workspace = await Workspace.findById(workspaceId);
   if (!workspace) {
@@ -19,6 +20,7 @@ const createProject = asyncHandler(async (req, res) => {
     projectName: projectName,
     description: projectDescription,
     workspaceId,
+    members: [{ user: creatorId, role: "admin" }],
   });
 
   const newSection = new Section({
@@ -47,19 +49,18 @@ const getProject = asyncHandler(async (req, res) => {
   const project = await Project.findById(projectId)
     .populate({
       path: "sections",
-      model: Section, 
+      model: Section,
       populate: {
         path: "tasks",
         model: Task,
       },
     })
     .populate({
-      path: "members",
+      path: "members.user",
       model: User,
       options: { limit: 20 },
     })
     .exec();
-  console.log(project);
   if (project) {
     res.status(200).json(project);
   } else {

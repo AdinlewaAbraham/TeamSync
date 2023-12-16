@@ -1,5 +1,5 @@
 "use client";
-import CalendarBox from "@/components/project/calendar/CalendarBox";
+import CalendarBox from "@/components/project/tasks/calendar/CalendarBox";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
@@ -11,7 +11,7 @@ import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Task from "@/interfaces/task";
-import CalendarRow from "@/components/project/calendar/CalendarRow";
+import CalendarRow from "@/components/project/tasks/calendar/CalendarRow";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const currentDate = new Date();

@@ -34,7 +34,7 @@ const NavbarItem = ({
   return (
     <Link href={"/project/" + projectId + "/" + lowercaseTitle} key={title}>
       <li
-        className={` flex items-center p-2 text-sm text-muted-dark hover:text-white transition-colors duration-150 cursor-pointer
+        className={` flex cursor-pointer items-center p-2 text-sm text-muted-dark transition-colors duration-150 hover:text-white
       ${isCurrentTab && "border-b-2 text-white"} border-white`}
       >
         <i className="mr-1">{icon}</i>
@@ -72,37 +72,29 @@ const layout = ({
     getProject();
   }, []);
   return (
-    <section className="flex-1 flex flex-col relative overflow-x-hidden">
-      <AnimatePresence>
+    <section className="relative flex flex-1 flex-col overflow-x-hidden">
+      <AnimatePresence initial={false}>
         {showNavbar && (
           <motion.nav
             style={{ willChange: "height, opacity" }}
             initial={{
               height: 0,
               opacity: 0,
-              // padding: "0px",
-              // paddingBottom: "0px",
             }}
             animate={{
               height: "auto",
               opacity: 1,
-              // paddingTop: "16px",
-              // paddingLeft: "16px",
-              // paddingRight: "16px",
-              // paddingBottom: "0px",
             }}
             exit={{
               height: 0,
               opacity: 0,
-              // padding: "0px",
-              // paddingBottom: "0px",
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full p- pb-0 border-b border-border-default flex-shrink-0 overflow-hidden"
+            className="p- w-full flex-shrink-0 overflow-hidden border-b border-border-default pb-0"
           >
             {activeProject && (
-              <div className="flex items-center ml-4 mt-4">
-                <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
+              <div className="ml-4 mt-4 flex items-center">
+                <div className="mr-2 h-10 w-10 rounded-full bg-slate-400" />
                 <h1 className="text-xl">
                   <EditableComp
                     text={activeProject.projectName}
@@ -113,7 +105,7 @@ const layout = ({
             )}
 
             {activeProject && (
-              <ul className="flex rounded-lg ml-4 p-2 pl-0 pb-0">
+              <ul className="ml-4 flex rounded-lg p-2 pb-0 pl-0">
                 {[
                   { title: "Home", icon: <BiHomeAlt2 /> },
                   { title: "Dashboard", icon: <FaChartLine /> },
@@ -147,7 +139,7 @@ const layout = ({
       >
         toggle nav
       </button>
-      <main className="flex-1 relative">{children}</main>
+      <main className="relative flex-1">{children}</main>
     </section>
   );
 };

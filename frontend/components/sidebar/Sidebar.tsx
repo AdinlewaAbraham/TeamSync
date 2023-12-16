@@ -34,12 +34,12 @@ const SidebarComponent = ({
   return (
     <Link href={redirectLink}>
       <div
-        className={` whitespace-nowrap overflow-hidden inline-flex items-center rounded-lg
-        text-sm font-medium transition-colors 
-        focus-visible:outline-none focus-visible:ring-1
-         focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary
-         text-secondary-foreground shadow-sm hover:bg-secondary/80 h-9 px-4 py-2 w-full justify-start
-          hover:bg-menuItem-hover ${
+        className={` focus-visible:ring-ring bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex
+        h-9 w-full items-center 
+        justify-start overflow-hidden
+         whitespace-nowrap rounded-lg px-4 py-2
+         text-sm font-medium shadow-sm transition-colors hover:bg-menuItem-hover focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none
+          disabled:opacity-50 ${
             pathname.startsWith(redirectLink) && "bg-menuItem-active"
           }`}
       >
@@ -64,7 +64,7 @@ const Sidebar = () => {
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -77,10 +77,10 @@ const Sidebar = () => {
   const [referenceElement2, setReferenceElement2] =
     useState<HTMLDivElement | null>(null);
   const [popperElement2, setPopperElement2] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement2, setArrowElement2] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const { styles: styles2, attributes: attributes2 } = usePopper(
     referenceElement2,
@@ -89,7 +89,7 @@ const Sidebar = () => {
       placement: "right",
       strategy: "fixed",
       modifiers: [{ name: "arrow", options: { element: arrowElement2 } }],
-    }
+    },
   );
   useEffect(() => {
     const locallyStoredSidebarWidth = localStorage.getItem("localSidebarWidth");
@@ -103,6 +103,13 @@ const Sidebar = () => {
     }
   }, []);
   useEffect(() => {
+    if (sidebarWidth <= 200) {
+      setSidebarWidth(200);
+      localStorage.setItem("localSidebarWidth", JSON.stringify(200));
+    } else if (sidebarWidth >= 400) {
+      setSidebarWidth(400);
+      localStorage.setItem("localSidebarWidth", JSON.stringify(400));
+    }
     const handleMouseUp = () => {
       document.body.classList.remove("select-none");
       setIsResizing(false);
@@ -111,8 +118,16 @@ const Sidebar = () => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizing) {
         const newWidth = sidebarWidth + (e.clientX - initialX);
-        if (newWidth <= 200) return;
-        if (newWidth >= 400) return;
+        if (newWidth <= 200) {
+          setSidebarWidth(200);
+          localStorage.setItem("localSidebarWidth", JSON.stringify(200));
+          return;
+        }
+        if (newWidth >= 400) {
+          setSidebarWidth(400);
+          localStorage.setItem("localSidebarWidth", JSON.stringify(400));
+          return;
+        }
 
         setSidebarWidth(newWidth);
         localStorage.setItem("localSidebarWidth", JSON.stringify(newWidth));
@@ -157,7 +172,7 @@ const Sidebar = () => {
         const updatedWorkspace = await fetchWorkspace(user.activeWorkspaceId);
         localStorage.setItem(
           user.activeWorkspaceId,
-          JSON.stringify(updatedWorkspace)
+          JSON.stringify(updatedWorkspace),
         );
         setActiveWorkspace(updatedWorkspace);
       }
@@ -189,7 +204,7 @@ const Sidebar = () => {
               }}
               className={`${
                 isResizing ? "bg-accent-blue" : "bg-transparent"
-              } absolute right-0 bg-transparent top-0 bottom-0 w-1.5 cursor-col-resize`}
+              } absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent`}
             />
             <div className="border-b-[1px] border-border-default p-4">
               <SidebarComponent

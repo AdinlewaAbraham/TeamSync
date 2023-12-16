@@ -20,7 +20,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <html lang="en" className="h-full w-full ">
       <body className={`${inter.className} flex-1`}>

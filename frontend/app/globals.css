@@ -46,6 +46,12 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+
+:root {
+  color-scheme: dark;
+}
+
 .scrollBar::-webkit-scrollbar {
   width: 10px;
   background-color: transparent;

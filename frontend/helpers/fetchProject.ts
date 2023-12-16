@@ -6,6 +6,7 @@ export default async function fetchProject(id: string) {
       method: "GET",
     });
     const data = await response.json();
+    console.log(data)
     await redirectToLogin(response.status, data.error);
     // if (!response.ok) {
     //   throw new Error(`HTTP error! Status: ${response.status}`);

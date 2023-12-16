@@ -11,18 +11,19 @@ import {
   convertFromRaw,
   convertToRaw,
 } from "draft-js";
-import "@/components/project/editor/rich.css";
+import "./rich.css";
 import { useGlobalContext } from "@/context/GeneralContext";
 
 const ProjectDescEditor = () => {
   const [inEditMode, setInEditMode] = useState(false);
   const emptyContentStateJSON = EditorState.createEmpty();
   const { activeProject } = useGlobalContext();
+
+  const contentStateJSONDefault = false
+    ? activeProject?.description
+    : convertToRaw(EditorState.createEmpty().getCurrentContent());
   const [contentStateJSON, setContentStateJSON] =
-    useState<RawDraftContentState>(
-      (activeProject?.description as RawDraftContentState) ||
-        convertToRaw(EditorState.createEmpty().getCurrentContent())
-    );
+    useState<RawDraftContentState>(contentStateJSONDefault as RawDraftContentState);
 
   const contentState = convertFromRaw(contentStateJSON);
   const editorState = EditorState.createWithContent(contentState);
@@ -66,8 +67,8 @@ const ProjectDescEditor = () => {
         ) : (
           <div className="border border-transparent">
             <div
-              className="RichEditorProjectDesc p-3 hover:border-border-default border
-            border-transparent cursor-text rounded-lg min-h-[131px] box-content"
+              className="RichEditorProjectDesc box-content min-h-[131px] cursor-text
+            rounded-lg border border-transparent p-3 hover:border-border-default"
               onClick={() => {
                 setInEditMode(true);
                 console.log("clicked on div");

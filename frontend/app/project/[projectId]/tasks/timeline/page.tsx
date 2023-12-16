@@ -5,13 +5,13 @@ import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
-import TimelineVerticalBars from "@/components/project/timeline/TimelineVerticalBars";
-import HourHorizontalColums from "@/components/project/timeline/HorizontalRowsForTaskMapping";
+import TimelineVerticalBars from "@/components/project/tasks/timeline/TimelineVerticalBars";
+import HourHorizontalColums from "@/components/project/tasks/timeline/HorizontalRowsForTaskMapping";
 import EditableComp from "@/components/EditableComp";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
-import SectionHorizontalRow from "@/components/project/timeline/SectionHorizontalRow";
+import SectionHorizontalRow from "@/components/project/tasks/timeline/SectionHorizontalRow";
 import Section from "@/interfaces/section";
-import TimelineSideBarItem from "@/components/project/timeline/TimelineSideBarItem";
+import TimelineSideBarItem from "@/components/project/tasks/timeline/TimelineSideBarItem";
 
 export interface TimelineSectionObj {
   [key: string]: {
