@@ -139,7 +139,7 @@ const layout = ({
       >
         toggle nav
       </button>
-      <main className="relative flex-1">{children}</main>
+      <main className="relative flex h-full flex-1 flex-col">{children}</main>
     </section>
   );
 };

@@ -16,7 +16,8 @@ curent task: finish project home/overview page
 
 issues: 
     1. board section tooltip not working properly 
-    2. add desc for add member dropdown                      
+    2. add desc for add member dropdown        
+    3. make task components reuseable              
 
 
 look up fc icons for empty key resources comp

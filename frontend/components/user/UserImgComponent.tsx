@@ -26,7 +26,7 @@ const UserImgComponent = ({
           <FaUserAlt />
         </i>
       ) : (
-        <img src={src} alt="" onError={() => setDidImgFailToLoad(true)} />
+        <img src={src} alt="" height={height} width={width} onError={() => setDidImgFailToLoad(true)} />
       )}
     </div>
   );

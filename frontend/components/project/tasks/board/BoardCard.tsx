@@ -1,6 +1,6 @@
 import List from "@/interfaces/section";
 import React, { useEffect, useRef, useState } from "react";
-import SidebarIconComponent from "../sidebar/SidebarIconComponent";
+import SidebarIconComponent from "../../../sidebar/SidebarIconComponent";
 import { IoMdAdd } from "react-icons/io";
 import { BsThreeDots } from "react-icons/bs";
 import { MdClose } from "react-icons/md";
@@ -8,7 +8,7 @@ import { fetchWithAuth } from "@/app/api/fetchWithAuth";
 import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
-import RenderStatus, { RenderPriority } from "../ConditionalRender";
+import RenderStatus, { RenderPriority } from "../../../ConditionalRender";
 import { usePopper } from "react-popper";
 import deleteSection from "@/helpers/deleteSection";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
@@ -30,7 +30,7 @@ const BoardCard = ({
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
   const { taskComponentHeight } = useGlobalContext();
@@ -53,7 +53,7 @@ const BoardCard = ({
       section.tasks,
       startDate,
       lastDate,
-      0
+      0,
     );
 
     console.log("this is rownumber " + rowNumber, section.tasks);
@@ -123,10 +123,10 @@ const BoardCard = ({
   if (typeof localSection === "string") return <>loading this is a string </>;
   return (
     <div>
-      <div className="bg-bg-primary rounded-lg w-[280px] py-2 mr-2 overflow-auto flex-1 flex flex-col max-h-full">
-        <header className="flex justify-between items-center px-4 py-2">
+      <div className="mr-2 flex max-h-full w-[280px] flex-1 flex-col overflow-auto rounded-lg bg-bg-primary py-2">
+        <header className="flex items-center justify-between px-4 py-2">
           <h1>{localSection.sectionName}</h1>
-          <div className="flex items-start addTaskComponent">
+          <div className="addTaskComponent flex items-start">
             <div
               onClick={() => {
                 setShowAddTaskComponent(!showAddTaskComponent);
@@ -153,8 +153,8 @@ const BoardCard = ({
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="[&>div]:px-4  [&>div]:py-2 hover:[&>div]:bg-menuItem-hover [&>div]:cursor-pointer [&>div]: [&>div]:  
-              bg-bg-primary border border-border-default rounded-lg "
+                className="[&>div]:  [&>div]: rounded-lg border border-border-default bg-bg-primary  
+              [&>div]:cursor-pointer [&>div]:px-4 [&>div]:py-2 hover:[&>div]:bg-menuItem-hover "
               >
                 <div>rename section</div>
                 <div onClick={() => deleteSectionFunc()} className="">
@@ -165,7 +165,7 @@ const BoardCard = ({
             )}
           </div>
         </header>
-        <div className={`scrollBar flex-1 overflow-y-auto max-h-full `}>
+        <div className={`scrollBar max-h-full flex-1 overflow-y-auto `}>
           <ul>
             {localSection.tasks.map((task, index) => (
               <li key={index}>
@@ -173,28 +173,28 @@ const BoardCard = ({
                   <>loading</>
                 ) : (
                   <div
-                    className="px-2 mb-2 "
+                    className="mb-2 px-2 "
                     onClick={() => console.log(taskComponentHeight)}
                   >
                     <div
-                      className=" px-2 py-4  rounded-lg hover:bg-menuItem-hover cursor-pointer
-                     flex flex-col border border-border-default"
+                      className=" flex cursor-pointer  flex-col rounded-lg border
+                     border-border-default px-2 py-4 hover:bg-menuItem-hover"
                     >
                       <p className="mb-4 leading-none"> {task.taskName}</p>
                       <div className="flex items-center ">
-                        <div className=" [&>div]:rounded-xl [&>div]:text-sm [&>div]: text-black [&>div]: flex items-center">
-                          <div className="mr-1 [&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                        <div className=" [&>div]: [&>div]: flex items-center text-black [&>div]:rounded-xl [&>div]:text-sm">
+                          <div className="mr-1 [&>div]:mb-4 [&>div]:rounded-xl [&>div]:px-2 [&>div]:text-xs">
                             <RenderPriority Priority={task.Priority} />
                           </div>
 
-                          <div className="[&>div]:px-2 [&>div]:rounded-xl [&>div]:text-xs [&>div]:mb-4">
+                          <div className="[&>div]:mb-4 [&>div]:rounded-xl [&>div]:px-2 [&>div]:text-xs">
                             <RenderStatus status={task.status} />
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center">
-                        <div className="w-5 h-5 bg-slate-600 rounded-full mr-2" />
-                        <div className="text-muted-light text-xs">
+                        <div className="mr-2 h-5 w-5 rounded-full bg-slate-600" />
+                        <div className="text-xs text-muted-light">
                           today - sep 19
                         </div>
                       </div>
@@ -205,14 +205,14 @@ const BoardCard = ({
             ))}
           </ul>
         </div>
-        <footer className="px-2 addTaskComponent">
+        <footer className="addTaskComponent px-2">
           {showAddTaskComponent ? (
-            <div className="text-base py-2">
+            <div className="py-2 text-base">
               <textarea
                 cols={30}
                 rows={10}
                 autoFocus
-                className="text-input focus:ring-0 bg-bg-secondary w-full p-2 h-[90px] resize-none"
+                className="text-input h-[90px] w-full resize-none bg-bg-secondary p-2 focus:ring-0"
                 placeholder="provide task name"
                 onChange={(e) => setTaskName(e.target.value)}
                 value={taskName}
@@ -228,7 +228,7 @@ const BoardCard = ({
                   add task
                 </button>
                 <i
-                  className="text-icon-default hover:text-white transition-colors duration-150 text-2xl p-1 cursor-pointer"
+                  className="cursor-pointer p-1 text-2xl text-icon-default transition-colors duration-150 hover:text-white"
                   onClick={() => setShowAddTaskComponent(false)}
                 >
                   <MdClose />
@@ -237,7 +237,7 @@ const BoardCard = ({
             </div>
           ) : (
             <div
-              className="flex py-2 px-2 items-center mt-2 hover:bg-menuItem-hover rounded-lg cursor-pointer"
+              className="mt-2 flex cursor-pointer items-center rounded-lg px-2 py-2 hover:bg-menuItem-hover"
               onClick={() => setShowAddTaskComponent(true)}
             >
               <i className="mr-2">

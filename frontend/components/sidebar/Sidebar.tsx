@@ -19,6 +19,7 @@ import { usePopper } from "react-popper";
 import CreateProjectMOdal from "./project/CreateProjectModal";
 import SortOptions from "./project/SortOptions";
 import WorkspacePicker from "./WorkspacePicker";
+import { GoInbox } from "react-icons/go";
 
 const SidebarComponent = ({
   menuName,
@@ -209,7 +210,7 @@ const Sidebar = () => {
             <div className="border-b-[1px] border-border-default p-4">
               <SidebarComponent
                 menuName="Home"
-                redirectLink="/home"
+                redirectLink={"/home/" + user?._id}
                 iconComp={<BiHomeAlt2 />}
               />
               <SidebarComponent
@@ -218,9 +219,9 @@ const Sidebar = () => {
                 iconComp={<LuClipboardCheck />}
               />
               <SidebarComponent
-                menuName="Dashboards"
-                redirectLink="/dashboards"
-                iconComp={<FaChartLine />}
+                menuName="Inbox"
+                redirectLink="/inbox"
+                iconComp={<GoInbox />}
               />
             </div>
             <DropDownComponent

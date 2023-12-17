@@ -1,8 +1,14 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
-import React, { ReactElement, ReactNode, useEffect } from "react";
+import {
+  redirect,
+  usePathname,
+  useRouter,
+  useSelectedLayoutSegment,
+} from "next/navigation";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 const NavbarItem = ({
   title,
   activeWorkspaceId,
@@ -19,7 +25,7 @@ const NavbarItem = ({
       key={title}
     >
       <li
-        className={` p-2 text-muted-dark hover:text-white transition-colors duration-150 cursor-pointer
+        className={` cursor-pointer p-2 text-muted-dark transition-colors duration-150 hover:text-white
       ${isCurrentTab && "border-b-2 text-white"} border-white`}
       >
         {title}
@@ -35,7 +41,7 @@ const layout = ({
   children: ReactNode;
   params: { workspaceId: string };
 }) => {
-  const { user } = useGlobalContext();
+  const { user, activeWorkspace } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
     const checkWorkspaceValidity = () => {
@@ -53,26 +59,57 @@ const layout = ({
 
     checkWorkspaceValidity();
   }, [user, params.workspaceId]);
-
+  const [showNavbar, setShowNavbar] = useState(true);
   return (
-    <section>
-      <nav className="w-full p-4 pb-0 border-b border-border-default">
-        <div className="flex items-center">
-          <div className="h-10 w-10 bg-slate-400 rounded-full mr-2" />
-          <h1 className="text-xl">workspace name here</h1>
-        </div>
-        <ul
-          className="flex rounded-lg p-2 pl-0 pb-0
+    <section className="relative flex flex-1 flex-col">
+      <AnimatePresence initial={false}>
+        {showNavbar && (
+          <motion.nav
+            initial={{
+              height: 0,
+              opacity: 0,
+            }}
+            animate={{
+              height: "auto",
+              opacity: 1,
+            }}
+            exit={{
+              height: 0,
+              opacity: 0,
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full border-b border-border-default overflow-hidden"
+          >
+            <div className="m-4 mb-0">
+              <div className="flex items-center">
+                <div className="mr-2 h-10 w-10 rounded-full bg-slate-400" />
+                <h1 className="text-xl">{activeWorkspace?.name}</h1>
+              </div>
+              <ul
+                className="mt-2 flex rounded-lg
         "
-        >
-          {["Home", "Calendar", "Dashboard"].map((item) => (
-            <div key={item}>
-              <NavbarItem title={item} activeWorkspaceId={params.workspaceId} />
+              >
+                {["Home", "Calendar", "Dashboard"].map((item) => (
+                  <div key={item}>
+                    <NavbarItem
+                      title={item}
+                      activeWorkspaceId={params.workspaceId}
+                    />
+                  </div>
+                ))}
+              </ul>
             </div>
-          ))}
-        </ul>
-      </nav>
-      <main className=" h-[calc(100dvh-200px)]">{children}</main>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
+      <button
+        onClick={() => setShowNavbar(!showNavbar)}
+        className="absolute right-5 top-5 z-50"
+      >
+        toggle nav
+      </button>
+      <main className="flex h-full flex-1 relative">{children}</main>
     </section>
   );
 };

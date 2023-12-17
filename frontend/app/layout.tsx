@@ -26,7 +26,7 @@ export default function RootLayout({
         <GeneralContextProvider>
           {pathname.startsWith("/login") ||
           pathname.startsWith("/signup") ||
-          pathname.startsWith("/home") ||
+          // pathname.startsWith("/home") ||
           pathname === "/" ? (
             <>{children}</>
           ) : (

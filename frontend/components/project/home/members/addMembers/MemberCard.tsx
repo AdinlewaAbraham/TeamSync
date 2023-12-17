@@ -1,10 +1,9 @@
-import UserImgComponent from "@/components/UserImgComponent";
+import UserImgComponent from "@/components/user/UserImgComponent";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { Member } from "@/interfaces/project";
 import User from "@/interfaces/user";
 import React, { useState } from "react";
 import { MemberRoleSwitch } from "./MemberRoleSwitch";
-
 
 const MemberCard = ({ member }: { member: Member }) => {
   return (

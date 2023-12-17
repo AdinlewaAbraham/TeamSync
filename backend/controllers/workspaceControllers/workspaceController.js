@@ -9,9 +9,16 @@ const getWorkspace = asyncHandler(async (req, res) => {
       path: "members",
       options: { limit: 5 },
     })
-    .populate("projects")
+    .populate({
+      path: "projects",
+      model: Project,
+      populate: {
+        path: "members.user",
+        model: User,
+        options: { limit: 3 },
+      },
+    })
     .exec();
-
   res.status(200).json(workspace);
 });
 const createWorkspace = asyncHandler(async (req, res) => {

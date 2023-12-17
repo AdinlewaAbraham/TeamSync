@@ -1,5 +1,5 @@
 "use client";
-import BoardCard from "@/components/board/BoardCard";
+import BoardCard from "@/components/project/tasks/board/BoardCard";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
@@ -89,21 +89,17 @@ const page = ({ params }: { params: { projectId: string } }) => {
 
   return (
     <div
-      className="flex relative flex-1 overflow-auto overflow-x  px-8 "
+      className="overflow-x relative flex flex-1 overflow-auto  px-8 "
       id="overflowElement"
       // style={{ width: `calc(100vw - ${sidebarWidth}px)` }}
     >
       {activeProject.sections.map((section, index) => (
-          <BoardCard
-            section={section}
-            projectId={params.projectId}
-            key={index}
-          />
+        <BoardCard section={section} projectId={params.projectId} key={index} />
       ))}
       <div>
         {showAddSectionComponent ? (
-          <div className="w-[280px] px-2 py-2 pt-0 flex flex-col rounded-lg bg-bg-primary addSectionComponent">
-            <div className="h-[60px] flex items-center">
+          <div className="addSectionComponent flex w-[280px] flex-col rounded-lg bg-bg-primary px-2 py-2 pt-0">
+            <div className="flex h-[60px] items-center">
               <input
                 type="text"
                 autoFocus
@@ -113,7 +109,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
               />
             </div>
 
-            <div className="overflow-hidden flex items-center mb-1">
+            <div className="mb-1 flex items-center overflow-hidden">
               <button
                 className="button-default accent-color mr-2"
                 onClick={() => {
@@ -123,7 +119,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 Add section
               </button>
               <i
-                className="text-icon-default hover:text-white transition-colors duration-150 text-2xl p-1 cursor-pointer"
+                className="cursor-pointer p-1 text-2xl text-icon-default transition-colors duration-150 hover:text-white"
                 onClick={() => setShowAddSectionComponent(false)}
               >
                 <MdClose />
@@ -132,7 +128,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
           </div>
         ) : (
           <div
-            className="w-[280px] px-4 py-2  rounded-lg bg-bg-primary flex items-center h-[60px] hover:bg-menuItem-hover cursor-pointer addSectionComponent"
+            className="addSectionComponent flex h-[60px]  w-[280px] cursor-pointer items-center rounded-lg bg-bg-primary px-4 py-2 hover:bg-menuItem-hover"
             onClick={() => setShowAddSectionComponent(true)}
           >
             <i className="mr-2">
