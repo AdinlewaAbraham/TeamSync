@@ -1,9 +1,16 @@
 import { useGlobalContext } from "@/context/GeneralContext";
-import React from "react";
+import React, { useEffect } from "react";
 import { CiCalendar } from "react-icons/ci";
 
-const UserHomePageHeaderComponent = ({ userId }: { userId: string }) => {
+const UserHomePageHeaderComponent = ({
+  userId,
+  setShowAddWidgetSideBar,
+}: {
+  userId: string;
+  setShowAddWidgetSideBar: (c: boolean) => void;
+}) => {
   const { user } = useGlobalContext();
+
   return (
     <div className="w-full">
       <h1 className="py-8 text-lg font-semibold">Home</h1>
@@ -23,7 +30,10 @@ const UserHomePageHeaderComponent = ({ userId }: { userId: string }) => {
           </div>
           <div>{9} tasks completed</div>
           <div className="">{0} collabs</div>
-          <button className="rounded-lg border border-border-default px-3 py-1.5 ">
+          <button
+            className="rounded-lg border border-border-default px-3 py-1.5 "
+            onClick={() => setShowAddWidgetSideBar(true)}
+          >
             Customize
           </button>
         </div>

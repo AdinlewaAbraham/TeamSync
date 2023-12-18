@@ -6,7 +6,6 @@ import { Inter } from "next/font/google";
 import { GeneralContextProvider } from "@/context/GeneralContext";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
 const inter = Inter({ subsets: ["latin"] });
 
 // export const metadata: Metadata = {
@@ -30,7 +29,9 @@ export default function RootLayout({
           pathname === "/" ? (
             <>{children}</>
           ) : (
-            <MainLayout>{children}</MainLayout>
+            <MainLayout>
+              {children}
+            </MainLayout>
           )}
         </GeneralContextProvider>
       </body>

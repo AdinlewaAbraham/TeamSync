@@ -56,7 +56,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
       </nav>
       <div className="flex flex-1 ">
         <Sidebar />
-        <main className="bg-bg-secondary flex-1 flex overflow-y-auto">
+        <main className="bg-bg-secondary flex-1 flex overflow-y-auto relative">
           {children}
           {showCreateWorkspaceModal && <CreateWorkspaceModal />}
         </main>
