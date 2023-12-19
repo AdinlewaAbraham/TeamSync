@@ -7,7 +7,7 @@ import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineVerticalBars from "@/components/project/tasks/timeline/TimelineVerticalBars";
 import HourHorizontalColums from "@/components/project/tasks/timeline/HorizontalRowsForTaskMapping";
-import EditableComp from "@/components/EditableComp";
+import EditableComp from "@/components/others/EditableComp";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import SectionHorizontalRow from "@/components/project/tasks/timeline/SectionHorizontalRow";
 import Section from "@/interfaces/section";
@@ -111,7 +111,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       console.log(timelineSectionObj);
       localStorage.setItem(
         "timelineSectionObj",
-        JSON.stringify(timelineSectionObj)
+        JSON.stringify(timelineSectionObj),
       );
     }
   }, [timelineSectionObj]);
@@ -151,7 +151,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     const firstMonth = months[0];
     const yearOfFirstMonth = firstMonth.year;
     const monthOfFirstMonth = monthNames.findIndex(
-      (monthName) => firstMonth.name === monthName
+      (monthName) => firstMonth.name === monthName,
     );
 
     const prevMonth = getPrevMonthDays(yearOfFirstMonth, monthOfFirstMonth);
@@ -162,7 +162,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     const lastMonth = months[months.length - 1];
     const yearOfFirstMonth = lastMonth.year;
     const monthOfFirstMonth = monthNames.findIndex(
-      (monthName) => lastMonth.name === monthName
+      (monthName) => lastMonth.name === monthName,
     );
 
     const nextMonth = getNextMonthDays(yearOfFirstMonth, monthOfFirstMonth);
@@ -183,10 +183,10 @@ const page = ({ params }: { params: { projectId: string } }) => {
   });
   return (
     <div>
-      <nav className="flex justify-between items-center py-2 text-sm  border-t border-border-default">
-        <div className="h-9 flex justify-center items-center"> add task</div>
+      <nav className="flex items-center justify-between border-t border-border-default  py-2 text-sm">
+        <div className="flex h-9 items-center justify-center"> add task</div>
       </nav>
-      <div className="border-t border-border-default h-full relative flex">
+      <div className="relative flex h-full border-t border-border-default">
         <div className="w-[200px] pt-[48px]">
           <div className="border-t border-border-default">
             {activeProject.sections.map((section) => (
@@ -200,12 +200,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
         </div>
         <div className="w-[900px] ">
           <header
-            className="flex relative overflow-x-hidden border-b border-border-default pr-[20px]"
+            className="relative flex overflow-x-hidden border-b border-border-default pr-[20px]"
             ref={headerRef}
           >
             {months.map((month, index) => (
-              <div className="flex flex-col relative" key={index}>
-                <div className="max-w-max px-2 sticky left-0 ">
+              <div className="relative flex flex-col" key={index}>
+                <div className="sticky left-0 max-w-max px-2 ">
                   {month.name} {month.year}
                 </div>
                 <div className="flex">
@@ -228,8 +228,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
                        !highlightDate &&
                        "bg-bg-primary"
                      } ${
-                          highlightDate && "bg-accent-blue"
-                        } flex items-center justify-center `}
+                       highlightDate && "bg-accent-blue"
+                     } flex items-center justify-center `}
                         onClick={() => console.log(day)}
                       >
                         {index + 1}
@@ -241,12 +241,12 @@ const page = ({ params }: { params: { projectId: string } }) => {
             ))}
           </header>
           <div
-            className="flex overflow-x-scroll relative  overflow-y-auto h-[calc(100dvh-340px)]"
+            className="relative flex h-[calc(100dvh-340px)]  overflow-y-auto overflow-x-scroll"
             ref={timelineRef}
           >
             {months.map((month) => (
               <div key={month.name + month.year} className="">
-                <div className="flex relative">
+                <div className="relative flex">
                   <div className="absolute z-10 w-full">
                     {activeProject.sections.map((section) => {
                       if (typeof section !== "object") return;
@@ -257,7 +257,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                           projectId={params.projectId}
                           setSelectedDateObject={setSelectedDateObject}
                           month={monthNames.findIndex(
-                            (monthname) => monthname === month.name
+                            (monthname) => monthname === month.name,
                           )}
                           year={month.year}
                           taskWithDateRange={taskWithDateRange}

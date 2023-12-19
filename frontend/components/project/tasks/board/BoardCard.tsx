@@ -8,7 +8,7 @@ import { fetchWithAuth } from "@/app/api/fetchWithAuth";
 import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
-import RenderStatus, { RenderPriority } from "../../../ConditionalRender";
+import RenderStatus, { RenderPriority } from "../ConditionalRender";
 import { usePopper } from "react-popper";
 import deleteSection from "@/helpers/deleteSection";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";

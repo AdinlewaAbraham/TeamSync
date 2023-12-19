@@ -1,6 +1,6 @@
 "use client";
 import "./globals.css";
-import MainLayout from "@/components/MainLayout";
+import MainLayout from "@/components/others/MainLayout";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GeneralContextProvider } from "@/context/GeneralContext";
@@ -29,9 +29,7 @@ export default function RootLayout({
           pathname === "/" ? (
             <>{children}</>
           ) : (
-            <MainLayout>
-              {children}
-            </MainLayout>
+            <MainLayout>{children}</MainLayout>
           )}
         </GeneralContextProvider>
       </body>

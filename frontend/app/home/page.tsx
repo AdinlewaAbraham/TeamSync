@@ -1,10 +1,10 @@
 "use client";
-import MainLayout from "@/components/MainLayout";
+import MainLayout from "@/components/others/MainLayout";
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { useGlobalContext } from "@/context/GeneralContext";
 import User from "@/interfaces/user";
-import LoadingComponent from "@/components/LoadingComponent";
+import LoadingComponent from "@/components/others/LoadingComponent";
 import fetchUser from "@/helpers/fetchUser";
 import { useRouter } from "next/navigation";
 

@@ -8,7 +8,9 @@ import Project from "@/interfaces/project";
 import Section from "@/interfaces/section";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
-import RenderStatus, { RenderPriority } from "@/components/ConditionalRender";
+import RenderStatus, {
+  RenderPriority,
+} from "@/components/project/tasks/ConditionalRender";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { FiCheck } from "react-icons/fi";
@@ -72,7 +74,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -83,10 +85,10 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
   const [referenceElement2, setReferenceElement2] =
     useState<HTMLDivElement | null>(null);
   const [popperElement2, setPopperElement2] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement2, setArrowElement2] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const { styles: styles2, attributes: attributes2 } = usePopper(
     referenceElement2,
@@ -94,19 +96,19 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
     {
       placement: "bottom",
       modifiers: [{ name: "arrow", options: { element: arrowElement2 } }],
-    }
+    },
   );
   return (
     <ul
-      className="w-full flex justify-between [&>li]:w-[20%] border-t
-     border-border-default [&>li]:flex [&>li]:items-center h-12
-    [&>li]:pr-2 text-sm"
+      className="flex h-12 w-full justify-between border-t
+     border-border-default text-sm [&>li]:flex [&>li]:w-[20%]
+    [&>li]:items-center [&>li]:pr-2"
       key={task._id}
       onClick={() => console.log(task)}
     >
       <li className="pl-8">{task.taskName}</li>
       <li className="flex items-center">
-        <div className="w-5 h-5 rounded-full bg-slate-600 mr-2" />
+        <div className="mr-2 h-5 w-5 rounded-full bg-slate-600" />
         {"debo"}
       </li>
       <li>
@@ -114,8 +116,8 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
       </li>
       <li className="">
         <div
-          className="py-1 h-9 border px-2 text-sm w-full rounded-lg border-border-default relative
-          flex items-center justify-between cursor-pointer hover:bg-menuItem-hover"
+          className="relative flex h-9 w-full cursor-pointer items-center justify-between rounded-lg border
+          border-border-default px-2 py-1 text-sm hover:bg-menuItem-hover"
           ref={setReferenceElement}
           onClick={() => {
             setShowPriorityMenu(!showPriorityMenu);
@@ -125,7 +127,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
             <i className="mr-2">{priorityObj[task.Priority].icon}</i>
             {priorityObj[task.Priority].text}
           </div>
-          <i className="text-muted-dark ml-2">
+          <i className="ml-2 text-muted-dark">
             <IoIosArrowDown />
           </i>
           {showPriorityMenu && (
@@ -133,15 +135,15 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
-              className="bg-bg-secondary w-[calc(100%+1px)] z-50 border border-border-default rounded-lg"
+              className="z-50 w-[calc(100%+1px)] rounded-lg border border-border-default bg-bg-secondary"
             >
               {Object.values(priorityObj).map((priority) => (
                 <div
-                  className="py-1 h-9 px-2 text-sm  
-                  flex items-center w-full"
+                  className="flex h-9 w-full items-center  
+                  px-2 py-1 text-sm"
                   key={priority.text}
                 >
-                  <div className="flex items-center  py-1 px-2 cursor-pointer hover:bg-menuItem-hover w-full rounded-lg">
+                  <div className="flex w-full  cursor-pointer items-center rounded-lg px-2 py-1 hover:bg-menuItem-hover">
                     <i className="mr-2">{priority.icon}</i>
                     {priority.text}
                   </div>
@@ -153,8 +155,8 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
       </li>
       <li className="[&>div]:px-2 [&>div]:text-sm ">
         <div
-          className="py-1 border h-9 px-2 text-sm rounded-lg border-border-default w-full relative
-        justify-between flex items-center cursor-pointer hover:bg-menuItem-hover"
+          className="relative flex h-9 w-full cursor-pointer items-center justify-between rounded-lg border
+        border-border-default px-2 py-1 text-sm hover:bg-menuItem-hover"
           ref={setReferenceElement2}
           onClick={() => {
             setShowStatusMenu(!showStatusMenu);
@@ -165,7 +167,7 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
 
             {statusObj[task.status].text}
           </div>
-          <i className="text-muted-dark ml-2">
+          <i className="ml-2 text-muted-dark">
             <IoIosArrowDown />
           </i>
           {showStatusMenu && (
@@ -173,15 +175,15 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
               ref={setPopperElement2}
               style={styles2.popper}
               {...attributes2.popper}
-              className="bg-bg-secondary w-[calc(100%+3px)] z-50 border border-border-default rounded-lg"
+              className="z-50 w-[calc(100%+3px)] rounded-lg border border-border-default bg-bg-secondary"
             >
               {Object.values(statusObj).map((status, index) => (
                 <div
-                  className="py-1 px-2 text-sm
-                  flex items-center w-full"
+                  className="flex w-full items-center
+                  px-2 py-1 text-sm"
                   key={status.text + index}
                 >
-                  <div className=" flex items-center  py-1 px-2 cursor-pointer hover:bg-menuItem-hover w-full rounded-lg">
+                  <div className=" flex w-full  cursor-pointer items-center rounded-lg px-2 py-1 hover:bg-menuItem-hover">
                     <i className="mr-2">{status.icon}</i>
                     {status.text}
                   </div>
@@ -254,7 +256,7 @@ const TableDropdown = ({
     >
       <header
         onClick={() => setShowMainComponent(!showMainComponent)}
-        className="flex items-center cursor-pointer py-2 font-medium h-12"
+        className="flex h-12 cursor-pointer items-center py-2 font-medium"
       >
         <i
           className={` px-2 ${
@@ -278,23 +280,23 @@ const TableDropdown = ({
 
             {showAddTaskComponent ? (
               <div
-                className="addTaskInput w-full flex [&>li]:w-[20%] border-t
-                   border-border-default [&>li]:flex [&>li]:items-center [&>li]:py-1
-                  [&>li]:pr-2 text-sm h-12"
+                className="addTaskInput flex h-12 w-full border-t
+                   border-border-default text-sm [&>li]:flex [&>li]:w-[20%]
+                  [&>li]:items-center [&>li]:py-1 [&>li]:pr-2"
               >
                 <input
                   type="text"
                   autoFocus
-                  className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
+                  className="text-input h-full w-full border-none bg-transparent pl-8 focus:ring-0"
                   placeholder="Write a task name"
                   onChange={(e) => setTaskName(e.target.value)}
                 />
               </div>
             ) : (
               <div
-                className="w-full flex border-t
-                   border-border-default [&>li]:py-1
-                  [&>li]:pr-2 text-sm pl-8 h-12 items-center text-muted-dark hover:bg-menuItem-hover cursor-pointer  "
+                className="flex h-12 w-full
+                   cursor-pointer items-center
+                  border-t border-border-default pl-8 text-sm text-muted-dark hover:bg-menuItem-hover [&>li]:py-1 [&>li]:pr-2  "
                 onClick={() => setShowAddTaskComponent(true)}
               >
                 <i className="mr-2">
@@ -390,16 +392,16 @@ const page = ({ params }: { params: { projectId: string } }) => {
   };
   if (!activeProject?.sections)
     return (
-      <div className="flex-1 flex justify-center items-center">
+      <div className="flex flex-1 items-center justify-center">
         loading state
       </div>
     );
   return (
-    <div className="pl-8 flex-1 flex flex-col">
+    <div className="flex flex-1 flex-col pl-8">
       <header className="w-full  bg-inherit ">
         <ul
-          className="flex gutter w-full justify-between bg-bg-secondary [&>li]:w-[20%] border border-border-default rounded-t-lg 
-         [&>li]:py-2 text-sm text-muted-dark"
+          className="gutter flex w-full justify-between rounded-t-lg border border-border-default bg-bg-secondary text-sm 
+         text-muted-dark [&>li]:w-[20%] [&>li]:py-2"
         >
           <li className="pl-2">Task name</li>
           <li> Assignee</li>
@@ -408,7 +410,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
           <li> Status </li>
         </ul>
       </header>
-      <div className="  overflow-y-auto max-h-full">
+      <div className="  max-h-full overflow-y-auto">
         {activeProject.sections.map((section, index) => (
           <TableDropdown
             section={section}
@@ -417,10 +419,10 @@ const page = ({ params }: { params: { projectId: string } }) => {
           />
         ))}
       </div>
-      <footer className="w-full border  border-border-default rounded-b-lg ">
+      <footer className="w-full rounded-b-lg  border border-border-default ">
         {showAddSectionComponent ? (
           <div
-            className="py-2 h-12 pl-2 flex items-center hover:bg-menuItem-hover cursor-pointer text-muted-dark"
+            className="flex h-12 cursor-pointer items-center py-2 pl-2 text-muted-dark hover:bg-menuItem-hover"
             onClick={() => setShowAddSectionComponent(false)}
           >
             <i className="mr-2">
@@ -429,11 +431,11 @@ const page = ({ params }: { params: { projectId: string } }) => {
             Add section
           </div>
         ) : (
-          <div className="addSectionInput w-full flex text-sm h-12">
+          <div className="addSectionInput flex h-12 w-full text-sm">
             <input
               type="text"
               autoFocus
-              className="bg-transparent h-full w-full text-input focus:ring-0 pl-8 border-none"
+              className="text-input h-full w-full border-none bg-transparent pl-8 focus:ring-0"
               placeholder="Write a task name"
               onChange={(e) => setSectionName(e.target.value)}
               onBlur={async () => await addSection()}

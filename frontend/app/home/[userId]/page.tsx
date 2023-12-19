@@ -1,8 +1,7 @@
 "use client";
 import UserHomePageHeaderComponent from "@/components/user/home/UserHomePageHeaderComponent";
-import WidgetComponent, {
-  WidgetRenderSettings,
-} from "@/components/user/home/WidgetComponent";
+import WidgetComponent from "@/components/user/home/WidgetComponent";
+import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
 import AddWidgetSidebar from "@/components/user/home/widgets/AddWidgetSidebar";
 import { AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
@@ -34,8 +33,8 @@ const page = () => {
           />
         )}
       </AnimatePresence>
-      <div className="flex w-full justify-center overflow-y-auto">
-        <div className="relative flex w-full max-w-6xl flex-col gap-6 px-6">
+      <div className="flex h-full w-full justify-center overflow-y-auto">
+        <div className="relative flex w-full max-w-6xl flex-1 flex-col gap-6 px-6">
           <UserHomePageHeaderComponent
             userId={typeof userId === "object" ? userId[0] : userId}
             setShowAddWidgetSideBar={setShowAddWidgetSideBar}

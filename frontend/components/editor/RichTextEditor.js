@@ -21,6 +21,7 @@ import {
 } from "react-icons/lu";
 import { RxDividerVertical } from "react-icons/rx";
 import { usePopper } from "react-popper";
+import { PiCrownSimpleBold } from "react-icons/pi";
 
 const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
   Draft;
@@ -30,6 +31,7 @@ export default class RichEditorProjectDesc extends React.Component {
     super(props);
     this.state = {
       editorState: this.props.editorState || EditorState.createEmpty(),
+      isFocused: false,
     };
     this.focus = () => this.refs.editor.focus();
     this.onChange = (editorState) => this.setState({ editorState });
@@ -51,7 +53,7 @@ export default class RichEditorProjectDesc extends React.Component {
       const newEditorState = RichUtils.onTab(
         e,
         this.state.editorState,
-        4 /* maxDepth */
+        4 /* maxDepth */,
       );
       if (newEditorState !== this.state.editorState) {
         this.onChange(newEditorState);
@@ -65,11 +67,13 @@ export default class RichEditorProjectDesc extends React.Component {
   }
   _toggleInlineStyle(inlineStyle) {
     this.onChange(
-      RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle)
+      RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle),
     );
   }
   render() {
-    const { editorState } = this.state;
+    const { editorState, isFocused } = this.state;
+    const { turnOffBorders , alwaysShowButtons} = this.props;
+    console.log(alwaysShowButtons);
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
     let className = "RichEditor-editor";
@@ -83,39 +87,60 @@ export default class RichEditorProjectDesc extends React.Component {
     const editorContent = editorState.getCurrentContent();
     const contentStateJSON = convertToRaw(editorContent);
     const handleBlur = () => {
+      this.setState({ isFocused: false });
       localStorage.setItem(
         "projectDescriptionJson",
-        JSON.stringify(contentStateJSON)
+        JSON.stringify(contentStateJSON),
       );
+    };
+    const handleFocus = () => {
+      this.setState({ isFocused: true });
     };
     return (
       <div
-        className="bg-bg-secondary border-2 border-white rounded-lg p-3 min-h-[131px]
-       box-content flex flex-col justify-between"
+        className={`${
+          !turnOffBorders &&
+          (isFocused
+            ? "border-white"
+            : "border-transparent hover:border-border-default")
+        } ${!turnOffBorders && "rounded-lg border"}`}
+        onClick={this.focus}
       >
-        <div className={`${className} mb-3`} onClick={this.focus}>
-          <Editor
-            blockStyleFn={getBlockStyle}
-            customStyleMap={styleMap}
-            editorState={editorState}
-            handleKeyCommand={this.handleKeyCommand}
-            keyBindingFn={this.mapKeyToEditorCommand}
-            onChange={this.onChange}
-            placeholder=""
-            ref="editor"
-            spellCheck={true}
-            onBlur={handleBlur}
-          />
-        </div>
-        <div className="flex">
-          <BlockStyleControls
-            editorState={editorState}
-            onToggle={this.toggleBlockType}
-          />
-          <InlineStyleControls
-            editorState={editorState}
-            onToggle={this.toggleInlineStyle}
-          />
+        <div
+          className={`box-content flex min-h-[131px] flex-col justify-between p-3
+        ${
+          !turnOffBorders && (isFocused ? "border-white" : "border-transparent")
+        } ${!turnOffBorders && "rounded-lg border"} bg-bg-secondary`}
+        >
+          <div className={`${className}`}>
+            <Editor
+              blockStyleFn={getBlockStyle}
+              customStyleMap={styleMap}
+              editorState={editorState}
+              handleKeyCommand={this.handleKeyCommand}
+              keyBindingFn={this.mapKeyToEditorCommand}
+              onChange={this.onChange}
+              placeholder=""
+              ref="editor"
+              spellCheck={true}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+            />
+          </div>
+          <div
+            className={`flex items-center ${
+               alwaysShowButtons || isFocused ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <BlockStyleControls
+              editorState={editorState}
+              onToggle={this.toggleBlockType}
+            />
+            <InlineStyleControls
+              editorState={editorState}
+              onToggle={this.toggleInlineStyle}
+            />
+          </div>
         </div>
       </div>
     );
@@ -149,8 +174,8 @@ class StyleButton extends React.Component {
   render() {
     return (
       <span
-        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md mr-1 
-        cursor-pointer ${
+        className={` mr-1 flex h-[28px] w-[28px] cursor-pointer items-center justify-center 
+        rounded-md ${
           this.props.active
             ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
             : " bg-transparent hover:bg-menuItem-active"
@@ -180,8 +205,8 @@ class ButtonListItem extends React.Component {
   render() {
     return (
       <span
-        className={` flex items-center h-[40px] rounded-lg px-2 text-sm
-        cursor-pointer ${
+        className={` flex h-[40px] cursor-pointer items-center rounded-lg px-2
+        text-sm ${
           this.props.active
             ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
             : " bg-transparent hover:bg-menuItem-active"
@@ -205,8 +230,6 @@ const BLOCK_TYPES = [
   { label: "Heading 2", style: "header-two", icon: <LuHeading2 /> },
   { label: "Heading 3", style: "header-three", icon: <LuHeading3 /> },
   { label: "Heading 4", style: "header-four", icon: <LuHeading4 /> },
-  { label: "Heading 5", style: "header-five", icon: <LuHeading5 /> },
-  { label: "Heading 6", style: "header-six", icon: <LuHeading6 /> },
   // { label: "Blockquote", style: "blockquote", icon: <Fa500Px /> },
   { label: "Bulleted list", style: "unordered-list-item", icon: <FaList /> },
   { label: "Numbered list", style: "ordered-list-item", icon: <FaListOl /> },
@@ -239,10 +262,10 @@ const BlockStyleControls = (props) => {
   });
 
   return (
-    <div className=" flex blockStyles">
+    <div className=" blockStyles flex">
       <span
-        className={` flex justify-center items-center h-[28px] w-[28px] rounded-md 
-        cursor-pointer ${
+        className={` flex h-[28px] w-[28px] cursor-pointer items-center justify-center 
+        rounded-md ${
           showBlockStyles
             ? "bg-accent-blue bg-opacity-30 hover:bg-opacity-50"
             : " bg-transparent hover:bg-menuItem-active"
@@ -258,14 +281,16 @@ const BlockStyleControls = (props) => {
           <FaPlus />
         </i>
       </span>
-      <i className="flex justify-center items-center w-[1px] h-[28px] bg-muted-dark
-       mx-1" />
+      <i
+        className="mx-1 flex h-[28px] w-[1px] items-center justify-center
+       bg-muted-dark"
+      />
       {showBlockStyles && (
         <div
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
-          className="p-2 bg-bg-secondary border border-border-default rounded-lg "
+          className="rounded-lg border border-border-default bg-bg-secondary p-2 "
         >
           {BLOCK_TYPES.map((type) => (
             <ButtonListItem

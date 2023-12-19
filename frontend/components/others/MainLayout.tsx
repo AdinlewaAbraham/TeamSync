@@ -1,8 +1,8 @@
 "use client";
 import React, { ReactNode, useEffect } from "react";
-import Navbar from "./navbar/Navbar";
-import Sidebar from "./sidebar/Sidebar";
-import CreateWorkspaceModal from "./modals/CreateWorkspaceModal";
+import Navbar from "../navbar/Navbar";
+import Sidebar from "../sidebar/Sidebar";
+import CreateWorkspaceModal from "../modals/CreateWorkspaceModal";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchUser from "@/helpers/fetchUser";
 import fetchWorkspace from "@/helpers/fetchWorkspace";
@@ -50,13 +50,13 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
   // const { sidebarWidth, setTaskComponentHeight } = useGlobalContext();
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-1 flex-col">
       <nav className="">
         <Navbar />
       </nav>
       <div className="flex flex-1 ">
         <Sidebar />
-        <main className="bg-bg-secondary flex-1 flex overflow-y-auto relative">
+        <main className="relative flex flex-1 overflow-y-auto bg-bg-secondary">
           {children}
           {showCreateWorkspaceModal && <CreateWorkspaceModal />}
         </main>

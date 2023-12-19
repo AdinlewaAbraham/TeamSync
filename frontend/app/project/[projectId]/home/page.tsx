@@ -3,7 +3,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useState } from "react";
-import ProjectDescEditor from "@/components/project/home/editor/ProjectDescEditor";
+import ProjectDescEditor from "@/components/editor/WYSIWYGEditor";
 import {
   Editor,
   EditorState,

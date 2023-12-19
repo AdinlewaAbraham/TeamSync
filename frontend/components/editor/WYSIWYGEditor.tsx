@@ -14,7 +14,7 @@ import {
 import "./rich.css";
 import { useGlobalContext } from "@/context/GeneralContext";
 
-const ProjectDescEditor = () => {
+const WYSIWYGEditor = () => {
   const [inEditMode, setInEditMode] = useState(false);
   const emptyContentStateJSON = EditorState.createEmpty();
   const { activeProject } = useGlobalContext();
@@ -23,7 +23,9 @@ const ProjectDescEditor = () => {
     ? activeProject?.description
     : convertToRaw(EditorState.createEmpty().getCurrentContent());
   const [contentStateJSON, setContentStateJSON] =
-    useState<RawDraftContentState>(contentStateJSONDefault as RawDraftContentState);
+    useState<RawDraftContentState>(
+      contentStateJSONDefault as RawDraftContentState,
+    );
 
   const contentState = convertFromRaw(contentStateJSON);
   const editorState = EditorState.createWithContent(contentState);
@@ -56,46 +58,16 @@ const ProjectDescEditor = () => {
 
   return (
     <div className="">
-      <div>
-        {inEditMode ? (
-          <div className="RichEditorProjectDesc">
-            <RichEditorProjectDesc
-              editorState={editorState}
-              onBlurFunc={() => console.log("onblur")}
-            />
-          </div>
-        ) : (
-          <div className="border border-transparent">
-            <div
-              className="RichEditorProjectDesc box-content min-h-[131px] cursor-text
-            rounded-lg border border-transparent p-3 hover:border-border-default"
-              onClick={() => {
-                setInEditMode(true);
-                console.log("clicked on div");
-              }}
-            >
-              <div
-                className="RichEditor-editor mb-[40px] "
-                style={{ marginBottom: "38px" }}
-              >
-                <Editor
-                  blockStyleFn={
-                    getBlockStyle as (block: ContentBlock) => string
-                  }
-                  customStyleMap={styleMap}
-                  editorState={editorState}
-                  // readOnly={true}
-                  onFocus={() => setInEditMode(true)}
-                  onChange={() => {}}
-                  // placeholder="what can i write"
-                />
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="RichEditorProjectDesc">
+        <RichEditorProjectDesc
+          editorState={editorState}
+          onBlurFunc={() => console.log("onblur")}
+          turnOffBorders={false}
+          alwaysShowButtons={false}
+        />
       </div>
     </div>
   );
 };
 
-export default ProjectDescEditor;
+export default WYSIWYGEditor;

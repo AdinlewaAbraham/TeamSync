@@ -3,7 +3,7 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoCheckmark } from "react-icons/io5";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { usePopper } from "react-popper";
-import { WidgetRenderSettings } from "../WidgetComponent";
+import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
 
 const WidgetWrapper = ({
   children,

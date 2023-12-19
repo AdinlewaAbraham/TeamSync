@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import ProjectWidget from "./widgets/ProjectWidget";
 import MyTasksWidget from "./widgets/MyTasksWidget";
 import WidgetWrapper from "./widgets/WidgetWrapper";
-type widgetTypes = "project" | "mytask";
-export interface WidgetRenderSettings {
-  type: widgetTypes;
-  fullWidth: boolean;
-}
+import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
 const WidgetComponent = ({
   widgetsArray,
   setWidgetsArray,
@@ -25,7 +21,7 @@ const WidgetComponent = ({
     }
   };
   return (
-    <div className="flex flex-wrap" id="widgetDropZone">
+    <div className="flex flex-wrap flex-1" id="widgetDropZone">
       {widgetsArray.map((WidgetRenderSettings) => (
         <WidgetWrapper
           children={renderWidget(WidgetRenderSettings)}

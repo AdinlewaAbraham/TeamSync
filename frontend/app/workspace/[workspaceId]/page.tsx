@@ -1,5 +1,5 @@
 "use client";
-import LoadingComponent from "@/components/LoadingComponent";
+import LoadingComponent from "@/components/others/LoadingComponent";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchUser from "@/helpers/fetchUser";
 import { useRouter } from "next/navigation";

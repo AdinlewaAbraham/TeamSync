@@ -1,6 +1,6 @@
+import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { WidgetRenderSettings } from "../WidgetComponent";
 
 const AddWidgetSidebar = ({
   setShowAddWidgetSideBar,

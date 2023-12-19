@@ -1,5 +1,5 @@
 "use client";
-import EditableComp from "@/components/EditableComp";
+import EditableComp from "@/components/others/EditableComp";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/fetchProject";
 import Link from "next/link";

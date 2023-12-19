@@ -28,7 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/project/home/editor/RichTextEditor.js"
+    "components/editor/RichTextEditor.js"
   ],
   "exclude": ["node_modules"]
 }
