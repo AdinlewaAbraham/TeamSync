@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.1",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-label": "^2.0.2",
     "@types/node": "20.4.9",

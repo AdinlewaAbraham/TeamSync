@@ -21,7 +21,7 @@ const projectSchema = mongoose.Schema({
     required: [false],
   },
   description: {
-    type: Object,
+    type: String,
     required: [false],
   },
   isProjectPrivate: { type: Boolean, default: false },

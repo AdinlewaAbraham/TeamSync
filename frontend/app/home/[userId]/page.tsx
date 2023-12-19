@@ -10,12 +10,10 @@ import React, { useState } from "react";
 const page = () => {
   const { userId } = useParams();
   const [showAddWidgetSideBar, setShowAddWidgetSideBar] = useState(false);
+  const [isMouseDownOnSidebarWidget, setIsMouseDownOnSidebarWidget] =
+    useState(false);
   const defaultWidgetArr: WidgetRenderSettings[] = [
-    {
-      type: "project",
-      fullWidth: true,
-    },
-    { type: "mytask", fullWidth: false },
+    { type: "_blank", fullWidth: false },
     { type: "mytask", fullWidth: false },
     { type: "project", fullWidth: true },
   ];
@@ -30,6 +28,8 @@ const page = () => {
             setShowAddWidgetSideBar={setShowAddWidgetSideBar}
             widgetsArray={widgetsArray}
             setWidgetsArray={setWidgetsArray}
+            isMouseDownOnSidebarWidget={isMouseDownOnSidebarWidget}
+            setIsMouseDownOnSidebarWidget={setIsMouseDownOnSidebarWidget}
           />
         )}
       </AnimatePresence>
@@ -42,6 +42,7 @@ const page = () => {
           <WidgetComponent
             widgetsArray={widgetsArray}
             setWidgetsArray={setWidgetsArray}
+            isMouseDownOnSidebarWidget={isMouseDownOnSidebarWidget}
           />
         </div>
       </div>

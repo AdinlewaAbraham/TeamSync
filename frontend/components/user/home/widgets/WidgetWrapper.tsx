@@ -10,11 +10,13 @@ const WidgetWrapper = ({
   WidgetRenderSettings,
   widgetsArray,
   setWidgetsArray,
+  isMouseDownOnSidebarWidget,
 }: {
   children: ReactNode;
   WidgetRenderSettings: WidgetRenderSettings;
   widgetsArray: WidgetRenderSettings[];
   setWidgetsArray: (c: WidgetRenderSettings[]) => void;
+  isMouseDownOnSidebarWidget: boolean;
 }) => {
   const [showWidgetModal, setShowWidgetModal] = useState(false);
   const [referenceElement, setReferenceElement] =
@@ -54,14 +56,26 @@ const WidgetWrapper = ({
 
   return (
     <div
-      className="p-2"
+      className="relative p-2"
       style={{ width: WidgetRenderSettings.fullWidth ? "100%" : "50%" }}
     >
-      <div className="group relative h-[400px] cursor-pointer rounded-lg border border-border-default p-4">
+      {isMouseDownOnSidebarWidget && (
+        <div
+          className="absolute inset-0 z-10 bg-transparent bg-opacity-70"
+          id={WidgetRenderSettings.type}
+        />
+      )}
+      <div
+        className={`group relative h-[400px] cursor-pointer rounded-lg border border-border-default p-4 ${
+          WidgetRenderSettings.type === "_blank" && "bg-slate-500"
+        } `}
+      >
         <div
           className={`absolute right-5 top-5 ${
             showWidgetModal ? "block" : "hidden"
-          }  rounded-lg border border-border-default p-4 transition-all duration-150 group-hover:block`}
+          }  rounded-lg border border-border-default p-4 transition-all duration-150 ${
+            WidgetRenderSettings.type !== "_blank" && "group-hover:block"
+          }`}
           onClick={() => setShowWidgetModal(!showWidgetModal)}
           ref={setReferenceElement}
         >

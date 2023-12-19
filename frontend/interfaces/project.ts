@@ -1,3 +1,4 @@
+import { RawDraftContentState } from "draft-js";
 import Section from "./section";
 import User from "./user";
 
@@ -10,7 +11,7 @@ export interface Member {
 export default interface Project {
   projectName: string;
   dueDate: Date;
-  description: object | undefined;
+  description: string | undefined;
   isProjectPrivate: boolean;
   members: Member[];
   admins: string[] | User[];

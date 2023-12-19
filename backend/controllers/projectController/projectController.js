@@ -68,5 +68,35 @@ const getProject = asyncHandler(async (req, res) => {
   }
 });
 
+const updateProjectDescription = asyncHandler(async (req, res) => {
+  try {
+    const { projectDescription, projectId } = req.body;
+    const filter = { _id: projectId };
+
+    const update = {
+      $set: {
+        description: projectDescription,
+      },
+    };
+    const project = await Project.findById(projectId);
+    if (project) {
+      await Project.updateOne(filter, update);
+    } else {
+      res.status(404);
+    }
+    console.log(project.description);
+    res.status(200).json(project.description);
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
+
 const deleteProject = asyncHandler((req, res) => {});
-module.exports = { createProject, deleteProject, editProject, getProject };
+module.exports = {
+  createProject,
+  deleteProject,
+  editProject,
+  getProject,
+  updateProjectDescription,
+};

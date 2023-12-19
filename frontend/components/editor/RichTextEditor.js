@@ -26,11 +26,13 @@ import { PiCrownSimpleBold } from "react-icons/pi";
 const { Editor, EditorState, RichUtils, getDefaultKeyBinding, convertToRaw } =
   Draft;
 
-export default class RichEditorProjectDesc extends React.Component {
+export default class WYSIWYGEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      editorState: this.props.editorState || EditorState.createEmpty(),
+      editorState: this.props.editorState
+        ? this.props.editorState
+        : EditorState.createEmpty(),
       isFocused: false,
     };
     this.focus = () => this.refs.editor.focus();
@@ -72,8 +74,7 @@ export default class RichEditorProjectDesc extends React.Component {
   }
   render() {
     const { editorState, isFocused } = this.state;
-    const { turnOffBorders , alwaysShowButtons} = this.props;
-    console.log(alwaysShowButtons);
+    const { turnOffBorders, alwaysShowButtons, onBlurFunc } = this.props;
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
     let className = "RichEditor-editor";
@@ -92,6 +93,7 @@ export default class RichEditorProjectDesc extends React.Component {
         "projectDescriptionJson",
         JSON.stringify(contentStateJSON),
       );
+      if (onBlurFunc) onBlurFunc(contentStateJSON);
     };
     const handleFocus = () => {
       this.setState({ isFocused: true });
@@ -112,7 +114,7 @@ export default class RichEditorProjectDesc extends React.Component {
           !turnOffBorders && (isFocused ? "border-white" : "border-transparent")
         } ${!turnOffBorders && "rounded-lg border"} bg-bg-secondary`}
         >
-          <div className={`${className}`}>
+          <div className={`${className} max-w-full`}>
             <Editor
               blockStyleFn={getBlockStyle}
               customStyleMap={styleMap}
@@ -129,7 +131,7 @@ export default class RichEditorProjectDesc extends React.Component {
           </div>
           <div
             className={`flex items-center ${
-               alwaysShowButtons || isFocused ? "opacity-100" : "opacity-0"
+              alwaysShowButtons || isFocused ? "opacity-100" : "opacity-0"
             }`}
           >
             <BlockStyleControls
