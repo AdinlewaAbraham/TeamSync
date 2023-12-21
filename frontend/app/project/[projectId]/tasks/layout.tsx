@@ -61,7 +61,7 @@ const layout = ({
             { title: "Board", icon: <BiSolidBarChartAlt2 /> },
             { title: "Table", icon: <FaRegListAlt /> },
             { title: "Calendar", icon: <FaRegCalendar /> },
-            { title: "timeline", icon: <FaChartLine /> },
+            { title: "Timeline", icon: <FaChartLine /> },
           ].map((listItem) => (
             <NavbarItem
               title={listItem.title}

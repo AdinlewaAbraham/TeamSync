@@ -4,6 +4,7 @@ import WidgetRenderSettings, {
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { GoSidebarCollapse } from "react-icons/go";
+import SidebarWidgetCompWrapper from "./SidebarWidgetCompWrapper";
 
 const AddWidgetSidebar = ({
   setShowAddWidgetSideBar,
@@ -18,78 +19,7 @@ const AddWidgetSidebar = ({
   isMouseDownOnSidebarWidget: boolean;
   setIsMouseDownOnSidebarWidget: (c: boolean) => void;
 }) => {
-  const [currentDraggedElement, setCurrentDraggedElement] =
-    useState<widgetTypes | null>();
-  const handleMouseDown = (widgetKey: widgetTypes) => {
-    setIsMouseDownOnSidebarWidget(true);
-    setCurrentDraggedElement(widgetKey);
-  };
-  useEffect(() => {
-    if (isMouseDownOnSidebarWidget) {
-      document.body.classList.add("select-none");
-    } else {
-      document.body.classList.remove("select-none");
-    }
-    const handleMouseUp = (e: MouseEvent) => {
-      const currentHoverTargetElement = e.target as HTMLElement;
-      document.body.classList.remove("cursor-no-drop");
-      document.body.classList.remove("cursor-copy");
-      const filteredWidgetsArray = [...widgetsArray].filter(
-        (widget) => widget.type !== "_blank",
-      );
-      if (
-        currentHoverTargetElement.closest("#widgetDropZone") &&
-        currentDraggedElement
-      ) {
-        setWidgetsArray([
-          ...filteredWidgetsArray,
-          { type: currentDraggedElement, fullWidth: false },
-        ]);
-      } else {
-        setWidgetsArray(filteredWidgetsArray);
-      }
-      setIsMouseDownOnSidebarWidget(false);
-    };
-    const handleMouseMove = (e: MouseEvent) => {
-      const currentHoverTargetElement = e.target as HTMLElement;
-      if (
-        currentHoverTargetElement.closest("#widgetDropZone") &&
-        currentDraggedElement
-      ) {
-        // in dropzone
-        const currentHoverTargetElementId = currentHoverTargetElement.id;
-        console.log(currentHoverTargetElementId);
-        if (currentHoverTargetElementId !== "_blank") {
-          const currentHoverTargetElementIndex = widgetsArray.findIndex(
-            (widget) => widget.type === currentHoverTargetElement.id,
-          );
-          if (currentHoverTargetElementIndex !== -1) {
-            // splice and stuff
-            const widgetsArrCopy = [...widgetsArray];
-            widgetsArrCopy.splice(currentHoverTargetElementIndex, 0, {
-              fullWidth: false,
-              type: "_blank",
-            });
-            setWidgetsArray(widgetsArrCopy);
-          }
-        }
-
-        document.body.classList.add("cursor-copy");
-      } else {
-        document.body.classList.remove("cursor-copy");
-        document.body.classList.add("cursor-no-drop");
-      }
-    };
-    if (isMouseDownOnSidebarWidget) {
-      window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("mousemove", handleMouseMove);
-      return () => {
-        window.removeEventListener("mouseup", handleMouseUp);
-        window.removeEventListener("mousemove", handleMouseMove);
-      };
-    }
-  }, [isMouseDownOnSidebarWidget]);
-  const widgetTypes = [
+  const widgetTypesDefault = [
     "project",
     "mytask",
     "privatenote",
@@ -97,6 +27,20 @@ const AddWidgetSidebar = ({
   ].filter(
     (widget) => !widgetsArray.some((arrWidget) => arrWidget.type === widget),
   ) as widgetTypes[];
+  const [widgetTypes, setWidgetTypes] =
+    useState<widgetTypes[]>(widgetTypesDefault);
+  useEffect(() => {
+    const newWidgetTypesArr = [
+      "project",
+      "mytask",
+      "privatenote",
+      "taskiassigned",
+    ].filter(
+      (widget) => !widgetsArray.some((arrWidget) => arrWidget.type === widget),
+    ) as widgetTypes[];
+    setWidgetTypes(newWidgetTypesArr);
+  }, [widgetsArray]);
+
   return (
     <div className="absolute bottom-0 right-0 top-0 z-30 border-l border-border-default bg-bg-primary">
       <motion.div
@@ -133,14 +77,15 @@ const AddWidgetSidebar = ({
                 reorder and remove them.
               </p>
             </div>
-            {widgetTypes.map((widget) => (
-              <div
-                key={widget}
-                className="h-[200px] rounded-lg bg-red-200 p-4 text-black"
-                onMouseDown={() => handleMouseDown(widget)}
-              >
-                {widget}
-              </div>
+            {widgetTypes.map((widgetType) => (
+              <SidebarWidgetCompWrapper
+                children={widgetType}
+                widgetType={widgetType}
+                key={widgetType}
+                widgetTypes={widgetTypes}
+                setWidgetTypes={setWidgetTypes}
+                setIsMouseDownOnSidebarWidget={setIsMouseDownOnSidebarWidget}
+              />
             ))}
           </div>
         </div>

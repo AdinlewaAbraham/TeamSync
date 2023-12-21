@@ -1,6 +1,6 @@
 "use client";
 import React, { ReactNode, useEffect } from "react";
-import Navbar from "../navbar/Navbar";
+import Navbar from "../navbar/MainLayoutNavbar/MainLayoutNavbar";
 import Sidebar from "../sidebar/Sidebar";
 import CreateWorkspaceModal from "../modals/CreateWorkspaceModal";
 import { useGlobalContext } from "@/context/GeneralContext";

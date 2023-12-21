@@ -1,7 +1,7 @@
 "use client";
 import UserHomePageHeaderComponent from "@/components/user/home/UserHomePageHeaderComponent";
-import WidgetComponent from "@/components/user/home/WidgetComponent";
-import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
+import WidgetComponent from "@/components/user/home/widgets/WidgetComponent";
+import WidgetRenderSettings, { widgetTypes } from "@/interfaces/widgetRenderSettings";
 import AddWidgetSidebar from "@/components/user/home/widgets/AddWidgetSidebar";
 import { AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
@@ -12,10 +12,11 @@ const page = () => {
   const [showAddWidgetSideBar, setShowAddWidgetSideBar] = useState(false);
   const [isMouseDownOnSidebarWidget, setIsMouseDownOnSidebarWidget] =
     useState(false);
+  const [currentDraggedElementType, setCurrentDraggedElementType] =
+    useState<widgetTypes | null>();
   const defaultWidgetArr: WidgetRenderSettings[] = [
-    { type: "_blank", fullWidth: false },
     { type: "mytask", fullWidth: false },
-    { type: "project", fullWidth: true },
+    { type: "project", fullWidth: false },
   ];
   const [widgetsArray, setWidgetsArray] =
     useState<WidgetRenderSettings[]>(defaultWidgetArr);

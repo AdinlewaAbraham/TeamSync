@@ -58,6 +58,7 @@ const WidgetWrapper = ({
     <div
       className="relative p-2"
       style={{ width: WidgetRenderSettings.fullWidth ? "100%" : "50%" }}
+      id={WidgetRenderSettings.type}
     >
       {isMouseDownOnSidebarWidget && (
         <div

@@ -33,7 +33,7 @@ const SidebarComponent = ({
   const pathname = usePathname();
 
   return (
-    <Link href={redirectLink}>
+    <Link href={redirectLink.toLowerCase()}>
       <div
         className={` focus-visible:ring-ring bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex
         h-9 w-full items-center 
@@ -208,21 +208,29 @@ const Sidebar = () => {
               } absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent`}
             />
             <div className="border-b-[1px] border-border-default p-4">
-              <SidebarComponent
-                menuName="Home"
-                redirectLink={"/home/" + user?._id}
-                iconComp={<BiHomeAlt2 />}
-              />
-              <SidebarComponent
-                menuName="My tasks"
-                redirectLink="/mytasks"
-                iconComp={<LuClipboardCheck />}
-              />
-              <SidebarComponent
-                menuName="Inbox"
-                redirectLink="/inbox"
-                iconComp={<GoInbox />}
-              />
+              {[
+                {
+                  menuName: "Home",
+                  redirectLink: "/home/" + user?._id,
+                  icon: <BiHomeAlt2 />,
+                },
+                {
+                  menuName: "My tasks",
+                  redirectLink: "/mytasks/" + user?._id + "/board",
+                  icon: <LuClipboardCheck />,
+                },
+                {
+                  menuName: "Inbox",
+                  redirectLink: "/inbox/" + user?._id,
+                  icon: <GoInbox />,
+                },
+              ].map((SidebarComponentObj) => (
+                <SidebarComponent
+                  menuName={SidebarComponentObj.menuName}
+                  redirectLink={SidebarComponentObj.redirectLink}
+                  iconComp={SidebarComponentObj.icon}
+                />
+              ))}
             </div>
             <DropDownComponent
               MainComponent={<ProjectMainSection />}

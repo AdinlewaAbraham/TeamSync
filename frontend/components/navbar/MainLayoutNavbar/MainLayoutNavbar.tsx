@@ -5,9 +5,8 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { AiOutlineSearch } from "react-icons/ai";
 import { usePopper } from "react-popper";
-import "../../app/globals.css";
 import CreateMenu from "./CreateMenu";
-const Navbar = () => {
+const MainLayoutNavbar = () => {
   const { showSidebar, setShowSidebar } = useGlobalContext();
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [showCreateMenu, setShowCreateMenu] = useState<boolean>(false);
@@ -142,4 +141,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default MainLayoutNavbar;

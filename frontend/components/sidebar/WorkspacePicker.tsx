@@ -17,14 +17,16 @@ const WorkspaceBar = ({ workspace }: { workspace: Workspace }) => {
       <div
         className={` ${
           isActive ? " bg-menuItem-active" : "hover:bg-menuItem-hover"
-        } cursor-pointer px-3 py-2 rounded-lg flex items-center justify-between w-full `}
+        } flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 `}
       >
-        <div className="flex items-center">
-          <div className="w-5 h-5 mr-2 bg-slate-400 rounded-full" />
-          <p className="whitespace-nowrap">{workspace.name}</p>
+        <div className="flex flex-1 items-center truncate">
+          <div className="mr-2 h-5 w-5 flex-shrink-0 rounded-full bg-slate-400" />
+          <p className="truncate text-ellipsis whitespace-nowrap">
+            {workspace.name}
+          </p>
         </div>
         {isActive && (
-          <i>
+          <i className="ml-2">
             <AiOutlineCheck />
           </i>
         )}
@@ -39,7 +41,7 @@ const WorkspacePicker = () => {
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -64,10 +66,10 @@ const WorkspacePicker = () => {
   }, []);
   const workspaces = user?.workspaces;
   const currentWorkspace = workspaces?.find(
-    (workspace) => workspace._id === user?.activeWorkspaceId
+    (workspace) => workspace._id === user?.activeWorkspaceId,
   );
   const filteredWorkspaces = workspaces?.filter(
-    (workspace) => workspace._id !== user?.activeWorkspaceId
+    (workspace) => workspace._id !== user?.activeWorkspaceId,
   );
   return (
     <div>
@@ -82,20 +84,20 @@ const WorkspacePicker = () => {
             {...attributes.popper}
             className=" w-full  overflow-hidden "
           >
-            <div className="flex items-center justify-center w-full  px-4 bg-bg-primary">
-              <div className=" workspaceMenu w-full border border-border-default rounded-lg my-2">
-                <div className="h-[48px] border-b border-border-default flex items-center pl-4 mb-[2px]">
+            <div className="flex w-full items-center justify-center  bg-bg-primary px-4">
+              <div className=" workspaceMenu my-2 w-full rounded-lg border border-border-default">
+                <div className="mb-[2px] flex h-[48px] items-center border-b border-border-default pl-4">
                   <i className="text-icon-default">
                     <BiSearchAlt2 />
                   </i>
                   <input
                     type="text"
                     placeholder="Search workspace..."
-                    className="text-input w-full border-none outline-none focus:ring-0 placeholder:text-muted-dark"
+                    className="text-input w-full border-none outline-none placeholder:text-muted-dark focus:ring-0"
                   />
                 </div>
                 <div>
-                  <h3 className="text-muted-dark px-4 py-1.5 text-sm">
+                  <h3 className="px-4 py-1.5 text-sm text-muted-dark">
                     Active Workspace
                   </h3>
                   <div className="p-1">
@@ -106,7 +108,7 @@ const WorkspacePicker = () => {
                     )}
                   </div>
                   {filteredWorkspaces?.length !== 0 && (
-                    <h3 className="text-muted-dark px-4 py-1.5 text-sm">
+                    <h3 className="px-4 py-1.5 text-sm text-muted-dark">
                       Other Workspaces
                     </h3>
                   )}
@@ -122,12 +124,12 @@ const WorkspacePicker = () => {
                     )}
                   </div>
                 </div>
-                <div className="p-1 flex items-center border-t border-border-default">
-                  <div className="cursor-pointer px-3 py-2 rounded-lg flex items-center w-full hover:bg-menuItem-hover whitespace-nowrap">
+                <div className="flex items-center border-t border-border-default p-1">
+                  <div className="flex w-full cursor-pointer items-center whitespace-nowrap rounded-lg px-3 py-2 hover:bg-menuItem-hover">
                     <i className="mr-2">
-                      <IoIosAddCircleOutline />
+                      <IoIosAddCircleOutline size={20} />
                     </i>
-                    Create workspace
+                    <p className="truncate text-ellipsis"> Create workspace</p>
                   </div>
                 </div>
               </div>
@@ -135,17 +137,19 @@ const WorkspacePicker = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="p-4 flex items-center justify-between">
+      <div className="flex items-center justify-between p-4">
         <div
-          className={`flex workspaceMenu items-center justify-between w-full p-4  ${
+          className={`workspaceMenu flex w-full items-center justify-between p-4  ${
             showWorkpaceMenu ? "bg-menuItem-active" : "hover:bg-menuItem-hover"
-          } rounded-lg cursor-pointer`}
+          } cursor-pointer rounded-lg`}
           ref={setReferenceElement}
           onClick={() => setShowWorkpaceMenu(!showWorkpaceMenu)}
         >
-          <div className="flex items-center whitespace-nowrap mr-2 ">
-            <div className="w-8 h-8 bg-slate-400 rounded-full mr-3" />
-            {activeWorkspace?.name}
+          <div className="mr-2 flex flex-1 flex-row  items-center truncate whitespace-nowrap ">
+            <div className="mr-3 h-8 w-8 flex-shrink-0 rounded-full bg-slate-400" />
+            <p className="flex-1 truncate text-ellipsis ">
+              {activeWorkspace?.name}
+            </p>
           </div>
           <i>
             <MdOutlineUnfoldMore />
