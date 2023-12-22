@@ -1,7 +1,7 @@
 "use client";
 import LoadingComponent from "@/components/others/LoadingComponent";
 import { useGlobalContext } from "@/context/GeneralContext";
-import fetchUser from "@/helpers/fetchUser";
+import fetchUser from "@/helpers/user/fetchUser";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 

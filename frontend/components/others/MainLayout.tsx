@@ -4,8 +4,8 @@ import Navbar from "../navbar/MainLayoutNavbar/MainLayoutNavbar";
 import Sidebar from "../sidebar/Sidebar";
 import CreateWorkspaceModal from "../modals/CreateWorkspaceModal";
 import { useGlobalContext } from "@/context/GeneralContext";
-import fetchUser from "@/helpers/fetchUser";
-import fetchWorkspace from "@/helpers/fetchWorkspace";
+import fetchUser from "@/helpers/user/fetchUser";
+import fetchWorkspace from "@/helpers/workspace/fetchWorkspace";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
   const { showCreateWorkspaceModal, setUser, user, setActiveWorkspace } =

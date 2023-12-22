@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { redirectToLogin } from "@/helpers/redirect";
 
 import { useRouter } from "next/navigation";
-import fetchUser from "@/helpers/fetchUser";
+import fetchUser from "@/helpers/user/fetchUser";
 export default function Home() {
   const { setUser, user } = useGlobalContext();
   useEffect(() => {

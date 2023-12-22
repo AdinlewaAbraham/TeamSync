@@ -17,6 +17,7 @@ const TaskBar = ({
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
   calendarIndex,
   rowKey,
+  boxWidth,
 }: {
   index: number;
   task: Task;
@@ -27,90 +28,66 @@ const TaskBar = ({
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
   calendarIndex: number;
   rowKey: string;
+  boxWidth: number;
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
   const handleTaskDelete = async (taskId: string) => {};
 
-  const boxRef = useRef<HTMLElement | null>(null);
-  const [boxWidth, setBoxWidth] = useState(0);
   const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
     taskDateToStart.getFullYear() !== calendarDate.getFullYear() ||
     taskDateToStart.getMonth() !== calendarDate.getMonth() ||
     taskDateToStart.getDate() !== calendarDate.getDate();
-  useEffect(() => {
-    const element = boxRef.current;
 
-    if (element) {
-      const resizeObserver = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          setBoxWidth(entry.contentRect.width);
-        }
-      });
-
-      resizeObserver.observe(element);
-
-      return () => {
-        resizeObserver.unobserve(element);
-      };
-    }
-  }, []);
   const properlyIndexedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const taskStartDay = new Date(task.dateToStart);
   const dateIndex = properlyIndexedDays.findIndex(
-    (day) => days[taskStartDay.getDay()] === day
+    (day) => days[taskStartDay.getDay()] === day,
   );
 
   const daysInDateRange = calculateDaysBetweenDates(
     new Date(task.dateToStart),
-    new Date(task.dueDate)
+    new Date(task.dueDate),
   );
   const noOfDaysToEnd = 7 - dateIndex;
   const hasOverflowToRight = daysInDateRange > noOfDaysToEnd;
-  const padding = 16;
-  const widthForTasksWithOverflowToRight = hasOverflowToRight
-    ? noOfDaysToEnd * boxWidth - padding / 2
-    : daysInDateRange * boxWidth - padding;
+  const widthForTasksWithOverflowToRight = hasOverflowToRight //remove right padding if task has overflow to right(if tasks does not end on that week)
+    ? noOfDaysToEnd * boxWidth 
+    : daysInDateRange * boxWidth; 
   const daysRemainingFromSpillOver = calculateDaysBetweenDates(
     new Date(calendarDate),
-    new Date(task.dueDate)
+    new Date(task.dueDate),
   );
-  const doesTaskRunThrough = daysRemainingFromSpillOver > 7;
+  const goesAcross = daysRemainingFromSpillOver > 6;
+  const doesTaskRunThrough = daysRemainingFromSpillOver > 7; // if tasks spans through the week
   const widthForTasksThatDoesNotStartOnDay = doesTaskRunThrough
     ? boxWidth * 7
-    : daysRemainingFromSpillOver * boxWidth - padding / 2;
+    : daysRemainingFromSpillOver * boxWidth; 
 
   // implement heigth or as you may say top
   const isMonday = calendarIndex === 0;
 
-  const mondayTop =
-    /* doesNotStartOnDay
-    ?*/ index * 36 /* height of taskbar */ +
-    40 /*hieght of top header */ +
-    index * 4; /* margin*/
-  // : (index -
-  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame +
-  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
-  //     36 /* height of taskbar */ +
-  //   40 /*hieght of top header */ +
-  //   (index -
-  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame +
-  //     noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) *
-  //     4; /* margin*/
-  /*
- useeffect
- add to object all the details of the task
-*/
   const calculateTop = () => {
+    const mondayTop =
+      /* doesNotStartOnDay
+    ?*/ index * 36 /* height of taskbar */ +
+      40 /*hieght of top header */ +
+      index * 4;
     if (isMonday) {
       return mondayTop;
     }
-    const localRowTaskPositionObj = localStorage.getItem(rowKey);
-    const rowTaskPositionObj = localRowTaskPositionObj
-      ? JSON.parse(localRowTaskPositionObj)
-      : undefined;
+    const localTaskPositionString = localStorage.getItem(
+      "localTaskPositionObject",
+    );
+    const localTaskPositionObject = localTaskPositionString
+      ? JSON.parse(localTaskPositionString)
+      : null;
+    const rowTaskPositionObj =
+      typeof localTaskPositionObject === "object"
+        ? localTaskPositionObject?.[rowKey]
+        : null;
     if (
       typeof rowTaskPositionObj !== "object" ||
       Object.keys(rowTaskPositionObj).length === 0
@@ -151,6 +128,7 @@ const TaskBar = ({
 
   useEffect(() => {
     // setRowTaskPositionObj((prev: any) => {
+
     //   if (typeof prev !== "object") {
     //     return {
     //       [task._id]: {
@@ -170,103 +148,131 @@ const TaskBar = ({
     //     },
     //   };
     // });
-    const localRowTaskPositionObj = localStorage.getItem(rowKey);
-    const parsedLocalRowTaskPositionObj = localRowTaskPositionObj
-      ? JSON.parse(localRowTaskPositionObj)
-      : undefined;
+
+    const localTaskPositionString = localStorage.getItem(
+      "localTaskPositionObject",
+    );
+    const localTaskPositionObject = localTaskPositionString
+      ? JSON.parse(localTaskPositionString)
+      : {};
+    const parsedLocalRowTaskPositionObj = localTaskPositionObject?.[rowKey]
+      ? localTaskPositionObject?.[rowKey]
+      : {};
+
     localStorage.setItem(
-      rowKey,
+      `localTaskPositionObject`,
       JSON.stringify({
-        ...parsedLocalRowTaskPositionObj,
-        [task._id]: {
-          dateToStart: task.dateToStart,
-          dueDate: task.dueDate,
-          top: calculateTop(),
+        ...localTaskPositionObject,
+        [rowKey]: {
+          ...parsedLocalRowTaskPositionObj,
+          [task._id]: {
+            dateToStart: task.dateToStart,
+            dueDate: task.dueDate,
+            top: calculateTop(),
+          },
         },
-      })
+      }),
     );
   }, []);
 
   /*
   NOTE: this will only run for all except mondays 
-  function that calculates top
+  function that calculates position top
   1. first create new obj that gets all task that fall on timeframe
   2. then use a for loop to increment from lowest top position and check if it is already occupied till top is found
   */
-  const goesAcross = daysRemainingFromSpillOver > 6;
+
+  const handleMouseEnter = () => {
+    setTaskHoverStatusObj({ [task._id]: true });
+    setShowCheckMark(true);
+  };
+  const handleMouseLeave = () => {
+    setTaskHoverStatusObj({ [task._id]: false });
+    setShowCheckMark(false);
+  };
+
   return (
-    <div key={task._id + index} onClick={() => console.log(calculateTop())}>
+    <div
+      onClick={() => {
+        console.log(goesAcross);
+        console.log(hasOverflowToRight);
+      }}
+    >
       <div
-        className="h-1 w-full bg-transparent absolute"
-        ref={(element) => (boxRef.current = element)}
-      />
-      <div
-        key={task._id}
-        className={`
+        key={task._id + index}
+        onClick={() => console.log(calculateTop())}
+        style={{
+          top: calculateTop(),
+          width: doesNotStartOnDay
+            ? widthForTasksThatDoesNotStartOnDay
+            : widthForTasksWithOverflowToRight,
+        }}
+        className={`taskBar absolute z-50 px-2 ${
+          hasOverflowToRight && !doesNotStartOnDay && "pr-0"
+        } ${goesAcross && "pr-0"}  ${doesNotStartOnDay && "pl-0"} `}
+      >
+        <div
+          key={task._id}
+          className={`
          border-2 ${
            isLast ? "" : "mb-1"
-         } absolute z-50 bg-bg-secondary rounded-lg top-[${index * 36}px]
+         }  z-50 rounded-lg bg-bg-secondary 
          ${
            hasOverflowToRight &&
            !doesNotStartOnDay &&
            "rounded-r-none border-r-0"
          } ${goesAcross && "border-r-0"} ${
-          doesTaskRunThrough && "rounded-r-none"
-        } ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
+           doesTaskRunThrough && "rounded-r-none"
+         } ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
          w-full 
        ${
          taskHoverStatusObj?.[task._id]
            ? "border-accent-blue"
            : "border-border-default"
        }
-          transition-colors duration-150
-      px-3 py-1 text-xs h-9 flex items-center cursor-pointer group  `}
-        style={{
-          width: doesNotStartOnDay
-            ? widthForTasksThatDoesNotStartOnDay
-            : widthForTasksWithOverflowToRight,
-          left: doesNotStartOnDay ? 0 : padding / 2,
-          top: isMonday ? mondayTop : calculateTop(),
-        }}
-        onClick={() =>
-          console.log(
-            noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
-            index,
-            new Date(task.dateToStart).toDateString(),
-            new Date(task.dueDate).toDateString()
-          )
-        }
-        onMouseEnter={() => {
-          setTaskHoverStatusObj({ [task._id]: true });
-          setShowCheckMark(true);
-          console.log(taskHoverStatusObj);
-        }}
-        onMouseLeave={() => {
-          setTaskHoverStatusObj({ [task._id]: false });
-          setShowCheckMark(false);
-          console.log(taskHoverStatusObj);
-        }}
-        draggable
-      >
-        {/* {dateIndex} */}
-        <AnimatePresence>
-          {showCheckMark && (
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: "auto" }}
-              exit={{ width: 0 }}
-              transition={{ duration: 0.5 }}
-              className="group-hover:flex hidden overflow-hidden border justify-center text-[22px] items-center mr-1
-       text-gray-500 hover:text-accent-green "
-            >
-              <BiCheckCircle />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div>{task.taskName}</div>
-        {/* <i onClick={() => handleTaskDelete(task._id)}>
+          group flex
+      h-9 cursor-pointer items-center px-3 py-1 text-xs transition-colors duration-150  `}
+          style={
+            {
+              // width: doesNotStartOnDay
+              //   ? widthForTasksThatDoesNotStartOnDay
+              //   : widthForTasksWithOverflowToRight,
+              // left: doesNotStartOnDay ? 0 : padding / 2,
+              // top: calculateTop(),
+            }
+          }
+          onClick={() =>
+            console.log(
+              noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
+              index,
+              new Date(task.dateToStart).toDateString(),
+              new Date(task.dueDate).toDateString(),
+            )
+          }
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          draggable
+        >
+          {/* {dateIndex} */}
+          <AnimatePresence>
+            {showCheckMark && (
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: "auto" }}
+                exit={{ width: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mr-1 hidden items-center justify-center overflow-hidden border text-[22px] text-gray-500
+       group-hover:flex hover:text-accent-green "
+              >
+                <BiCheckCircle />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div>{task.taskName}</div>
+          {/* <i onClick={() => handleTaskDelete(task._id)}>
           <AiOutlineDelete />
         </i> */}
+        </div>
       </div>
     </div>
   );

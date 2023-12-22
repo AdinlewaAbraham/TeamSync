@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
-import fetchProject from "@/helpers/fetchProject";
+import fetchProject from "@/helpers/project/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useState } from "react";
 import {

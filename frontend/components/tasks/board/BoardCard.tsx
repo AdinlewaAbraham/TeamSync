@@ -1,6 +1,6 @@
 import List from "@/interfaces/section";
 import React, { useEffect, useRef, useState } from "react";
-import SidebarIconComponent from "../../../sidebar/SidebarIconComponent";
+import SidebarIconComponent from "../../sidebar/SidebarIconComponent";
 import { IoMdAdd } from "react-icons/io";
 import { BsThreeDots } from "react-icons/bs";
 import { MdClose } from "react-icons/md";
@@ -10,7 +10,7 @@ import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 import RenderStatus, { RenderPriority } from "../ConditionalRender";
 import { usePopper } from "react-popper";
-import deleteSection from "@/helpers/deleteSection";
+import deleteSection from "@/helpers/section/deleteSection";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 
 const BoardCard = ({

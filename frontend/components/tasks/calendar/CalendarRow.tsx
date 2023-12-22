@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CalendarBox from "./CalendarBox";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Task from "@/interfaces/task";
@@ -30,14 +30,37 @@ const CalendarRow = ({
   const [rowTaskPositionObj, setRowTaskPositionObj] = useState<any>();
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
- 
 
+  const rowWidthRef = useRef<HTMLElement | null>(null);
+  const [rowWidth, setRowWidth] = useState(0);
+
+  useEffect(() => {
+    const rowWidthElement = rowWidthRef.current;
+
+    if (rowWidthElement) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          setRowWidth(entry.contentRect.width);
+        }
+      });
+
+      resizeObserver.observe(rowWidthElement);
+
+      return () => {
+        resizeObserver.unobserve(rowWidthElement);
+      };
+    }
+  }, []);
   return (
     <ul
-      className="grid grid-flow-col  grid-cols-[7]"
+      className="relative grid grid-flow-col grid-cols-7"
       // onClick={() => console.log(JSON.parse(localStorage.getItem(rowKey)))}
       key={rowKey}
     >
+      <div
+        className="absolute left-0 right-0 h-1 bg-transparent"
+        ref={(element) => (rowWidthRef.current = element)}
+      />
       {dateArr.map((date, index) => (
         <CalendarBox
           date={new Date(date)}
@@ -58,6 +81,7 @@ const CalendarRow = ({
           taskHoverStatusObj={taskHoverStatusObj}
           setTaskHoverStatusObj={setTaskHoverStatusObj}
           rowKey={rowKey}
+          rowWidth={rowWidth}
         />
       ))}
     </ul>

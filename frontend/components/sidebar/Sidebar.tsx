@@ -13,7 +13,7 @@ import { IoMdAdd } from "react-icons/io";
 import DropDownComponent from "./DropDownComponent";
 import ProjectMainSection from "./project/ProjectMainSection";
 import WorkspaceMainsection from "./workspace/WorkspaceMainsection";
-import fetchWorkspace from "@/helpers/fetchWorkspace";
+import fetchWorkspace from "@/helpers/workspace/fetchWorkspace";
 import SidebarIconComponent from "./SidebarIconComponent";
 import { usePopper } from "react-popper";
 import CreateProjectMOdal from "./project/CreateProjectModal";

@@ -1,10 +1,11 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
-import React, { useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import TaskBar from "./TaskBar";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
+import Section from "@/interfaces/section";
 
 const CalendarBox = ({
   date,
@@ -21,6 +22,7 @@ const CalendarBox = ({
   taskHoverStatusObj,
   setTaskHoverStatusObj,
   rowKey,
+  rowWidth,
 }: {
   date: Date;
   projectId: string;
@@ -36,6 +38,7 @@ const CalendarBox = ({
   taskHoverStatusObj: TaskHoverStatusObj;
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   rowKey: string;
+  rowWidth: number;
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
@@ -47,7 +50,7 @@ const CalendarBox = ({
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const calendarBoxScollParentElement = document.getElementById(
-      "calendarBoxScollParent"
+      "calendarBoxScollParent",
     );
     const handleScroll = () => {
       if (date.getDate() === 1) {
@@ -75,7 +78,7 @@ const CalendarBox = ({
       if (calendarBoxScollParentElement) {
         calendarBoxScollParentElement.removeEventListener(
           "scroll",
-          handleScroll
+          handleScroll,
         );
       }
     };
@@ -89,11 +92,27 @@ const CalendarBox = ({
     if (
       typeof activeProject?.sections[0] !== "object" ||
       !activeProject?.sections
-    )
+    ) {
       return;
+    }
     const dueDate = new Date(date);
-    dueDate.setDate(dueDate.getDate() + 3);
-    const rowNumber = findMinFreeRowNumber(taskWithDateRange, date, dueDate);
+    dueDate.setDate(dueDate.getDate() + 2);
+    const sectionTasksWithDateRange = taskWithDateRange.filter((task) => {
+      if (typeof task === "object") {
+        return (
+          task.sectionId ===
+          ((activeProject.sections[0] as Section)?._id as string)
+        );
+      } else {
+        return false;
+      }
+    });
+    const rowNumber = findMinFreeRowNumber(
+      sectionTasksWithDateRange,
+      date,
+      dueDate,
+      0,
+    );
     const postBody = {
       taskName,
       projectId,
@@ -112,6 +131,7 @@ const CalendarBox = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
+      localStorage.removeItem("localTaskPositionObject");
       // update localtasks
     } else {
       console.log("something went wrong");
@@ -144,9 +164,22 @@ const CalendarBox = ({
   const newDate = new Date();
 
   const dateIndex = properlyIndexedDays.findIndex(
-    (day) => days[date.getDay()] === day
+    (day) => days[date.getDay()] === day,
   );
 
+  const numberOfTasksThatStartOnDay = taskWithDateRange.filter((task) => {
+    if (typeof task !== "object") return false;
+
+    const taskDateToStart = new Date(task.dateToStart);
+    if (
+      taskDateToStart.getMonth() === date.getMonth() &&
+      taskDateToStart.getDate() === date.getDate() &&
+      taskDateToStart.getFullYear() === date.getFullYear()
+    ) {
+      return true;
+    }
+    return false;
+  }).length;
   const tasksThatStartOnDay = taskWithDateRange.filter((task) => {
     if (typeof task !== "object") return false;
 
@@ -184,7 +217,14 @@ const CalendarBox = ({
       );
     }).length;
   const calendarBoxDate = new Date(date).getDate();
-
+  const handleCalendarClick = (e: MouseEvent) => {
+    const clickTarget = e.target as HTMLElement;
+    if (clickTarget.closest(".taskBar")) {
+      console.log("you just clicked on taskbar");
+    } else {
+      setShowInput(true);
+    }
+  };
   return (
     <li
       id={isToday ? "today" : calendarBoxDate.toString()}
@@ -193,23 +233,18 @@ const CalendarBox = ({
         newDate.getMonth() === date.getMonth() &&
         newDate.getFullYear() === date.getFullYear() &&
         "currentMonthFirstDate"
-      } relative border border-border-default border-b-0 h-48 cursor-cell w-full ${
+      } relative box-border h-48 w-full cursor-cell border border-b-0 border-border-default ${
         (calendarBoxDate + 1) % 7 === 0 ? "border-r" : "border-r-0"
       } ${calendarBoxDate % 7 !== 0 ? "border-l" : "border-l-0"} ${
         monthIndex === 0 && rowIndex === 0 ? "border-t-0" : "border-t"
-      } `}
-      key={date.toString()}
+      } border-0 `}
       ref={boxRef}
-      onClick={() => {
-        setShowInput(true);
-        console.log(monthIndex);
-      }}
-      // style={{height: isToday ? 300 : 192}}
+      onClick={handleCalendarClick}
     >
       <div
-        className={` max-w-max m-2 p-2 h-7 flex justify-center items-center  ${
+        className={` m-2 flex h-7 max-w-max items-center justify-center p-2  ${
           !highlight && "text-muted-dark"
-        } ${isToday && "bg-accent-blue rounded-lg"} `}
+        } ${isToday && "rounded-lg bg-accent-blue"} `}
       >
         {date.getDate() === 1 && (
           <>{months[date.getMonth()].substring(0, 3)} </>
@@ -232,23 +267,30 @@ const CalendarBox = ({
             }
             calendarIndex={dateIndex}
             rowKey={rowKey}
+            boxWidth={rowWidth === 0 ? 0 : rowWidth / 7}
           />
         );
       })}
       {showInput && (
-        <div className="px-2">
+        <div
+          className="absolute z-50 flex w-full items-center justify-center px-2"
+          style={{
+            top:
+              40 *
+                (numberOfTasksThatStartOnDay +
+                  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame) +
+                40 || 40,
+          }}
+        >
           <input
-            className={`${
-              tasksThatStartOnDay.length > 0 && "mt-1"
-            } absolute bg-transparent text-input w-[calc(100%-16px)] border-2 border-border-default text-sm focus:ring-0 flex items-center`}
+            className={`text-input flex items-center border-2 border-border-default bg-transparent text-sm focus:ring-0`}
             autoFocus
             onBlur={() => addTask()}
             onChange={(e) => setTaskName(e.target.value)}
             style={{
               left: 8,
               top: 0,
-              // 36 *
-              // (tasksThatStartOnDay.length + noOfDaysThatDoesNotStartOnDayButFallInTimeFrame),
+              width: rowWidth / 7 - 16,
             }}
           />
         </div>

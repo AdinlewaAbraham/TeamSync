@@ -1,7 +1,7 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { usePopper } from "react-popper";
-import fetchProject from "@/helpers/fetchProject";
+import fetchProject from "@/helpers/project/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { ReactNode, useEffect, useState } from "react";
 import Project from "@/interfaces/project";
@@ -10,7 +10,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
 import RenderStatus, {
   RenderPriority,
-} from "@/components/project/tasks/ConditionalRender";
+} from "@/components/tasks/ConditionalRender";
 import { IoIosArrowDown } from "react-icons/io";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { FiCheck } from "react-icons/fi";
@@ -24,6 +24,7 @@ import {
   HiOutlineArrowSmUp,
 } from "react-icons/hi";
 import Task from "@/interfaces/task";
+import Table from "@/components/tasks/table/Table";
 
 const TaskRowComponent = ({ task }: { task: Task }) => {
   const [showPriorityMenu, setShowPriorityMenu] = useState<boolean>(false);
@@ -314,10 +315,6 @@ const TableDropdown = ({
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
-  const [sectionName, setSectionName] = useState<string>("");
-  const [showAddSectionComponent, setShowAddSectionComponent] =
-    useState<boolean>(true);
-  const { taskComponentHeight } = useGlobalContext();
   useEffect(() => {
     const fetchProjectFunc = async () => {
       const response = await fetchProject(params.projectId);
@@ -350,46 +347,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     };
     resolveFuncSync();
   }, []);
-  // useEffect(() => {
-  //   const handleClick = async (e: MouseEvent) => {
-  //     const target = e.target as HTMLElement;
-  //     if (!target.closest(".addSectionInput")) {
-  //       await addSection();
-  //     }
-  //   };
-  //   window.addEventListener("click", handleClick);
-  //   return () => window.removeEventListener("click", handleClick);
-  // }, [sectionName]);
 
-  const addSection = async () => {
-    setShowAddSectionComponent(true);
-    if (sectionName === "") {
-      return;
-    }
-    if (!activeProject) return;
-    try {
-      const response = await fetch("/api/section/", {
-        method: "POST",
-        body: JSON.stringify({ sectionName, projectId: activeProject._id }),
-      });
-      const data = await response.json();
-      await redirectToLogin(response.status, data.error);
-      const newSection: Section = {
-        sectionName: sectionName,
-        tasks: [],
-        projectId: activeProject?._id,
-        _id: data._id,
-      };
-
-      const newProject: Project = {
-        ...activeProject,
-        sections: [...activeProject.sections, newSection],
-      };
-      setActiveProject(newProject);
-    } catch (err) {
-      // isError = true;
-    }
-  };
   if (!activeProject?.sections)
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -397,53 +355,11 @@ const page = ({ params }: { params: { projectId: string } }) => {
       </div>
     );
   return (
-    <div className="flex flex-1 flex-col pl-8">
-      <header className="w-full  bg-inherit ">
-        <ul
-          className="gutter flex w-full justify-between rounded-t-lg border border-border-default bg-bg-secondary text-sm 
-         text-muted-dark [&>li]:w-[20%] [&>li]:py-2"
-        >
-          <li className="pl-2">Task name</li>
-          <li> Assignee</li>
-          <li> Due date </li>
-          <li> Priority </li>
-          <li> Status </li>
-        </ul>
-      </header>
-      <div className="  max-h-full overflow-y-auto">
-        {activeProject.sections.map((section, index) => (
-          <TableDropdown
-            section={section}
-            projectId={params.projectId}
-            // isLast={activeProject.sections.length - 1 === index}
-          />
-        ))}
-      </div>
-      <footer className="w-full rounded-b-lg  border border-border-default ">
-        {showAddSectionComponent ? (
-          <div
-            className="flex h-12 cursor-pointer items-center py-2 pl-2 text-muted-dark hover:bg-menuItem-hover"
-            onClick={() => setShowAddSectionComponent(false)}
-          >
-            <i className="mr-2">
-              <IoMdAdd />
-            </i>
-            Add section
-          </div>
-        ) : (
-          <div className="addSectionInput flex h-12 w-full text-sm">
-            <input
-              type="text"
-              autoFocus
-              className="text-input h-full w-full border-none bg-transparent pl-8 focus:ring-0"
-              placeholder="Write a task name"
-              onChange={(e) => setSectionName(e.target.value)}
-              onBlur={async () => await addSection()}
-            />
-          </div>
-        )}
-      </footer>
-    </div>
+    <Table
+      paramsProjectId={params.projectId}
+      project={activeProject}
+      setProject={setActiveProject}
+    />
   );
 };
 

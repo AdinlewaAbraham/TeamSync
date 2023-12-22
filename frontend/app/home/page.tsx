@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useGlobalContext } from "@/context/GeneralContext";
 import User from "@/interfaces/user";
 import LoadingComponent from "@/components/others/LoadingComponent";
-import fetchUser from "@/helpers/fetchUser";
+import fetchUser from "@/helpers/user/fetchUser";
 import { useRouter } from "next/navigation";
 
 const page = () => {

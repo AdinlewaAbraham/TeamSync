@@ -1,7 +1,7 @@
 "use client";
 import EditableComp from "@/components/others/EditableComp";
 import { useGlobalContext } from "@/context/GeneralContext";
-import fetchProject from "@/helpers/fetchProject";
+import fetchProject from "@/helpers/project/fetchProject";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
