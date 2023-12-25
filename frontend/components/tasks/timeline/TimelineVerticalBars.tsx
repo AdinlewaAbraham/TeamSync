@@ -8,11 +8,13 @@ const TimelineVerticalBars = ({
   setSelectedDateObject,
   projectId,
   taskWithDateToStart,
+  minHeight,
 }: {
   day: Date;
   setSelectedDateObject: (c: { startDate: Date; endDate: Date } | null) => void;
   projectId: string;
   taskWithDateToStart: (string | Task | undefined)[];
+  minHeight: number;
 }) => {
   const { activeProject } = useGlobalContext();
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -53,7 +55,7 @@ const TimelineVerticalBars = ({
     }
   };
   const [tasksToMap, setTasksToMap] = useState<(string | Task | undefined)[]>(
-    []
+    [],
   );
   function areDatesEqual(date1: Date, date2: Date) {
     return (
@@ -73,20 +75,20 @@ const TimelineVerticalBars = ({
   }, [taskWithDateToStart]);
 
   useEffect(() => {}, []);
-  const isToday = (new Date()).toUTCString() === (new Date(day)).toUTCString();
+  const isToday = new Date().toUTCString() === new Date(day).toUTCString();
   if (isToday) {
     console.log(day);
   }
   return (
     <div
       key={day.getUTCSeconds()}
-      className={`w-[40px] h-[calc(100dvh-360px)] relative ${
-        (day.getDay() === 0 || day.getDay() === 6) && "bg-bg-primary"
+      className={`relative h-full w-[40px] ${
+        (day.getDay() === 0 || day.getDay() === 6) && "bg-[#2a2b2d]"
       } `}
-   
+      style={{ minHeight: minHeight }}
     >
       {isToday && (
-        <div className="absolute h-10 left-0 w-1 z-50 bg-green-500" />
+        <div className="absolute left-0 z-50 h-10 w-1 bg-green-500" />
       )}
     </div>
   );

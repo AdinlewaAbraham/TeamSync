@@ -1,9 +1,8 @@
-import React from 'react'
+import WebsocketTest from "@/components/WebsocketTest";
+import React from "react";
 
 const page = () => {
-  return (
-    <div> user personalized board</div>
-  )
-}
+  return <WebsocketTest />;
+};
 
-export default page
+export default page;

@@ -25,7 +25,7 @@ const SectionHorizontalRow = ({
 }) => {
   const allTaskInSectionRowNumberArr: (number | undefined)[] = taskWithDateRange
     .filter(
-      (task) => typeof task === "object" && task.sectionId === section._id
+      (task) => typeof task === "object" && task.sectionId === section._id,
     )
     .map((task) => {
       if (typeof task === "object" && typeof task.rowNumber === "number") {
@@ -77,7 +77,7 @@ const SectionHorizontalRow = ({
 
   return (
     <div
-      className={` border-b border-red-500 w-full`}
+      className={` w-full border-b border-border-default`}
       ref={sectionComponent}
       // onClick={() => console.log(timelineSectionObj)}
     >
@@ -97,8 +97,9 @@ const SectionHorizontalRow = ({
                 year={year}
                 taskWithDateRange={taskWithDateRange}
                 sectionTasks={allSectionTask}
+                section={section}
               />
-            )
+            ),
           )}
       </div>
     </div>

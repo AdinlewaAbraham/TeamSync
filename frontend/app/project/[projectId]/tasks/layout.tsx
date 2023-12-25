@@ -49,8 +49,6 @@ const layout = ({
   children: ReactNode;
   params: { projectId: string };
 }) => {
-  const observerRef = useRef<ResizeObserver | null>(null);
-  const { setTaskComponentHeight } = useGlobalContext();
 
 
   return (

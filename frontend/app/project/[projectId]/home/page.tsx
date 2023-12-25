@@ -57,6 +57,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       setContentStateJSON(contentStateJSON);
       contentStateJSON.entityMap = {};
       if (contentStateJSON) {
+        console.log(contentStateJSON);
         const contentState = convertFromRaw(contentStateJSON);
         const newEditorState = EditorState.createWithContent(contentState);
         setEditorState(newEditorState);
@@ -113,7 +114,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
             <div className="w-full">
               <h3 className="">Key resources</h3>
               <div>
-                {activeProject.projectResources.length === 0 &&
+                {activeProject?.projectResources?.length === 0 &&
                 !activeProject?.projectBrief ? (
                   <NoResourceComp
                     activeProject={activeProject}

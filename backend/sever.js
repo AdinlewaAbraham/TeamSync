@@ -3,7 +3,8 @@ const workspace = require("./routes/workspace/workspaceRoute");
 const project = require("./routes/project/projectRoute");
 const googleAuth = require("./routes/auth/googleRoute");
 const task = require("./routes/task/taskRoute");
-const section = require("./routes/section/sectionRoute")
+const section = require("./routes/section/sectionRoute");
+const { Server } = require("socket.io");
 require("dotenv").config();
 const cors = require("cors");
 const session = require("express-session");
@@ -13,10 +14,27 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 
 require("./auth");
 
+const port = process.env.PORT || 5000;
 const db = require("./config/dbConnection");
 const passport = require("passport");
 const { User } = require("./models/userModel");
 const app = express();
+
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
+io.on("connection", (socket) => {
+  console.log("io connected");
+  socket.on("add_task", (taskdata) => {
+    console.log(taskdata);
+    socket.broadcast.emit("recieve_task", taskdata);
+  });
+});
+server.listen(port);
 
 const store = new MongoDBStore({
   uri: process.env.CONNECTION_STRING,
@@ -33,8 +51,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-const port = process.env.PORT || 5000;
 
 app.use(cors());
 
@@ -71,7 +87,7 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-app.listen(port, () => {});
+// app.listen(port, () => {});
 
 // io = require("socket.io")(app, {
 //   cors: {

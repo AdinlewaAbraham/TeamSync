@@ -4,7 +4,7 @@ export default function findMinFreeRowNumber(
   allTasks: (Task | string | undefined)[],
   startDate: Date,
   dueDate: Date,
-  currentRowNumber: number
+  currentRowNumber: number,
 ) {
   if (allTasks.length === 0) {
     // console.log("allTasks was empty");
@@ -35,12 +35,14 @@ export default function findMinFreeRowNumber(
 
     return 0;
   }
-const maxNumberInRowNumbers = Math.max(...rowNumbers)
+  const maxNumberInRowNumbers = Math.max(...rowNumbers);
   for (let i = 0; i < maxNumberInRowNumbers; i++) {
     if (!rowNumbers.includes(i)) {
       return i;
     }
   }
 
-  return maxNumberInRowNumbers + 1 < currentRowNumber ? currentRowNumber : maxNumberInRowNumbers + 1 ;
+  return maxNumberInRowNumbers + 1 < currentRowNumber
+    ? currentRowNumber
+    : maxNumberInRowNumbers + 1;
 }
