@@ -9,6 +9,8 @@ require("dotenv").config();
 const cors = require("cors");
 const session = require("express-session");
 const authMiddleware = require("./middleware/validateUserTokenHandler");
+const { socketConnection } = require('./utils/socket-io');
+const { sendMessage } = require('./utils/socket-io');
 
 const MongoDBStore = require("connect-mongodb-session")(session);
 
@@ -21,19 +23,24 @@ const { User } = require("./models/userModel");
 const app = express();
 
 const server = require("http").createServer(app);
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-});
-io.on("connection", (socket) => {
-  console.log("io connected");
-  socket.on("add_task", (taskdata) => {
-    console.log(taskdata);
-    socket.broadcast.emit("recieve_task", taskdata);
-  });
-});
+socketConnection(server);
+// const io = require("socket.io")(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"],
+//   },
+// });
+// io.on("connection", (socket) => {
+//   socket.on("join_room", (roomId) => {
+//     console.log(roomId);
+//     socket.join(roomId);
+//   });
+
+//   socket.on("add_task", (data) => {
+//     console.log(data);
+//   });
+// });
+
 server.listen(port);
 
 const store = new MongoDBStore({
@@ -75,6 +82,11 @@ app.get("/auth/failure", (req, res) => {
   res.send("something went wrong");
 });
 app.get("/login", (req, res) => {
+  const roomId = '12345';
+  const key = 'eventName';
+  const message = 'new order assigned';
+  
+  sendMessage(roomId, key, message);
   res.status(200).json({ message: "first fullstack api call" });
 });
 
@@ -87,16 +99,4 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-// app.listen(port, () => {});
-
-// io = require("socket.io")(app, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
-
-// io.on("connection", (socket)=>{
-//   console.log("connected")
-// })
-
-module.exports = { db };
+module.exports = { db, };

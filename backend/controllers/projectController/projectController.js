@@ -4,7 +4,7 @@ const { Workspace } = require("../../models/workspaceModel");
 const { Section } = require("../../models/sectionModel");
 const { Task } = require("../../models/taskModel");
 const { User } = require("../../models/userModel");
-
+const { sendMessage } = require("../../utils/socket-io");
 const editProject = asyncHandler((req, res) => {});
 
 const createProject = asyncHandler(async (req, res) => {
@@ -85,6 +85,7 @@ const updateProjectDescription = asyncHandler(async (req, res) => {
       res.status(404);
     }
     console.log(project.description);
+    io.emit("projectUpdate", description);
     res.status(200).json(project.description);
   } catch (error) {
     console.log(error);

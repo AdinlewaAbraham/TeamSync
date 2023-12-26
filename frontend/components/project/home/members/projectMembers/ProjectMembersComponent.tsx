@@ -29,7 +29,7 @@ const ProjectMembersComponent = ({
         <span className="">Add member</span>
       </div>
       {Array(5)
-        .fill(activeProject.members[0])
+        .fill(activeProject.members?.[0])
         .map((member) => {
           if (typeof member === "object") return <MemberCard member={member} />;
         })}

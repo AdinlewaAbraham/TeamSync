@@ -15,6 +15,8 @@ import {} from "react-icons/";
 import {} from "react-icons/";
 import { AnimatePresence, motion } from "framer-motion";
 import SubLayoutReusableNavbar from "@/components/navbar/SubLayoutReusableNavbar/SubLayoutReusableNavbar";
+import Section from "@/interfaces/section";
+import Task from "@/interfaces/task";
 
 const layout = ({
   params,
@@ -23,7 +25,8 @@ const layout = ({
   params: { projectId: string };
   children: ReactNode;
 }) => {
-  const { user, activeWorkspace, activeProject } = useGlobalContext();
+  const { user, activeWorkspace, activeProject, setActiveProject } =
+    useGlobalContext();
   const [showNavbar, setShowNavbar] = useState(true);
   const router = useRouter();
   useEffect(() => {
@@ -44,6 +47,50 @@ const layout = ({
     getProject();
   }, []);
   const navbarBaseUrl = "/project/" + activeProject?._id + "/";
+  const addTask = () => {
+    if (!activeProject) return;
+    const sectionId = "6588c9c02bef41cc9191b865";
+    const project = { ...activeProject };
+    const projectSections = [...activeProject.sections];
+    const sectionToBeEditedIndex = projectSections.findIndex((section) => {
+      if (typeof section !== "object") return false;
+      return section._id === sectionId;
+    });
+    const sectionToBeEdited = projectSections.find((section) => {
+      if (typeof section !== "object") return false;
+      return section._id === sectionId;
+    });
+    const taskToBeAdded: Task = {
+      _id: "652ea2c856c7c663833733f7",
+      taskName: "fffff",
+      assignees: [],
+      dueDate: new Date("2023-10-04T23:00:00.000Z"),
+      dateToStart: new Date("2023-10-02T23:00:00.000Z"),
+      Priority: "null",
+      status: "null",
+      comments: [],
+      subTasks: [],
+      members: [],
+      projectId: "64ee7b4ed858970d2df1bfc9",
+      sectionId: "652ea17d56c7c663833733b8",
+      description: "shit",
+      isComplete: false,
+      rowNumber: 4,
+    };
+    if (typeof sectionToBeEdited === "object") {
+      const newSectionTasks: Task[] = [
+        ...sectionToBeEdited.tasks,
+        taskToBeAdded,
+      ].filter((task) => typeof task !== "string") as Task[];
+
+      sectionToBeEdited.tasks = newSectionTasks;
+      projectSections.splice(sectionToBeEditedIndex, 1, sectionToBeEdited);
+      project.sections = projectSections;
+      setActiveProject({ ...project });
+    }
+  };
+
+  const deleteTask = () => {};
   return (
     <section className="relative flex flex-1 flex-col overflow-x-hidden">
       <SubLayoutReusableNavbar
@@ -80,6 +127,14 @@ const layout = ({
       >
         toggle nav
       </button>
+      <div className="flex justify-center">
+        <button onClick={addTask} className="bg-green-400 px-2">
+          add task
+        </button>
+        <button onClick={deleteTask} className="bg-red-400 px-2">
+          delete task
+        </button>
+      </div>
       <main className="relative flex h-full flex-1 flex-col">{children}</main>
     </section>
   );

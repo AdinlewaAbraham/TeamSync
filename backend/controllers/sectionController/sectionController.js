@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { Section } = require("../../models/sectionModel");
 const { Project } = require("../../models/projectModel");
+const { sendMessage } = require("../../utils/socket-io");
 
 const getSection = asyncHandler(async (req, res) => {});
 const updateSection = asyncHandler(async (req, res) => {});
@@ -24,7 +25,7 @@ const deleteSection = asyncHandler(async (req, res) => {
           sections: sectionID,
         },
       });
-
+      sendMessage(`project_${projectId}`, "section_deleted", [sectionID]);
       res.status(200).json({ message: "Section deleted successfully" });
       console.log("Document deleted successfully");
     } catch (error) {
@@ -54,6 +55,7 @@ const createSection = asyncHandler(async (req, res) => {
     project.sections = [];
   }
   console.log(project);
+  sendMessage(`project_${projectId}`, "section_added", [section]);
   await Promise.all([
     await section.save(),
     await project.updateOne({

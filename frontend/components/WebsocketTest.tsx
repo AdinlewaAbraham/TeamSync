@@ -1,18 +1,20 @@
 "use client";
+import socket from "@/config/WebSocketManager";
 import { useGlobalContext } from "@/context/GeneralContext";
 import React, { useEffect } from "react";
-import io from "socket.io-client";
 
 const WebsocketTest = () => {
   const { activeWorkspace } = useGlobalContext();
   console.log(activeWorkspace);
-  const socket = io.connect("http://localhost:5001/");
   const addTask = () => {
-    socket.emit("add_task", { taskId: "someId" });
+    socket.emit("join_room", "shit");
   };
   useEffect(() => {
     socket.on("recieve_task", (task: { taskId: string }) => {
       console.log(task.taskId);
+    });
+    socket.on("eventName", (data) => {
+      console.log(data)
     });
   }, [socket]);
 

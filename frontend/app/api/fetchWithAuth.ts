@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+
 export async function fetchWithAuth(
   url: string,
-  options: RequestInit
+  options: RequestInit,
 ): Promise<any> {
   try {
     const cookieStore = cookies();
@@ -22,7 +23,7 @@ export async function fetchWithAuth(
     // if (!response.ok) {
     //   console.log("something is wrong wih your response check fetchWithAuth this is your status     " + response.status );
     // }
-    
+
     return { data, status: response.status };
   } catch (error) {
     console.error(error);

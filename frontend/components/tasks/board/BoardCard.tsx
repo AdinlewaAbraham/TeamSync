@@ -13,12 +13,14 @@ import { usePopper } from "react-popper";
 import deleteSection from "@/helpers/section/deleteSection";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import BoardTaskCard from "./BoardTaskCard";
+import socket from "@/config/WebSocketManager";
+import Task from "@/interfaces/task";
 
 const BoardCard = ({
   section,
   projectId,
 }: {
-  section: Section | string;
+  section: Section;
   projectId: string;
 }) => {
   const [showAddTaskComponent, setShowAddTaskComponent] =
@@ -26,7 +28,7 @@ const BoardCard = ({
   const [taskName, setTaskName] = useState<string>("");
   const { setActiveProject, activeProject } = useGlobalContext();
   const [showBoardMenu, setShowBoardMenu] = useState<boolean>(false);
-  const [localSection, setLocalSection] = useState<Section | string>(section);
+  const [localSection, setLocalSection] = useState<Section>(section);
 
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
@@ -84,7 +86,7 @@ const BoardCard = ({
         projectId: activeProject._id,
         _id: data._id,
       };
-      setLocalSection(newLocalSection);
+      // setLocalSection(newLocalSection);
     } else {
       console.log("something went wrong");
     }
@@ -96,34 +98,58 @@ const BoardCard = ({
     if (!returnObj) return;
     const { data, status } = returnObj;
     console.log(data, status);
-    if (status === 200) {
-      console.log("yahhhhhhhhhhhh");
-      if (!activeProject) return;
-      const filteredSections = activeProject.sections.filter((arrSection) => {
-        if (typeof arrSection === "string") return;
-        return arrSection._id !== section._id;
-      });
-      const newActiveProject = {
-        ...activeProject,
-        sections: filteredSections,
-      };
-      setActiveProject(newActiveProject);
-    }
+    // if (status === 200) {
+    //   console.log("yahhhhhhhhhhhh");
+    //   if (!activeProject) return;
+    //   const filteredSections = activeProject.sections.filter((arrSection) => {
+    //     if (typeof arrSection === "string") return;
+    //     return arrSection._id !== section._id;
+    //   });
+    //   const newActiveProject = {
+    //     ...activeProject,
+    //     sections: filteredSections,
+    //   };
+    //   // setActiveProject(newActiveProject);
+    // }
   };
-  // useEffect(() => {
-  //   const handleClick = (e: MouseEvent) => {
-  //     const target = e.target as HTMLElement;
-  //     if (!target.closest(".addTaskComponent")) {
-  //       handleAddTask();
-  //     }
-  //   };
-  //   window.addEventListener("click", handleClick);
-  //   return () => window.removeEventListener("click", handleClick);
-  // }, []);
+
+  useEffect(() => {
+    if (typeof localSection === "object") {
+      const sectionId = localSection._id;
+      const handleAddTask = (task: Task) => {
+        if (sectionId !== task.sectionId) return;
+        // console.log(task);
+        setLocalSection((prevLocalSection) => {
+          if (prevLocalSection._id === task.sectionId) {
+            return {
+              ...prevLocalSection,
+              tasks: [...prevLocalSection.tasks, task] as Task[],
+            };
+          }
+          return prevLocalSection;
+        });
+      };
+      const handleDeleteTask = (taskId: string) => {
+        const sectionCopy = { ...localSection };
+        sectionCopy.tasks = [...sectionCopy.tasks].filter(
+          (task) => typeof task === "object" && task._id !== taskId,
+        ) as Task[];
+        setLocalSection(sectionCopy);
+      };
+      socket.emit("join_room", `section_${section._id}`);
+      socket.on("task_added", handleAddTask);
+      socket.on("task_deleted", handleDeleteTask);
+
+      return () => {
+        socket.off("task_added", handleAddTask);
+        socket.off("task_deleted", handleDeleteTask);
+      };
+    }
+  }, [localSection, section]);
 
   if (typeof localSection === "string") return <>loading this is a string </>;
   return (
-    <div>
+    <div onClick={() => console.log(localSection._id)}>
       <div className="mr-2 flex max-h-full w-[280px] flex-1 flex-col overflow-auto rounded-lg bg-bg-primary py-2">
         <header className="flex items-center justify-between px-4 py-2">
           <h1>{localSection.sectionName}</h1>

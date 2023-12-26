@@ -13,7 +13,7 @@ import Board from "@/components/tasks/board/Board";
 
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
-    useState<boolean>(false);
+  useState<boolean>(false);
   useEffect(() => {
     const fetchProjectFunc = async () => {
       const response = await fetchProject(params.projectId);
@@ -27,15 +27,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
       }
     };
     const getProject = async () => {
-      if (activeProject) return;
-      const stringData = localStorage.getItem(params.projectId);
-      const project: Project = stringData ? JSON.parse(stringData) : undefined;
-
-      if (project?._id) {
-        setActiveProject(project);
-      } else {
-        await fetchProjectFunc();
-      }
+      await fetchProjectFunc();
     };
     const syncProject = async () => {
       if (activeProject?._id) {
