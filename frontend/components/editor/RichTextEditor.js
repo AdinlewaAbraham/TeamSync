@@ -100,49 +100,48 @@ export default class WYSIWYGEditor extends React.Component {
     };
     return (
       <div
-        className={`${
+        className={`${this.props.mainDivClasses} ${
           !turnOffBorders &&
           (isFocused
             ? "border-white"
             : "border-transparent hover:border-border-default")
-        } ${!turnOffBorders && "rounded-lg border"}`}
-        onClick={this.focus}
-      >
-        <div
-          className={`box-content flex min-h-[131px] flex-col justify-between p-3
+        } ${
+          !turnOffBorders && "rounded-lg border"
+        } box-content flex flex-col justify-between p-3
         ${
           !turnOffBorders && (isFocused ? "border-white" : "border-transparent")
         } ${!turnOffBorders && "rounded-lg border"} bg-bg-secondary`}
+        onClick={this.focus}
+      >
+        
+        <div className={`${this.props.editorClasses} ${className} max-w-full`}>
+          <Editor
+            blockStyleFn={getBlockStyle}
+            customStyleMap={styleMap}
+            editorState={editorState}
+            handleKeyCommand={this.handleKeyCommand}
+            keyBindingFn={this.mapKeyToEditorCommand}
+            onChange={this.onChange}
+            placeholder={this.props.placeholder}
+            ref="editor"
+            spellCheck={true}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
+          />
+        </div>
+        <div
+          className={`${this.props.buttonPanelclasses} flex items-center ${
+            alwaysShowButtons || isFocused ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <div className={`${className} max-w-full`}>
-            <Editor
-              blockStyleFn={getBlockStyle}
-              customStyleMap={styleMap}
-              editorState={editorState}
-              handleKeyCommand={this.handleKeyCommand}
-              keyBindingFn={this.mapKeyToEditorCommand}
-              onChange={this.onChange}
-              placeholder=""
-              ref="editor"
-              spellCheck={true}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-            />
-          </div>
-          <div
-            className={`flex items-center ${
-              alwaysShowButtons || isFocused ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <BlockStyleControls
-              editorState={editorState}
-              onToggle={this.toggleBlockType}
-            />
-            <InlineStyleControls
-              editorState={editorState}
-              onToggle={this.toggleInlineStyle}
-            />
-          </div>
+          <BlockStyleControls
+            editorState={editorState}
+            onToggle={this.toggleBlockType}
+          />
+          <InlineStyleControls
+            editorState={editorState}
+            onToggle={this.toggleInlineStyle}
+          />
         </div>
       </div>
     );

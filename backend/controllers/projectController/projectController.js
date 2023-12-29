@@ -85,7 +85,7 @@ const updateProjectDescription = asyncHandler(async (req, res) => {
       res.status(404);
     }
     console.log(project.description);
-    io.emit("projectUpdate", description);
+    // io.emit("projectUpdate", description);
     res.status(200).json(project.description);
   } catch (error) {
     console.log(error);

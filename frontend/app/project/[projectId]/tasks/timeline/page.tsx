@@ -7,7 +7,7 @@ import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineVerticalBars from "@/components/tasks/timeline/TimelineVerticalBars";
 import HourHorizontalColums from "@/components/tasks/timeline/HorizontalRowsForTaskMapping";
-import EditableComp from "@/components/others/EditableComp";
+import EditableComp from "@/components/others/EditableTextComponent";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import SectionHorizontalRow from "@/components/tasks/timeline/SectionHorizontalRow";
 import Section from "@/interfaces/section";

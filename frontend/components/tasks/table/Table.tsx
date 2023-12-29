@@ -4,44 +4,29 @@ import Project from "@/interfaces/project";
 import { IoMdAdd } from "react-icons/io";
 import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
+import { useGlobalContext } from "@/context/GeneralContext";
 
-const Table = ({
-  project,
-  setProject,
-  paramsProjectId,
-}: {
-  project: Project;
-  setProject: (c: Project) => void;
-  paramsProjectId: string;
-}) => {
+const Table = ({ paramsProjectId }: { paramsProjectId: string }) => {
+  const { activeProject } = useGlobalContext();
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(true);
+  if (!activeProject) {
+    return <div>loading comp</div>;
+  }
   const addSection = async () => {
     setShowAddSectionComponent(true);
     if (sectionName === "") {
       return;
     }
-    if (!project) return;
+    if (!activeProject) return;
     try {
       const response = await fetch("/api/section/", {
         method: "POST",
-        body: JSON.stringify({ sectionName, projectId: project._id }),
+        body: JSON.stringify({ sectionName, projectId: activeProject._id }),
       });
       const data = await response.json();
       await redirectToLogin(response.status, data.error);
-      const newSection: Section = {
-        sectionName: sectionName,
-        tasks: [],
-        projectId: project?._id,
-        _id: data._id,
-      };
-
-      const newProject: Project = {
-        ...project,
-        sections: [...project.sections, newSection],
-      };
-      setProject(newProject);
     } catch (err) {
       // isError = true;
     }
@@ -61,7 +46,7 @@ const Table = ({
         </ul>
       </header>
       <div className="  max-h-full overflow-y-auto">
-        {project.sections.map((section, index) => (
+        {activeProject.sections.map((section, index) => (
           <TableDropdown
             section={section}
             projectId={paramsProjectId}

@@ -7,7 +7,7 @@ import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
 
-const TaskBar = ({
+const CalendarTaskBar = ({
   index,
   task,
   isLast,
@@ -18,6 +18,7 @@ const TaskBar = ({
   calendarIndex,
   rowKey,
   boxWidth,
+  tasksThatStartOnDay,
 }: {
   index: number;
   task: Task;
@@ -29,9 +30,9 @@ const TaskBar = ({
   calendarIndex: number;
   rowKey: string;
   boxWidth: number;
+  tasksThatStartOnDay: (Task| undefined| string)[];
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
-  const handleTaskDelete = async (taskId: string) => {};
 
   const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
@@ -54,8 +55,8 @@ const TaskBar = ({
   const noOfDaysToEnd = 7 - dateIndex;
   const hasOverflowToRight = daysInDateRange > noOfDaysToEnd;
   const widthForTasksWithOverflowToRight = hasOverflowToRight //remove right padding if task has overflow to right(if tasks does not end on that week)
-    ? noOfDaysToEnd * boxWidth 
-    : daysInDateRange * boxWidth; 
+    ? noOfDaysToEnd * boxWidth
+    : daysInDateRange * boxWidth;
   const daysRemainingFromSpillOver = calculateDaysBetweenDates(
     new Date(calendarDate),
     new Date(task.dueDate),
@@ -64,17 +65,19 @@ const TaskBar = ({
   const doesTaskRunThrough = daysRemainingFromSpillOver > 7; // if tasks spans through the week
   const widthForTasksThatDoesNotStartOnDay = doesTaskRunThrough
     ? boxWidth * 7
-    : daysRemainingFromSpillOver * boxWidth; 
+    : daysRemainingFromSpillOver * boxWidth;
 
   // implement heigth or as you may say top
   const isMonday = calendarIndex === 0;
+
+  const [top, setTop] = useState(0);
 
   const calculateTop = () => {
     const mondayTop =
       /* doesNotStartOnDay
     ?*/ index * 36 /* height of taskbar */ +
       40 /*hieght of top header */ +
-      index * 4;
+      index * 4; //margin
     if (isMonday) {
       return mondayTop;
     }
@@ -127,28 +130,7 @@ const TaskBar = ({
   };
 
   useEffect(() => {
-    // setRowTaskPositionObj((prev: any) => {
-
-    //   if (typeof prev !== "object") {
-    //     return {
-    //       [task._id]: {
-    //         dateToStart: task.dateToStart,
-    //         dueDate: task.dueDate,
-    //         top: calculateTop(),
-    //       },
-    //     };
-    //   }
-
-    //   return {
-    //     ...prev,
-    //     [task._id]: {
-    //       dateToStart: task.dateToStart,
-    //       dueDate: task.dueDate,
-    //       top: calculateTop(),
-    //     },
-    //   };
-    // });
-
+    const newTop = calculateTop();
     const localTaskPositionString = localStorage.getItem(
       "localTaskPositionObject",
     );
@@ -168,12 +150,13 @@ const TaskBar = ({
           [task._id]: {
             dateToStart: task.dateToStart,
             dueDate: task.dueDate,
-            top: calculateTop(),
+            top: newTop,
           },
         },
       }),
     );
-  }, []);
+    setTop(newTop);
+  }, [task, tasksThatStartOnDay]);
 
   /*
   NOTE: this will only run for all except mondays 
@@ -191,6 +174,19 @@ const TaskBar = ({
     setShowCheckMark(false);
   };
 
+  const handleDeleteTask = async () => {
+    console.log("handling task");
+    try {
+      const response = await fetch("/api/task/" + task._id, {
+        method: "DELETE",
+      });
+      console.log(response.status);
+      if (response.ok) {
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div
       onClick={() => {
@@ -202,7 +198,7 @@ const TaskBar = ({
         key={task._id + index}
         onClick={() => console.log(calculateTop())}
         style={{
-          top: calculateTop(),
+          top: top,
           width: doesNotStartOnDay
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
@@ -214,9 +210,7 @@ const TaskBar = ({
         <div
           key={task._id}
           className={`
-         border-2 ${
-           isLast ? "" : "mb-1"
-         }  z-50 rounded-lg bg-bg-secondary 
+         border-2 ${isLast ? "" : "mb-1"}  z-50 rounded-lg bg-bg-secondary 
          ${
            hasOverflowToRight &&
            !doesNotStartOnDay &&
@@ -231,7 +225,7 @@ const TaskBar = ({
            : "border-border-default"
        }
           group flex
-      h-9 cursor-pointer items-center px-3 py-1 text-xs transition-colors duration-150  `}
+       h-9 cursor-pointer items-center px-3 py-1 text-xs transition-colors duration-150  `}
           style={
             {
               // width: doesNotStartOnDay
@@ -269,13 +263,13 @@ const TaskBar = ({
             )}
           </AnimatePresence>
           <div>{task.taskName}</div>
-          {/* <i onClick={() => handleTaskDelete(task._id)}>
-          <AiOutlineDelete />
-        </i> */}
+          <i onClick={handleDeleteTask} className="px-4 hover:border">
+            <AiOutlineDelete />
+          </i>
         </div>
       </div>
     </div>
   );
 };
 
-export default TaskBar;
+export default CalendarTaskBar;

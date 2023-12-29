@@ -149,7 +149,7 @@ const HorizontalRowsForTaskMapping = ({
   return (
     <div
       key={index}
-      className=" relative z-[99] flex h-[52px] w-full cursor-cell items-center"
+      className=" relative z-[99] flex h-12 w-full cursor-cell items-center"
       onClick={handleRowClick}
     >
       {/* <p className="absolute left-[50%]">{index + 1}</p> */}

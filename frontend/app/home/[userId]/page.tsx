@@ -1,11 +1,13 @@
 "use client";
 import UserHomePageHeaderComponent from "@/components/user/home/UserHomePageHeaderComponent";
-import WidgetComponent from "@/components/user/home/widgets/WidgetComponent";
-import WidgetRenderSettings, { widgetTypes } from "@/interfaces/widgetRenderSettings";
-import AddWidgetSidebar from "@/components/user/home/widgets/AddWidgetSidebar";
+import WidgetComponents from "@/components/user/home/widgets/widgetComponents/WidgetComponents";
+import WidgetRenderSettings, {
+  widgetTypes,
+} from "@/interfaces/widgetRenderSettings";
+import AddWidgetSidebar from "@/components/user/home/widgets/addWidgetSidebar/AddWidgetSidebar";
 import { AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const page = () => {
   const { userId } = useParams();
@@ -20,6 +22,14 @@ const page = () => {
   ];
   const [widgetsArray, setWidgetsArray] =
     useState<WidgetRenderSettings[]>(defaultWidgetArr);
+  useEffect(() => {
+    const handleMouseUp = () => {
+      setIsMouseDownOnSidebarWidget(false);
+    };
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => window.removeEventListener("mouseup", handleMouseUp);
+  }, []);
+
   if (!userId) return <div>loading...</div>;
   return (
     <div className=" absolute inset-0 flex flex-1 flex-col items-center ">
@@ -40,7 +50,7 @@ const page = () => {
             userId={typeof userId === "object" ? userId[0] : userId}
             setShowAddWidgetSideBar={setShowAddWidgetSideBar}
           />
-          <WidgetComponent
+          <WidgetComponents
             widgetsArray={widgetsArray}
             setWidgetsArray={setWidgetsArray}
             isMouseDownOnSidebarWidget={isMouseDownOnSidebarWidget}

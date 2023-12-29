@@ -9,11 +9,7 @@ import TimelineSideBarItem from "@/components/tasks/timeline/TimelineSideBarItem
 import TimelineMonthComponent from "@/components/tasks/timeline/TimelineMonthComponent";
 import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
 
-const Timeline = ({
-  paramProjectId,
-}: {
-  paramProjectId: string;
-}) => {
+const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
   const monthNames = [
     "January",
     "February",
@@ -90,39 +86,6 @@ const Timeline = ({
     }
   }, [timelineRef.current]);
 
-  useEffect(() => {
-    const fetchProjectFunc = async () => {
-      const response = await fetchProject(paramProjectId);
-      if (!response) {
-      } else {
-        const { data, status } = response;
-        await redirectToLogin(status, data?.error);
-        // console.log(data);
-        setActiveProject(data);
-        localStorage.setItem(paramProjectId, JSON.stringify(data));
-      }
-    };
-    const getProject = async () => {
-      if (activeProject) return;
-      const stringData = localStorage.getItem(paramProjectId);
-      const project: Project = stringData ? JSON.parse(stringData) : undefined;
-
-      if (project?._id) {
-        setActiveProject(project);
-      } else {
-        await fetchProjectFunc();
-      }
-    };
-    const syncProject = async () => {
-      if (activeProject?._id) {
-        await fetchProjectFunc();
-      }
-    };
-    const resolveFuncSync = async () => {
-      await Promise.all([getProject(), syncProject()]);
-    };
-    resolveFuncSync();
-  }, []);
   useEffect(() => {
     if (typeof timelineSectionObj === "object") {
       localStorage.setItem(

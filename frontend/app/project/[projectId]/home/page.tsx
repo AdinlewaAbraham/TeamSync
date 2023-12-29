@@ -27,25 +27,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
   const [editorState, setEditorState] = useState<EditorState>();
 
   useEffect(() => {
-    const stringData = localStorage.getItem(params.projectId);
-    const project = stringData ? JSON.parse(stringData) : undefined;
-    if (project) setActiveProject(project);
-    const syncProject = async () => {
-      const response = await fetchProject(params.projectId);
-      if (!response) return;
-      const { data, status } = response;
-      await redirectToLogin(status, data.error);
-      setActiveProject(data);
-      localStorage.setItem(params.projectId, JSON.stringify(data));
-    };
-    syncProject();
-  }, []);
-  // useEffect(() => {
-  //   if (activeProject) setContentStateJSON(contentStateJSONDefault);
-  // }, [contentStateJSONDefault, activeProject]);
-  console.log("catch infinity loop");
-
-  useEffect(() => {
     if (activeProject) {
       const projectDescriptionString = activeProject.description;
       const projectDescription = projectDescriptionString
@@ -66,7 +47,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, [activeProject]);
 
   if (!activeProject) return <>loading comp</>;
-  if (!editorState) return <>loading comp</>;
+  if (!editorState) return <>loading editor</>;
 
   const onBlurWYSIWYGEditorFunction = async (data: RawDraftContentState) => {
     if (JSON.stringify(contentStateJSON) !== JSON.stringify(data)) {
@@ -104,7 +85,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 editorState={editorState}
                 onBlurFunc={onBlurWYSIWYGEditorFunction}
                 turnOffBorders={false}
-                alwaysShowButtons={false}
+                alwaysShowButtons={false} mainDivClasses="min-h-[131px]"
               />
             </div>
             <div className="w-full">

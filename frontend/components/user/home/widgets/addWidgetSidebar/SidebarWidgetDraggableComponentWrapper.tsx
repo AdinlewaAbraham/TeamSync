@@ -1,7 +1,7 @@
 import { widgetTypes } from "@/interfaces/widgetRenderSettings";
 import React, { ReactNode, DragEvent, useEffect, useState } from "react";
 
-const SidebarWidgetCompWrapper = ({
+const SidebarWidgetDraggableComponentWrapper = ({
   children,
   widgetType,
   setIsMouseDownOnSidebarWidget,
@@ -54,4 +54,4 @@ const SidebarWidgetCompWrapper = ({
   );
 };
 
-export default SidebarWidgetCompWrapper;
+export default SidebarWidgetDraggableComponentWrapper;

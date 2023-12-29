@@ -51,6 +51,11 @@ const CalendarRow = ({
       };
     }
   }, []);
+
+  // useEffect(() => {
+  //   localStorage.removeItem("localTaskPositionObject");
+  // }, [taskWithDateRange]);
+
   return (
     <ul
       className="relative grid grid-flow-col grid-cols-7"

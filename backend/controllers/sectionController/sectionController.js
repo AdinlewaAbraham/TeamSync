@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { Section } = require("../../models/sectionModel");
 const { Project } = require("../../models/projectModel");
 const { sendMessage } = require("../../utils/socket-io");
+const { Task } = require("../../models/taskModel");
 
 const getSection = asyncHandler(async (req, res) => {});
 const updateSection = asyncHandler(async (req, res) => {});
@@ -17,17 +18,23 @@ const deleteSection = asyncHandler(async (req, res) => {
     console.log("Bad request");
   } else {
     try {
-      await Section.findByIdAndRemove(sectionID);
-      const project = await Project.findById(projectId);
+      const section = await Section.findById(sectionID);
+      if (section) {
+        const sectionTasks = section.tasks;
+        const result = await Task.deleteMany({ _id: { $in: sectionTasks } });
+        console.log(result.deletedCount);
+        await Section.findByIdAndRemove(sectionID);
+        const project = await Project.findById(projectId);
 
-      await project.updateOne({
-        $pull: {
-          sections: sectionID,
-        },
-      });
-      sendMessage(`project_${projectId}`, "section_deleted", [sectionID]);
-      res.status(200).json({ message: "Section deleted successfully" });
-      console.log("Document deleted successfully");
+        await project.updateOne({
+          $pull: {
+            sections: sectionID,
+          },
+        });
+        sendMessage(`project_${projectId}`, "section_deleted", [sectionID]);
+        res.status(200).json({ message: "Section deleted successfully" });
+        console.log("Document deleted successfully");
+      }
     } catch (error) {
       res.status(500).json({ message: "something went wrong" });
       console.error("Error deleting document:", error);

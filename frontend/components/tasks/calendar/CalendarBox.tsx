@@ -2,7 +2,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
 import React, { MouseEvent, useEffect, useRef, useState } from "react";
-import TaskBar from "./TaskBar";
+import CalendarTaskBar from "./CalendarTaskBar";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Section from "@/interfaces/section";
@@ -131,7 +131,6 @@ const CalendarBox = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
-      localStorage.removeItem("localTaskPositionObject");
       // update localtasks
     } else {
       console.log("something went wrong");
@@ -255,7 +254,7 @@ const CalendarBox = ({
         if (typeof task !== "object") return;
         const isLast = tasksThatStartOnDay.length - 1 === index;
         return (
-          <TaskBar
+          <CalendarTaskBar
             index={index}
             task={task}
             isLast={isLast}
@@ -268,6 +267,8 @@ const CalendarBox = ({
             calendarIndex={dateIndex}
             rowKey={rowKey}
             boxWidth={rowWidth === 0 ? 0 : rowWidth / 7}
+            tasksThatStartOnDay={tasksThatStartOnDay}
+            key={task._id}
           />
         );
       })}

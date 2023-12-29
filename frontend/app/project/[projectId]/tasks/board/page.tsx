@@ -29,13 +29,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
     const getProject = async () => {
       await fetchProjectFunc();
     };
-    const syncProject = async () => {
-      if (activeProject?._id) {
-        await fetchProjectFunc();
-      }
-    };
     const resolveFuncSync = async () => {
-      await Promise.all([getProject(), syncProject()]);
+      await Promise.all([getProject()]);
     };
     resolveFuncSync();
   }, []);
@@ -45,8 +40,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
   return (
     <Board
       paramsProjectId={params.projectId}
-      project={activeProject}
-      setProject={setActiveProject}
     />
   );
 };

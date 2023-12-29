@@ -204,8 +204,8 @@ const Sidebar = () => {
                 document.body.classList.remove("select-none");
               }}
               className={`${
-                isResizing ? "bg-accent-blue" : "bg-transparent"
-              } absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent`}
+                isResizing ? "bg-accent-blue" : "bg-transparent" 
+              }  absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent transition-all duration-150 hover:bg-accent-blue`}
             />
             <div className="border-b-[1px] border-border-default p-4">
               {[

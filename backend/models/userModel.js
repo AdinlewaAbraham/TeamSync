@@ -42,6 +42,7 @@ const userSchema = mongoose.Schema({
     ref: "Workspace",
     required: [true, "activeworkspaceId needed"],
   },
+  privateNote: { type: String },
 });
 
 const User = mongoose.model("user", userSchema);

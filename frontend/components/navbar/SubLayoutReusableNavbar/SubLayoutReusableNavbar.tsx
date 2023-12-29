@@ -1,4 +1,4 @@
-import EditableComp from "@/components/others/EditableComp";
+import EditableComp from "@/components/others/EditableTextComponent";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { ReactNode } from "react";
 import SubLayoutReusableNavbarNavbarItem from "./SubLayoutReusableNavbarNavbarItem";

@@ -28,7 +28,6 @@ const BoardCard = ({
   const [taskName, setTaskName] = useState<string>("");
   const { setActiveProject, activeProject } = useGlobalContext();
   const [showBoardMenu, setShowBoardMenu] = useState<boolean>(false);
-  const [localSection, setLocalSection] = useState<Section>(section);
 
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
@@ -78,11 +77,11 @@ const BoardCard = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
-      if (typeof localSection === "string" || !activeProject) return;
+      if (typeof section === "string" || !activeProject) return;
 
       const newLocalSection: Section = {
-        sectionName: localSection.sectionName,
-        tasks: [...localSection.tasks, data],
+        sectionName: section.sectionName,
+        tasks: [...section.tasks, data],
         projectId: activeProject._id,
         _id: data._id,
       };
@@ -114,45 +113,45 @@ const BoardCard = ({
   };
 
   useEffect(() => {
-    if (typeof localSection === "object") {
-      const sectionId = localSection._id;
-      const handleAddTask = (task: Task) => {
-        if (sectionId !== task.sectionId) return;
-        // console.log(task);
-        setLocalSection((prevLocalSection) => {
-          if (prevLocalSection._id === task.sectionId) {
-            return {
-              ...prevLocalSection,
-              tasks: [...prevLocalSection.tasks, task] as Task[],
-            };
-          }
-          return prevLocalSection;
-        });
-      };
+    if (typeof section === "object") {
+      const sectionId = section._id;
+      // const handleAddTask = (task: Task) => {
+      //   if (sectionId !== task.sectionId) return;
+      //   console.log("setting sections now!");
+      //   setLocalSection((prevLocalSection) => {
+      //     if (prevLocalSection._id === task.sectionId) {
+      //       return {
+      //         ...prevLocalSection,
+      //         tasks: [...prevLocalSection.tasks, task] as Task[],
+      //       };
+      //     }
+      //     return prevLocalSection;
+      //   });
+      // };
       const handleDeleteTask = (taskId: string) => {
-        const sectionCopy = { ...localSection };
+        const sectionCopy = { ...section };
         sectionCopy.tasks = [...sectionCopy.tasks].filter(
           (task) => typeof task === "object" && task._id !== taskId,
         ) as Task[];
-        setLocalSection(sectionCopy);
+        // setLocalSection(sectionCopy);
       };
       socket.emit("join_room", `section_${section._id}`);
-      socket.on("task_added", handleAddTask);
+      // socket.on("task_added", handleAddTask);
       socket.on("task_deleted", handleDeleteTask);
 
       return () => {
-        socket.off("task_added", handleAddTask);
+        // socket.off("task_added", handleAddTask);
         socket.off("task_deleted", handleDeleteTask);
       };
     }
-  }, [localSection, section]);
+  }, [section, section]);
 
-  if (typeof localSection === "string") return <>loading this is a string </>;
+  if (typeof section === "string") return <>loading this is a string </>;
   return (
-    <div onClick={() => console.log(localSection._id)}>
+    <div onClick={() => console.log(section._id)}>
       <div className="mr-2 flex max-h-full w-[280px] flex-1 flex-col overflow-auto rounded-lg bg-bg-primary py-2">
         <header className="flex items-center justify-between px-4 py-2">
-          <h1>{localSection.sectionName}</h1>
+          <h1>{section.sectionName}</h1>
           <div className="addTaskComponent flex items-start">
             <div
               onClick={() => {
@@ -193,8 +192,8 @@ const BoardCard = ({
           </div>
         </header>
         <div className={`scrollBar max-h-full flex-1 overflow-y-auto `}>
-          <ul>
-            {localSection.tasks.map((task, index) => (
+          <ul >
+            {section.tasks.map((task, index) => (
               <li key={index}>
                 {typeof task === "string" ? (
                   <>loading</>

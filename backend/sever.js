@@ -4,13 +4,14 @@ const project = require("./routes/project/projectRoute");
 const googleAuth = require("./routes/auth/googleRoute");
 const task = require("./routes/task/taskRoute");
 const section = require("./routes/section/sectionRoute");
+const user = require("./routes/user/UserRoute");
 const { Server } = require("socket.io");
 require("dotenv").config();
 const cors = require("cors");
 const session = require("express-session");
 const authMiddleware = require("./middleware/validateUserTokenHandler");
-const { socketConnection } = require('./utils/socket-io');
-const { sendMessage } = require('./utils/socket-io');
+const { socketConnection } = require("./utils/socket-io");
+const { sendMessage } = require("./utils/socket-io");
 
 const MongoDBStore = require("connect-mongodb-session")(session);
 
@@ -72,24 +73,22 @@ app.use("/section", authMiddleware, section);
 // login route for google
 app.use("/auth/google/", googleAuth);
 
-app.get("/user", authMiddleware, async (req, res) => {
-  const authUser = req.user;
-  const user = await User.findById(authUser.id).populate("workspaces").exec();
-  res.status(200).json(user);
-});
+app.use("/user", authMiddleware, user);
 
 app.get("/auth/failure", (req, res) => {
   res.send("something went wrong");
 });
 app.get("/login", (req, res) => {
-  const roomId = '12345';
-  const key = 'eventName';
-  const message = 'new order assigned';
-  
+  const roomId = "12345";
+  const key = "eventName";
+  const message = "new order assigned";
+
   sendMessage(roomId, key, message);
   res.status(200).json({ message: "first fullstack api call" });
 });
-
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "how fast was i?" });
+});
 app.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -99,4 +98,4 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-module.exports = { db, };
+module.exports = { db };

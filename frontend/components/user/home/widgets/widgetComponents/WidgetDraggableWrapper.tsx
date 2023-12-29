@@ -5,7 +5,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { usePopper } from "react-popper";
 import WidgetRenderSettings from "@/interfaces/widgetRenderSettings";
 
-const WidgetWrapper = ({
+const WidgetDraggableWrapper = ({
   children,
   WidgetRenderSettings,
   widgetsArray,
@@ -67,18 +67,19 @@ const WidgetWrapper = ({
         />
       )}
       <div
-        className={`group relative h-[400px] cursor-pointer rounded-lg border border-border-default p-4 ${
+        className={`group relative h-[400px] cursor-pointer rounded-lg border border-border-default pb-2 px-0 ${
           WidgetRenderSettings.type === "_blank" && "bg-slate-500"
         } `}
       >
         <div
-          className={`absolute right-5 top-5 ${
+          className={`absolute right-2 top-2 ${
             showWidgetModal ? "block" : "hidden"
-          }  rounded-lg border border-border-default p-4 transition-all duration-150 ${
+          }  rounded-lg border border-border-default p-3 transition-all duration-150 ${
             WidgetRenderSettings.type !== "_blank" && "group-hover:block"
           }`}
           onClick={() => setShowWidgetModal(!showWidgetModal)}
           ref={setReferenceElement}
+          role="button"
         >
           <BsThreeDots />
         </div>
@@ -118,4 +119,4 @@ const WidgetWrapper = ({
   );
 };
 
-export default WidgetWrapper;
+export default WidgetDraggableWrapper;

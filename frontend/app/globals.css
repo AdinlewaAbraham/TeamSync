@@ -47,7 +47,6 @@ body {
   flex-direction: column;
 }
 
-
 :root {
   color-scheme: dark;
 }
@@ -154,4 +153,15 @@ body {
   display: grid;
   grid-gap: 10px;
   grid-template-columns: repeat(auto-fill, minmax(181px, 1fr));
+}
+
+.userWidgetGrid {
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+}
+
+.navbarBorderB {
+  box-shadow: inset 0 -2px #f5f4f3;
+}
+.navbarBorderBHover:hover {
+  box-shadow: inset 0 -2px #a2a0a2;
 }

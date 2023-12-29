@@ -10,7 +10,28 @@ const getTask = asyncHandler(async (req, res) => {
   }
   res.status(200).json(task);
 });
-const updateTask = asyncHandler(async (req, res) => {});
+
+const updateTask = asyncHandler(async (req, res) => {
+  const reqBody = await req.body;
+  const taskId = req.params.id;
+  try {
+    const update = {
+      $set: reqBody,
+    };
+    const task = await Task.findById(taskId);
+    if (reqBody && task) {
+      await task.updateOne(update);
+      await task.save();
+      sendMessage(`project_${task.projectId}`, "task_updated", [task]);
+      res.status(200).json(task);
+    } else {
+      res.status(400);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
 
 const createTask = asyncHandler(async (req, res) => {
   const { taskName, projectId, sectionId, dueDate, dateToStart, rowNumber } =
@@ -49,7 +70,7 @@ const createTask = asyncHandler(async (req, res) => {
   section.tasks.push(task.id);
   try {
     await Promise.all([task.save(), section.save()]);
-    sendMessage(`section_${sectionId}`, "task_added", [task]);
+    sendMessage(`project_${projectId}`, "task_added", [task]);
     return res.status(200).json(task);
   } catch (error) {
     console.error(error);
@@ -59,6 +80,7 @@ const createTask = asyncHandler(async (req, res) => {
 
 const deleteTask = asyncHandler(async (req, res) => {
   const taskId = req.params.id;
+  console.log(taskId);
   try {
     const task = await Task.findById(taskId);
     if (task) {
@@ -71,9 +93,12 @@ const deleteTask = asyncHandler(async (req, res) => {
           },
         }
       );
-      await task.deleteOne();
+      await Task.deleteOne({ _id: taskId });
 
-      sendMessage(`section_${sectionId}`, "task_deleted", [taskId]);
+      sendMessage(`project_${task.projectId}`, "task_deleted", [
+        taskId,
+        sectionId,
+      ]);
       res.status(200);
     }
   } catch (error) {

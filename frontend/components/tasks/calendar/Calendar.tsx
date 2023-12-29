@@ -1,25 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import CalendarRow from "./CalendarRow";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { MdAccessTime, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import generateDates from "@/utilis/generateDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Project from "@/interfaces/project";
 import { redirectToLogin } from "@/helpers/redirect";
 import fetchProject from "@/helpers/project/fetchProject";
+import { useGlobalContext } from "@/context/GeneralContext";
 
-const Calendar = ({
-  project,
-  setProject,
-  paramsProjectId,
-  isLoading,
-}: {
-  project: Project | null;
-  setProject: (c: Project) => void;
-  paramsProjectId: string;
-  isLoading: boolean;
-}) => {
-  if (isLoading || !project) return <>loading</>;
+const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
+  const { activeProject } = useGlobalContext();
+  if (!activeProject) return <>loading</>;
   const currentDate = new Date();
   const cM = currentDate.getMonth();
   const cY = currentDate.getFullYear();
@@ -138,7 +130,7 @@ const Calendar = ({
 
     return { ...month, dates: dateBatches };
   });
-  const allTasks = project.sections
+  const allTasks = activeProject.sections
     .map((section) => {
       if (typeof section === "string") return;
       return section.tasks;
@@ -148,6 +140,9 @@ const Calendar = ({
     if (typeof task !== "object") return;
     return task?.dateToStart && task.dueDate;
   });
+  useEffect(() => {
+    localStorage.removeItem("localTaskPositionObject");
+  }, [taskWithDateRange]);
   return (
     <div className="flex flex-1 select-none flex-col">
       <nav className="flex items-center justify-between border-y border-border-default px-8 py-2 text-sm">

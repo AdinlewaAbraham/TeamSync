@@ -1,14 +1,14 @@
 import React, { useState, DragEvent } from "react";
-import ProjectWidget from "./ProjectWidget";
-import MyTasksWidget from "./MyTasksWidget";
-import WidgetWrapper from "./WidgetWrapper";
+import ProjectWidget from "../projects/ProjectWidget";
+import MyTasksWidget from "../myTask/MyTasksWidget";
+import WidgetDraggableWrapper from "./WidgetDraggableWrapper";
 import WidgetRenderSettings, {
   widgetTypes,
 } from "@/interfaces/widgetRenderSettings";
-import PrivateNoteWidget from "./PrivateNoteWidget";
+import PrivateNoteWidget from "../privateNote/PrivateNoteWidget";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import TasksAssigned from "./TasksAssigned";
-const WidgetComponent = ({
+import TasksAssigned from "../taskAssigned/TasksAssigned";
+const WidgetComponents = ({
   widgetsArray,
   setWidgetsArray,
   isMouseDownOnSidebarWidget,
@@ -104,7 +104,7 @@ const WidgetComponent = ({
       onDragLeave={dragLeave}
     >
       {widgetsArray.map((WidgetRenderSettings) => (
-        <WidgetWrapper
+        <WidgetDraggableWrapper
           children={renderWidget(WidgetRenderSettings)}
           WidgetRenderSettings={WidgetRenderSettings}
           widgetsArray={widgetsArray}
@@ -116,4 +116,4 @@ const WidgetComponent = ({
   );
 };
 
-export default WidgetComponent;
+export default WidgetComponents;

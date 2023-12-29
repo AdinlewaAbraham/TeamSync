@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-
 export async function fetchWithAuth(
   url: string,
   options: RequestInit,
@@ -15,7 +14,6 @@ export async function fetchWithAuth(
       Authorization: `Bearer ${token}`,
       ...options.headers,
     };
-
     const response = await fetch(url, { ...options, headers });
     const data = await response.json();
     // console.log(data);

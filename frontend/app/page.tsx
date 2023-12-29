@@ -11,6 +11,7 @@ export default function Home() {
     const handleUser = async () => {
       try {
         const user = await fetchUser();
+        console.log(user);
         if (user) {
           localStorage.setItem("user", JSON.stringify(user));
           setUser(user);
@@ -23,5 +24,5 @@ export default function Home() {
     handleUser();
   }, []);
 
-  return <div>validationg user...</div>;
+  return <div>validating user...</div>;
 }

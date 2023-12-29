@@ -4,7 +4,7 @@ import WidgetRenderSettings, {
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { GoSidebarCollapse } from "react-icons/go";
-import SidebarWidgetCompWrapper from "./SidebarWidgetCompWrapper";
+import SidebarWidgetDraggableComponentWrapper from "./SidebarWidgetDraggableComponentWrapper";
 
 const AddWidgetSidebar = ({
   setShowAddWidgetSideBar,
@@ -78,7 +78,7 @@ const AddWidgetSidebar = ({
               </p>
             </div>
             {widgetTypes.map((widgetType) => (
-              <SidebarWidgetCompWrapper
+              <SidebarWidgetDraggableComponentWrapper
                 children={widgetType}
                 widgetType={widgetType}
                 key={widgetType}
