@@ -56,7 +56,6 @@ const TimelineMonthComponent = ({
   return (
     <div
       className="relative flex w-full flex-1"
-      key={month.name + month.year}
       style={{ width: 40 * month.dates.length }}
     >
       <div className="absolute z-10 w-full">

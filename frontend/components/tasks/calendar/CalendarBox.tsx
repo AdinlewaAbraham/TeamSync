@@ -226,12 +226,14 @@ const CalendarBox = ({
   };
   return (
     <li
-      id={isToday ? "today" : calendarBoxDate.toString()}
+      id={date.getDate() + `${date.getMonth()}` + date.getFullYear()}
       className={` ${
         date.getDate() === 1 &&
         newDate.getMonth() === date.getMonth() &&
         newDate.getFullYear() === date.getFullYear() &&
         "currentMonthFirstDate"
+      } ${
+        isToday && "today"
       } relative box-border h-48 w-full cursor-cell border border-b-0 border-border-default ${
         (calendarBoxDate + 1) % 7 === 0 ? "border-r" : "border-r-0"
       } ${calendarBoxDate % 7 !== 0 ? "border-l" : "border-l-0"} ${

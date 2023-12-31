@@ -15,14 +15,14 @@ const monthNames = [
   "December",
 ];
 
-export default function generateDatesForFourMonths(
+export default function generateDatesMonths(
   year: number,
-  month: number
-) {
+  month: number,
+  numberOfMonths: number,
+): { name: string; year: number; dates: Date[] }[] {
   let currentYear = year;
   let currentMonth = month;
   const dates = [];
-  const numberOfMonths = 4;
   const invalidMonthPrev = currentMonth - 1 < 0;
   const prevMonth = {
     name: invalidMonthPrev ? monthNames[11] : monthNames[currentMonth - 1],
@@ -31,7 +31,7 @@ export default function generateDatesForFourMonths(
       ? generateDates(currentYear--, 11)
       : generateDates(currentYear, currentMonth - 1),
   };
-  dates.push(prevMonth);
+  // dates.push(prevMonth);
   for (let i = 0; i < numberOfMonths; i++) {
     const inValidMonthCurrent = currentMonth > 11;
     const nextYear = currentYear + 1;

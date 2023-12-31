@@ -1,13 +1,13 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
-import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
 import TimelineSideBarItem from "@/components/tasks/timeline/TimelineSideBarItem";
 import TimelineMonthComponent from "@/components/tasks/timeline/TimelineMonthComponent";
 import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
+import generateDatesMonths from "@/utilis/generateDatesMonths";
 
 const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
   const monthNames = [
@@ -25,16 +25,17 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
     "December",
   ];
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
+  const currentMonth = currentDate.getMonth() - 1;
   const currentYear = currentDate.getFullYear();
-  const fourMonths = generateDatesForFourMonths(currentYear, currentMonth);
+
+  const fourMonths = generateDatesMonths(currentYear, currentMonth, 4);
   const [months, setMonths] = useState(fourMonths);
-  const { setActiveProject, activeProject } = useGlobalContext();
-  const [scrollPosition, setscrollPosition] = useState<number>(0);
+  const { activeProject } = useGlobalContext();
   const [selectedDateObject, setSelectedDateObject] = useState<{
     startDate: Date;
     endDate: Date;
   } | null>(null);
+  const [scrollposition, setScrollposition] = useState({ x: 0, y: 0 });
   const localStorageValue = localStorage.getItem("timelineSectionObj");
 
   const defaultTimelineSectionObj = localStorageValue
@@ -82,11 +83,6 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
   }, [timelineHeightRef.current]);
 
   useEffect(() => {
-    if (timelineRef.current) {
-    }
-  }, [timelineRef.current]);
-
-  useEffect(() => {
     if (typeof timelineSectionObj === "object") {
       localStorage.setItem(
         "timelineSectionObj",
@@ -95,73 +91,106 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
     }
   }, [timelineSectionObj]);
 
-  const getPrevMonthDays = (year: number, month: number) => {
-    if (month === 0) {
-      return {
-        name: monthNames[11],
-        year: year - 1,
-        dates: generateDates(year - 1, 11),
-      };
-    } else {
-      return {
-        name: monthNames[month - 1],
-        year,
-        dates: generateDates(year, month - 1),
-      };
-    }
-  };
+  // useEffect(() => {
+  //   if (timelineRef.current) {
+  //     document.getElementById("today")?.scrollIntoView();
+  //   }
+  // }, [timelineRef.current, activeProject]);
 
-  const getNextMonthDays = (year: number, month: number) => {
-    if (month === 11) {
-      return {
-        name: monthNames[0],
-        year: year + 1,
-        dates: generateDates(year + 1, 0),
-      };
-    } else {
-      return {
-        name: monthNames[month + 1],
-        year,
-        dates: generateDates(year, month + 1),
-      };
-    }
-  };
+  const allTasks = useMemo(
+    () =>
+      activeProject?.sections
+        .map((section) => {
+          if (typeof section === "string") return;
+          return section.tasks;
+        })
+        .flat(1),
+    [activeProject?.sections],
+  );
+  const taskWithDateRange = useMemo(
+    () =>
+      allTasks?.filter((task) => {
+        if (typeof task !== "object") return;
+        return task?.dateToStart && task.dueDate;
+      }),
+    [allTasks],
+  );
+  if (!activeProject || !taskWithDateRange) return <div>loading timeline</div>;
+
+  const noOfMonthsTOAddToinfinityScroll = 3;
   const handleAddToLeft = () => {
-    const firstMonth = months[0];
-    const yearOfFirstMonth = firstMonth.year;
-    const monthOfFirstMonth = monthNames.findIndex(
-      (monthName) => firstMonth.name === monthName,
-    );
+    if (!timelineRef.current) return;
+    let generateDatesYear = months[0].year;
+    let generateDatesMonth =
+      monthNames.findIndex(
+        (month) => month.toLowerCase() === months[0].name.toLowerCase(),
+      ) - 3;
 
-    const prevMonth = getPrevMonthDays(yearOfFirstMonth, monthOfFirstMonth);
-    setMonths([prevMonth, ...months]);
-    console.log(months);
+    if (generateDatesMonth < 0) {
+      generateDatesMonth += 12;
+      generateDatesYear--;
+    }
+    const prevMonths = generateDatesMonths(
+      generateDatesYear,
+      generateDatesMonth,
+      noOfMonthsTOAddToinfinityScroll,
+    );
+    const newMonths = [...prevMonths, ...months];
+    let allDatesAddedLength = 0;
+    for (let i = 0; i < newMonths.length; i++) {
+      allDatesAddedLength += newMonths[i].dates.length;
+    }
+    (
+      timelineRef.current as HTMLElement
+    ).scrollLeft = allDatesAddedLength * 40;
+
+    setMonths(newMonths);
+    console.log(allDatesAddedLength * 40);
   };
+
   const handleAddToRight = () => {
     const lastMonth = months[months.length - 1];
-    const yearOfFirstMonth = lastMonth.year;
-    const monthOfFirstMonth = monthNames.findIndex(
-      (monthName) => lastMonth.name === monthName,
+
+    let generateDatesYear = lastMonth.year;
+    let generateDatesMonth =
+      monthNames.findIndex(
+        (month) => month.toLowerCase() === lastMonth.name.toLowerCase(),
+      ) + 1;
+
+    if (generateDatesMonth >= 12) {
+      generateDatesMonth = 0;
+      generateDatesYear++;
+    }
+    const nextMonths = generateDatesMonths(
+      generateDatesYear,
+      generateDatesMonth,
+      noOfMonthsTOAddToinfinityScroll,
     );
-
-    const nextMonth = getNextMonthDays(yearOfFirstMonth, monthOfFirstMonth);
-    setMonths([...months, nextMonth]);
-    console.log(months);
+    setMonths([...months, ...nextMonths]);
   };
-  if (!activeProject?.sections) return <>loading state</>;
+  const handleScroll = () => {
+    if (!timelineRef.current) return;
+    const timelineElement = timelineRef.current as HTMLElement;
 
-  const allTasks = activeProject.sections
-    .map((section) => {
-      if (typeof section === "string") return;
-      return section.tasks;
-    })
-    .flat(1);
-  const taskWithDateRange = allTasks.filter((task) => {
-    if (typeof task !== "object") return;
-    return task?.dateToStart && task.dueDate;
-  });
-  if (!activeProject) return <div>loading timeline</div>;
+    const threshold = 500;
+    const isNearLeftEdge = timelineElement.scrollLeft <= threshold;
+    const isNearRightEdge =
+      timelineElement.scrollWidth - timelineElement.scrollLeft <=
+      timelineElement.clientWidth + threshold;
 
+    if (isNearLeftEdge) {
+      console.log("near left");
+      handleAddToLeft();
+      setScrollposition({ x: timelineElement.scrollLeft, y: 0 });
+    }
+
+    if (isNearRightEdge) {
+      console.log("near rigth");
+      handleAddToRight();
+      setScrollposition({ x: timelineElement.scrollLeft, y: 0 });
+    }
+  };
+  console.log("i rerendered");
   return (
     <div className="flex-1 overflow-hidden ">
       {/* <nav className="flex items-center justify-between border-t border-border-default  py-2 pl-8 text-sm">
@@ -194,7 +223,10 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
               ref={headerRef}
             >
               {months.map((month, index) => (
-                <div className="flex flex-col" key={index}>
+                <div
+                  className="flex flex-col"
+                  key={month.name + month.year + "header"}
+                >
                   <div className="sticky left-0 max-w-max px-2 ">
                     {month.name} {month.year}
                   </div>
@@ -233,11 +265,8 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
             <div
               className="relative flex h-full  flex-1  overflow-auto"
               ref={timelineRef}
+              onScroll={handleScroll}
             >
-              <div
-                className="absolute bottom-0 top-0 h-full w-1 opacity-0"
-                ref={timelineHeightRef}
-              />
               {months.map((month) => (
                 <TimelineMonthComponent
                   activeProject={activeProject}
@@ -250,6 +279,10 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
                   key={month.name + month.year}
                 />
               ))}
+              <div
+                className="absolute bottom-0 top-0 h-full w-1 opacity-0"
+                ref={timelineHeightRef}
+              />
             </div>
           </div>
         </div>

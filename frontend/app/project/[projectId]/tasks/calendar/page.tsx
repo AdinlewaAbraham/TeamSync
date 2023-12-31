@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
-import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
+import generateDatesForFourMonths from "@/utilis/generateDatesMonths";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Task from "@/interfaces/task";

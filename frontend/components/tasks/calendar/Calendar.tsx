@@ -1,13 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, MouseEvent } from "react";
 import CalendarRow from "./CalendarRow";
 import { MdAccessTime, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import generateDatesForFourMonths from "@/utilis/generateDatesForFourMonths";
+import generateDatesForFourMonths from "@/utilis/generateDatesMonths";
 import generateDates from "@/utilis/generateDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Project from "@/interfaces/project";
 import { redirectToLogin } from "@/helpers/redirect";
 import fetchProject from "@/helpers/project/fetchProject";
 import { useGlobalContext } from "@/context/GeneralContext";
+import { fillMonthsDates } from "@/utilis/fillMonthsDates";
+import generateDatesMonths from "@/utilis/generateDatesMonths";
+import { fillMonthsDatesReverse } from "@/utilis/fillMonthsDatesReverse";
+import Task from "@/interfaces/task";
 
 const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
   const { activeProject } = useGlobalContext();
@@ -16,11 +20,17 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
   const cM = currentDate.getMonth();
   const cY = currentDate.getFullYear();
 
+  const prevMonth = cM === 0 ? 11 : cM - 1;
+  const prevYear = cM === 0 ? cY - 1 : cY;
+
+  const fillEdFourMonths = fillMonthsDates(
+    generateDatesMonths(prevYear, prevMonth, 4),
+    null,
+  );
+
   const [currentMonth, setCurrentMonth] = useState<number>(cM);
   const [currentYear, setCurrentYear] = useState<number>(cY);
-  const [monthsDates, setmonthsDates] = useState(
-    generateDatesForFourMonths(cY, cM),
-  );
+  const [filledMonthsDates, setFilledMonthsDates] = useState(fillEdFourMonths);
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
     useState<TaskHoverStatusObj>({ shutUpTs: true });
 
@@ -28,20 +38,7 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
 
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const getPrevMonthDays = (month: number, year: number) => {
-    if (month === 0) {
-      return generateDates(year - 1, 11);
-    } else {
-      return generateDates(year, month - 1);
-    }
-  };
-  const getNextMonthDays = (month: number, year: number) => {
-    if (month === 11) {
-      return generateDates(year + 1, 0);
-    } else {
-      return generateDates(year, month + 1);
-    }
-  };
+
   const months = [
     "January",
     "February",
@@ -56,93 +53,186 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
     "November",
     "December",
   ];
-  const handleAddMonth = () => {
+  function isSameDay(date1: Date, date2: Date) {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+  const addNextMonth = () => {
+    const lastMonthInFilledMonthsDates =
+      filledMonthsDates[filledMonthsDates.length - 1];
+
+    const lastMonthIndex = months.findIndex(
+      (month) =>
+        month.toLowerCase() === lastMonthInFilledMonthsDates.name.toLowerCase(),
+    );
+    const lastMonthYear = lastMonthInFilledMonthsDates.year;
+    if (lastMonthIndex !== -1) {
+      const isLastMonthInYear = lastMonthIndex === 11;
+      const getDateMonth = isLastMonthInYear ? 0 : lastMonthIndex + 1;
+      const getDateYear = isLastMonthInYear ? lastMonthYear + 1 : lastMonthYear;
+
+      let generateDatesYear = lastMonthInFilledMonthsDates.year;
+      let generateDatesMonth =
+        months.findIndex(
+          (month) =>
+            month.toLowerCase() ===
+            lastMonthInFilledMonthsDates.name.toLowerCase(),
+        ) + 1;
+
+      if (generateDatesMonth >= 12) {
+        generateDatesMonth = 0;
+        generateDatesYear++;
+      }
+      console.log(generateDatesYear, generateDatesMonth);
+
+      const newFilledMonthsDates = fillMonthsDates(
+        generateDatesMonths(generateDatesYear, generateDatesMonth, 3),
+        lastMonthInFilledMonthsDates.dates.flat()[
+          lastMonthInFilledMonthsDates.dates.flat().length - 1
+        ],
+      );
+
+      setFilledMonthsDates((prevFilledMonthsDate) => {
+        return [...prevFilledMonthsDate, ...newFilledMonthsDates];
+      });
+    } else {
+      console.error("last month not found");
+    }
+  };
+  const addPrevMonth = () => {
+    const firstMonthInFilledMonthsDates = filledMonthsDates[0];
+
+    const firstMonthIndex = months.findIndex(
+      (month) =>
+        month.toLowerCase() ===
+        firstMonthInFilledMonthsDates.name.toLowerCase(),
+    );
+    if (firstMonthIndex !== -1) {
+      const firstDateInFilledMonthsDate = filledMonthsDates[0].dates.flat()[0];
+
+      let generateDatesYear = filledMonthsDates[0].year;
+      let generateDatesMonth =
+        months.findIndex(
+          (month) =>
+            month.toLowerCase() === filledMonthsDates[0].name.toLowerCase(),
+        ) - 3;
+
+      if (generateDatesMonth < 0) {
+        generateDatesMonth += 12;
+        generateDatesYear--;
+      }
+
+      console.log(generateDatesMonth, generateDatesYear);
+
+      const newFilledMonthsDates = fillMonthsDatesReverse(
+        generateDatesMonths(generateDatesYear, generateDatesMonth, 3),
+        new Date(firstDateInFilledMonthsDate),
+      );
+
+      setFilledMonthsDates((prevFilledMonthsDate) => {
+        return [...newFilledMonthsDates, ...prevFilledMonthsDate];
+      });
+    } else {
+      console.error("first month not found");
+    }
+  };
+  const scrollToElement = (
+    _currentMonth: number,
+    _currentYear: number,
+    isAdding: boolean,
+  ) => {
+    const monthElementToScrollTo = document.getElementById(
+      "1" + _currentMonth + _currentYear,
+    );
+    console.log("1" + _currentMonth + _currentYear);
+    if (!monthElementToScrollTo) {
+      if (isAdding) {
+        addNextMonth();
+      } else {
+        addPrevMonth();
+      }
+    }
+    monthElementToScrollTo?.scrollIntoView({ behavior: "smooth" });
+  };
+  const goToNextMonth = () => {
+    let _currentMonth;
+    let _currentYear = currentYear;
     if (currentMonth === 11) {
+      _currentMonth = 0;
+      _currentYear = currentYear + 1;
       setCurrentYear(currentYear + 1);
       setCurrentMonth(0);
     } else {
+      _currentMonth = currentMonth + 1;
       setCurrentMonth(currentMonth + 1);
     }
+    scrollToElement(_currentMonth, _currentYear, true);
   };
-  const handleDecreaseMonth = () => {
+
+  const goToPrevMonth = () => {
+    let _currentMonth;
+    let _currentYear = currentYear;
     if (currentMonth === 0) {
+      _currentMonth = 11;
+      _currentYear = currentYear - 1;
       setCurrentYear(currentYear - 1);
       setCurrentMonth(11);
     } else {
+      _currentMonth = currentMonth - 1;
       setCurrentMonth(currentMonth - 1);
     }
+    scrollToElement(_currentMonth, _currentYear, false);
   };
 
-  let lastDayPushed: Date | null;
-  var filledMonthsDates = monthsDates.map((month) => {
-    const dates: Date[] = JSON.parse(JSON.stringify(month.dates));
-
-    const firstDayInDates = new Date(dates[0]);
-    const firstDay = properlyIndexedDays[firstDayInDates.getDay()];
-    const noOfDaysToUnshift = days.indexOf(firstDay);
-    const prevMonthDays = getPrevMonthDays(
-      firstDayInDates.getMonth(),
-      firstDayInDates.getFullYear(),
-    );
-    let daysToUnshit;
-    if (lastDayPushed) {
-      const currentDate = new Date(lastDayPushed);
-      const daysToUnshiftHolderArr = [];
-      for (let i = 0; i < noOfDaysToUnshift; i++) {
-        // this is meant to be the prev month
-        const newDate = new Date(currentDate);
-        newDate.setDate(newDate.getDate() + 1);
-        daysToUnshiftHolderArr.push(newDate);
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-      daysToUnshit = daysToUnshiftHolderArr;
-      if (daysToUnshit.length !== 0) {
-        // remove unwanted begining dates
-        const lastdayInDaysToUnshit = new Date(
-          daysToUnshit[daysToUnshit.length - 1],
-        );
-        dates.splice(0, lastdayInDaysToUnshit.getDate());
-      }
-    } else {
-      daysToUnshit = prevMonthDays.slice(-noOfDaysToUnshift);
-    }
-    dates.unshift(...daysToUnshit);
-
-    const noOfDaysToPush = 7 - (dates.length % 7);
-    if (dates.length % 7 !== 0) {
-      const nextMonthDays = getNextMonthDays(
-        firstDayInDates.getMonth(),
-        firstDayInDates.getFullYear(),
-      );
-      const daysToFill = nextMonthDays.slice(0, noOfDaysToPush);
-      dates.push(...daysToFill);
-      lastDayPushed = daysToFill[daysToFill.length - 1];
-      if (daysToFill.length === 0) {
-        lastDayPushed = null;
-      }
-    }
-    const batchSize = 7;
-    const dateBatches = [];
-
-    for (let i = 0; i < dates.length; i += batchSize) {
-      dateBatches.push(dates.slice(i, i + batchSize));
-    }
-
-    return { ...month, dates: dateBatches };
-  });
-  const allTasks = activeProject.sections
-    .map((section) => {
-      if (typeof section === "string") return;
-      return section.tasks;
-    })
-    .flat(1);
+  // get all tasks in project
+  const allTasks = useMemo(
+    () =>
+      activeProject.sections
+        .map((section) => {
+          if (typeof section === "string") return;
+          return section.tasks;
+        })
+        .flat(1),
+    [activeProject.sections],
+  );
   const taskWithDateRange = allTasks.filter((task) => {
     if (typeof task !== "object") return;
     return task?.dateToStart && task.dueDate;
   });
-  useEffect(() => {
+  useMemo(() => {
     localStorage.removeItem("localTaskPositionObject");
-  }, [taskWithDateRange]);
+  }, [activeProject.sections]);
+  useEffect(() => {
+    const todayElement = document.getElementsByClassName("today");
+    if (todayElement[0]) {
+      todayElement[0].scrollIntoView();
+    }
+  }, []);
+
+  const handleSCroll = () => {
+    if (!calendarBoxScollParent.current) return;
+    const threshold = 192;
+    const calendarBoxScollParentElement =
+      calendarBoxScollParent.current as HTMLElement;
+    const isNearBottom =
+      calendarBoxScollParentElement.scrollHeight -
+        calendarBoxScollParentElement.scrollTop <=
+      calendarBoxScollParentElement.clientHeight + threshold;
+    const isNearTop = calendarBoxScollParentElement.scrollTop <= threshold;
+
+    if (isNearTop) {
+      console.log("near top");
+      addPrevMonth();
+    }
+
+    if (isNearBottom) {
+      console.log("near bottom");
+      addNextMonth();
+    }
+  };
   return (
     <div className="flex flex-1 select-none flex-col">
       <nav className="flex items-center justify-between border-y border-border-default px-8 py-2 text-sm">
@@ -156,16 +246,18 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
             className="flex h-9 items-center justify-center rounded-lg border border-border-default px-2
         hover:border-white hover:bg-menuItem-hover hover:text-white"
             onClick={() => {
-              const element = document.getElementById("today");
-              element?.scrollIntoView({ behavior: "smooth" });
+              const todayElement = document.getElementsByClassName("today");
+              if (todayElement[0]) {
+                todayElement[0].scrollIntoView({ behavior: "smooth" });
+              }
             }}
           >
             Today
           </button>
-          <i className="" onClick={handleDecreaseMonth}>
+          <i className="" onClick={goToPrevMonth}>
             <MdNavigateBefore />
           </i>
-          <i onClick={handleAddMonth}>
+          <i onClick={goToNextMonth}>
             <MdNavigateNext />
           </i>
           <div className="text-xl text-white">
@@ -173,6 +265,9 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
           </div>
         </div>
         <div className="flex">
+          {/* <button onClick={}> back </button>
+          <button onClick={}>forward</button> */}
+
           <div>month view</div>
           <div>filter</div>
           <div>color</div>
@@ -199,15 +294,16 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
         </header>
         <div className="relative flex flex-1">
           <ul
-            className="calendarScrollBar absolute inset-0 h-full overflow-y-auto overflow-x-hidden"
+            className="absolute inset-0 h-full overflow-y-auto overflow-x-hidden"
             id="calendarBoxScollParent"
             ref={calendarBoxScollParent}
+            onScroll={handleSCroll}
           >
             {filledMonthsDates.map((month, monthIndex) => (
               <li
                 className="grid grid-flow-row  "
                 key={month.name + month.year}
-                id="calendarBoxParent"
+                id={month.name + month.year}
               >
                 {month.dates.map((dateArr: Date[], rowIndex: number) => {
                   const dateArrLastElementDate = new Date(

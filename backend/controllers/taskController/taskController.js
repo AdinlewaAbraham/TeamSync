@@ -93,11 +93,19 @@ const deleteTask = asyncHandler(async (req, res) => {
           },
         }
       );
+
+      const taskRowNumber = task.rowNumber;
+      await Task.updateMany(
+        { sectionId, rowNumber: { $gt: taskRowNumber } },
+        { $inc: { rowNumber: -1 } }
+      );
+
       await Task.deleteOne({ _id: taskId });
 
       sendMessage(`project_${task.projectId}`, "task_deleted", [
         taskId,
         sectionId,
+        taskRowNumber,
       ]);
       res.status(200);
     }

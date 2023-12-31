@@ -6,6 +6,7 @@ import { AiOutlineDelete } from "react-icons/ai";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
+import { useGlobalContext } from "@/context/GeneralContext";
 
 const CalendarTaskBar = ({
   index,
@@ -30,10 +31,10 @@ const CalendarTaskBar = ({
   calendarIndex: number;
   rowKey: string;
   boxWidth: number;
-  tasksThatStartOnDay: (Task| undefined| string)[];
+  tasksThatStartOnDay: (Task | undefined | string)[];
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
-
+  const { activeProject } = useGlobalContext();
   const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
     taskDateToStart.getFullYear() !== calendarDate.getFullYear() ||
@@ -157,6 +158,10 @@ const CalendarTaskBar = ({
     );
     setTop(newTop);
   }, [task, tasksThatStartOnDay]);
+  useEffect(() => {
+    setTaskHoverStatusObj({ [task._id]: true });
+    setTaskHoverStatusObj({ [task._id]: false });
+  }, [top]);
 
   /*
   NOTE: this will only run for all except mondays 
@@ -198,10 +203,10 @@ const CalendarTaskBar = ({
         key={task._id + index}
         onClick={() => console.log(calculateTop())}
         style={{
-          top: top,
           width: doesNotStartOnDay
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
+          ...(top > 192 - 36 ? { display: "none" } : { top: top }),
         }}
         className={`taskBar absolute z-50 px-2 ${
           hasOverflowToRight && !doesNotStartOnDay && "pr-0"

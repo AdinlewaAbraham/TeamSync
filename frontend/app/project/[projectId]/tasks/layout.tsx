@@ -126,9 +126,13 @@ const layout = ({
           return { ...section, tasks: updatedTasks } as Section;
         });
 
-        setActiveProject({ ...activeProject, sections: updatedSections} );
+        setActiveProject({ ...activeProject, sections: updatedSections });
       };
-      const handleTaskDeleted = (taskId: string, sectionId: string) => {
+      const handleTaskDeleted = (
+        taskId: string,
+        sectionId: string,
+        taskRowNumber: number,
+      ) => {
         const deepProjectCopy: Project = JSON.parse(
           JSON.stringify(activeProject),
         );
@@ -137,9 +141,23 @@ const layout = ({
             if (typeof section !== "object" || section._id !== sectionId) {
               return section;
             }
-            const newTasks = [...section.tasks].filter(
-              (task) => typeof task !== "string" && task._id !== taskId,
-            ) as Task[];
+            const newTasks = [];
+            for (let i = 0; i < section.tasks.length; i++) {
+              const currentTask = section.tasks[i];
+              if (
+                typeof currentTask !== "string" &&
+                currentTask._id !== taskId
+              ) {
+                if (currentTask.rowNumber > taskRowNumber) {
+                  newTasks.push({
+                    ...currentTask,
+                    rowNumber: currentTask.rowNumber - 1,
+                  });
+                } else {
+                  newTasks.push(currentTask);
+                }
+              }
+            }
 
             const newSection: Section = { ...section, tasks: newTasks };
             return newSection;

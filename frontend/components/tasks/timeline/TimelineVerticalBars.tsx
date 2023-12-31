@@ -86,6 +86,7 @@ const TimelineVerticalBars = ({
         (day.getDay() === 0 || day.getDay() === 6) && "bg-[#2a2b2d]"
       } `}
       style={{ minHeight: minHeight }}
+      id={isToday ? "today" : `${day.getMonth() + day.getDate()+ day.getFullYear()}` }
     >
       {isToday && (
         <div className="absolute left-0 z-50 h-10 w-1 bg-green-500" />
