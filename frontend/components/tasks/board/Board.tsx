@@ -8,39 +8,33 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import Task from "@/interfaces/task";
 import socket from "@/config/WebSocketManager";
 
-const Board = ({ paramsProjectId }: { paramsProjectId: string }) => {
+const Board = ({
+  paramsProjectId,
+  project,
+}: {
+  paramsProjectId: string;
+  project: Project | null;
+}) => {
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(false);
   const [addingSection, setAddingSection] = useState(false);
 
-  const { activeProject } = useGlobalContext();
-  if (!activeProject) return <>loading...</>;
+  if (!project) return <>loading...</>;
   const addSection = async () => {
     setAddingSection(true);
     if (sectionName === "" || addingSection) {
       return;
     }
     console.log("add section");
-    if (!activeProject) return;
+    if (!project) return;
     try {
       const response = await fetch("/api/section/", {
         method: "POST",
-        body: JSON.stringify({ sectionName, projectId: activeProject._id }),
+        body: JSON.stringify({ sectionName, projectId: project._id }),
       });
       const data = await response.json();
       // await redirectToLogin(response.status, data.error);
-      const newSection: Section = {
-        sectionName: sectionName,
-        tasks: [],
-        projectId: activeProject?._id,
-        _id: data._id,
-      };
-      const newProject: Project = {
-        ...activeProject,
-        sections: [...activeProject.sections, newSection],
-      };
-      // setActiveProject(newProject);
     } catch (err) {
       // isError = true;
     }
@@ -53,7 +47,7 @@ const Board = ({ paramsProjectId }: { paramsProjectId: string }) => {
       className="overflow-x relative flex flex-1 overflow-auto  px-8 "
       id="overflowElement"
     >
-      {activeProject.sections.map((section, index) => {
+      {project.sections.map((section, index) => {
         if (typeof section === "string") return <>loading</>;
         return (
           <BoardCard

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, DragEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Task from "@/interfaces/task";
 import { BiCheckCircle } from "react-icons/bi";
@@ -12,7 +12,7 @@ const CalendarTaskBar = ({
   index,
   task,
   isLast,
-  calendarDate,
+  calendarBoxDate,
   taskHoverStatusObj,
   setTaskHoverStatusObj,
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
@@ -24,7 +24,7 @@ const CalendarTaskBar = ({
   index: number;
   task: Task;
   isLast: boolean;
-  calendarDate: Date;
+  calendarBoxDate: Date;
   taskHoverStatusObj: TaskHoverStatusObj;
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
@@ -34,12 +34,11 @@ const CalendarTaskBar = ({
   tasksThatStartOnDay: (Task | undefined | string)[];
 }) => {
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
-  const { activeProject } = useGlobalContext();
   const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
-    taskDateToStart.getFullYear() !== calendarDate.getFullYear() ||
-    taskDateToStart.getMonth() !== calendarDate.getMonth() ||
-    taskDateToStart.getDate() !== calendarDate.getDate();
+    taskDateToStart.getFullYear() !== calendarBoxDate.getFullYear() ||
+    taskDateToStart.getMonth() !== calendarBoxDate.getMonth() ||
+    taskDateToStart.getDate() !== calendarBoxDate.getDate();
 
   const properlyIndexedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -59,7 +58,7 @@ const CalendarTaskBar = ({
     ? noOfDaysToEnd * boxWidth
     : daysInDateRange * boxWidth;
   const daysRemainingFromSpillOver = calculateDaysBetweenDates(
-    new Date(calendarDate),
+    new Date(calendarBoxDate),
     new Date(task.dueDate),
   );
   const goesAcross = daysRemainingFromSpillOver > 6;
@@ -158,10 +157,10 @@ const CalendarTaskBar = ({
     );
     setTop(newTop);
   }, [task, tasksThatStartOnDay]);
-  useEffect(() => {
-    setTaskHoverStatusObj({ [task._id]: true });
-    setTaskHoverStatusObj({ [task._id]: false });
-  }, [top]);
+  // useEffect(() => {
+  //   setTaskHoverStatusObj({ [task._id]: true });
+  //   setTaskHoverStatusObj({ [task._id]: false });
+  // }, [top]);
 
   /*
   NOTE: this will only run for all except mondays 
@@ -169,14 +168,17 @@ const CalendarTaskBar = ({
   1. first create new obj that gets all task that fall on timeframe
   2. then use a for loop to increment from lowest top position and check if it is already occupied till top is found
   */
-
   const handleMouseEnter = () => {
-    setTaskHoverStatusObj({ [task._id]: true });
-    setShowCheckMark(true);
+    if (goesAcross || hasOverflowToRight || doesNotStartOnDay) {
+      setTaskHoverStatusObj({ [task._id]: true });
+      setShowCheckMark(true);
+    }
   };
   const handleMouseLeave = () => {
-    setTaskHoverStatusObj({ [task._id]: false });
-    setShowCheckMark(false);
+    if (goesAcross || hasOverflowToRight || doesNotStartOnDay) {
+      setTaskHoverStatusObj({ [task._id]: false });
+      setShowCheckMark(false);
+    }
   };
 
   const handleDeleteTask = async () => {
@@ -190,6 +192,11 @@ const CalendarTaskBar = ({
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+  const dragStart = (e: DragEvent) => {
+    if (e.dataTransfer) {
+      e.dataTransfer.setData("text/plain", task._id);
     }
   };
   return (
@@ -206,7 +213,7 @@ const CalendarTaskBar = ({
           width: doesNotStartOnDay
             ? widthForTasksThatDoesNotStartOnDay
             : widthForTasksWithOverflowToRight,
-          ...(top > 192 - 36 ? { display: "none" } : { top: top }),
+          ...(top > 192 - 36 ? { color: "red", top: top } : { top: top }),
         }}
         className={`taskBar absolute z-50 px-2 ${
           hasOverflowToRight && !doesNotStartOnDay && "pr-0"
@@ -214,8 +221,9 @@ const CalendarTaskBar = ({
       >
         <div
           key={task._id}
-          className={`
-         border-2 ${isLast ? "" : "mb-1"}  z-50 rounded-lg bg-bg-secondary 
+          className={` group z-50 flex h-9 w-full cursor-pointer items-center rounded-lg 
+          border-2 bg-bg-secondary px-3 py-1 text-xs transition-colors duration-150 hover:border-accent-blue
+         ${isLast ? "" : "mb-1"} 
          ${
            hasOverflowToRight &&
            !doesNotStartOnDay &&
@@ -223,14 +231,11 @@ const CalendarTaskBar = ({
          } ${goesAcross && "border-r-0"} ${
            doesTaskRunThrough && "rounded-r-none"
          } ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
-         w-full 
-       ${
-         taskHoverStatusObj?.[task._id]
-           ? "border-accent-blue"
-           : "border-border-default"
-       }
-          group flex
-       h-9 cursor-pointer items-center px-3 py-1 text-xs transition-colors duration-150  `}
+         ${
+           taskHoverStatusObj?.[task._id]
+             ? "border-accent-blue"
+             : "border-border-default"
+         }  `}
           style={
             {
               // width: doesNotStartOnDay
@@ -251,23 +256,26 @@ const CalendarTaskBar = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           draggable
+          onDragStart={dragStart}
         >
           {/* {dateIndex} */}
           <AnimatePresence>
             {showCheckMark && (
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: "auto" }}
-                exit={{ width: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mr-1 hidden items-center justify-center overflow-hidden border text-[22px] text-gray-500
+                initial={{ x: -20 }}
+                animate={{ x: 0 }}
+                exit={{ x: 20 }}
+                transition={{ duration: 0.15 }}
+                className="mr-1 hidden items-center justify-center overflow-hidden text-[22px] text-gray-500
        group-hover:flex hover:text-accent-green "
               >
                 <BiCheckCircle />
               </motion.div>
             )}
           </AnimatePresence>
-          <div>{task.taskName}</div>
+          <div className="flex-1 truncate whitespace-nowrap">
+            {task.taskName}
+          </div>
           <i onClick={handleDeleteTask} className="px-4 hover:border">
             <AiOutlineDelete />
           </i>

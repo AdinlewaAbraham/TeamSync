@@ -1,5 +1,6 @@
 "use client";
 import Project from "@/interfaces/project";
+import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import User from "@/interfaces/user";
 import Workspace from "@/interfaces/workspace";
 import React, { ReactNode, createContext, useState, useContext } from "react";
@@ -19,8 +20,12 @@ export type GeneralContextType = {
   setActiveProject: (c: Project | null) => void;
   sidebarWidth: number;
   setSidebarWidth: (c: number) => void;
-  taskComponentHeight: number,
-  setTaskComponentHeight: (c: number) => void,
+  taskComponentHeight: number;
+  setTaskComponentHeight: (c: number) => void;
+  taskHoverStatusObj: TaskHoverStatusObj;
+  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
+  userProject: Project | null;
+  setUserProject: (c: Project | null) => void;
 };
 
 const GeneralContext = createContext<GeneralContextType>({
@@ -40,6 +45,10 @@ const GeneralContext = createContext<GeneralContextType>({
   setSidebarWidth: () => {},
   taskComponentHeight: 0,
   setTaskComponentHeight: () => {},
+  taskHoverStatusObj: { shutUpTs: true },
+  setTaskHoverStatusObj: () => {},
+  userProject: null,
+  setUserProject: () => {},
 });
 
 export const GeneralContextProvider = ({
@@ -53,11 +62,14 @@ export const GeneralContextProvider = ({
   const [token, setToken] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const [activeWorkspace, setActiveWorkspace] = useState<Workspace | null>(
-    null
+    null,
   );
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [userProject, setUserProject] = useState<Project | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState(0);
   const [taskComponentHeight, setTaskComponentHeight] = useState(0);
+  const [taskHoverStatusObj, setTaskHoverStatusObj] =
+    useState<TaskHoverStatusObj>({ shutUpTs: true });
 
   return (
     <GeneralContext.Provider
@@ -78,6 +90,10 @@ export const GeneralContextProvider = ({
         setSidebarWidth,
         taskComponentHeight,
         setTaskComponentHeight,
+        taskHoverStatusObj,
+        setTaskHoverStatusObj,
+        userProject,
+        setUserProject,
       }}
     >
       {children}

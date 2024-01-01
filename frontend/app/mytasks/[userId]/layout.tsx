@@ -1,6 +1,7 @@
 "use client";
 import SubLayoutReusableNavbar from "@/components/navbar/SubLayoutReusableNavbar/SubLayoutReusableNavbar";
 import { useGlobalContext } from "@/context/GeneralContext";
+import useTrackProject from "@/hooks/UseTrackProject";
 import React, { ReactNode, useEffect, useState } from "react";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaChartLine, FaRegCalendar, FaRegListAlt } from "react-icons/fa";
@@ -9,12 +10,14 @@ const layout = ({
   params,
   children,
 }: {
-  params: { projectId: string };
+  params: { userId: string };
   children: ReactNode;
 }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const { user } = useGlobalContext();
   const navbarBaseUrl = "/mytasks/" + user?._id + "/";
+  const { userProject, setUserProject } = useGlobalContext();
+  useTrackProject(params.userId, userProject, setUserProject);
   return (
     <div className="relative flex flex-1 flex-col">
       <SubLayoutReusableNavbar
@@ -50,7 +53,9 @@ const layout = ({
       >
         toggle nav
       </button>
-      <main className="flex-1 ">{children}</main>
+      <main className="relative flex-1 overflow-auto">
+        <div className="absolute inset-0 flex"> {children}</div>
+      </main>
     </div>
   );
 };

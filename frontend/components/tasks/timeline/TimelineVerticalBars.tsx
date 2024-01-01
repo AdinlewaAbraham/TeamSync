@@ -1,7 +1,7 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const TimelineVerticalBars = ({
   day,
@@ -16,7 +16,6 @@ const TimelineVerticalBars = ({
   taskWithDateToStart: (string | Task | undefined)[];
   minHeight: number;
 }) => {
-  const { activeProject } = useGlobalContext();
   const [showInput, setShowInput] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
   const handleAddTask = async () => {
@@ -25,17 +24,11 @@ const TimelineVerticalBars = ({
 
     if (!projectId || !taskName || !day) return;
 
-    if (
-      typeof activeProject?.sections[0] !== "object" ||
-      !activeProject?.sections
-    )
-      return;
     const lastDay: Date = new Date(day);
     lastDay.setDate(lastDay.getDate() + 4);
     const postBody = {
       taskName,
       projectId,
-      sectionId: activeProject.sections[0]._id,
       dateToStart: day,
       dueDate: lastDay,
     };
@@ -74,23 +67,29 @@ const TimelineVerticalBars = ({
     setTasksToMap(tasksToMapuseEffect);
   }, [taskWithDateToStart]);
 
-  useEffect(() => {}, []);
-  const isToday = new Date().toUTCString() === new Date(day).toUTCString();
-  if (isToday) {
-    console.log(day);
-  }
+  const isToday = areDatesEqual(new Date(), new Date(day));
+  const verticalBarRef = useRef(null);
+
+  // useEffect(() => {
+  //   if (isToday && verticalBarRef.current) {
+  //     (verticalBarRef.current as HTMLElement).scrollIntoView();
+  //   }
+  // }, [verticalBarRef.current, isToday]);
   return (
     <div
       key={day.getUTCSeconds()}
-      className={`relative h-full w-[40px] ${
+      className={`relative flex h-full w-[40px] justify-center ${
         (day.getDay() === 0 || day.getDay() === 6) && "bg-[#2a2b2d]"
       } `}
       style={{ minHeight: minHeight }}
-      id={isToday ? "today" : `${day.getMonth() + day.getDate()+ day.getFullYear()}` }
+      id={
+        isToday
+          ? "today"
+          : day.getMonth() + day.getDate().toString() + day.getFullYear()
+      }
+      ref={verticalBarRef}
     >
-      {isToday && (
-        <div className="absolute left-0 z-50 h-10 w-1 bg-green-500" />
-      )}
+      {isToday && <div className="h-full w-0.5 bg-green-500" />}
     </div>
   );
 };

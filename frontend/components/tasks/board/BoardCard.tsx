@@ -26,7 +26,6 @@ const BoardCard = ({
   const [showAddTaskComponent, setShowAddTaskComponent] =
     useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
-  const { setActiveProject, activeProject } = useGlobalContext();
   const [showBoardMenu, setShowBoardMenu] = useState<boolean>(false);
 
   const [referenceElement, setReferenceElement] =
@@ -77,15 +76,6 @@ const BoardCard = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
-      if (typeof section === "string" || !activeProject) return;
-
-      const newLocalSection: Section = {
-        sectionName: section.sectionName,
-        tasks: [...section.tasks, data],
-        projectId: activeProject._id,
-        _id: data._id,
-      };
-      // setLocalSection(newLocalSection);
     } else {
       console.log("something went wrong");
     }
@@ -192,7 +182,7 @@ const BoardCard = ({
           </div>
         </header>
         <div className={`scrollBar max-h-full flex-1 overflow-y-auto `}>
-          <ul >
+          <ul>
             {section.tasks.map((task, index) => (
               <li key={index}>
                 {typeof task === "string" ? (

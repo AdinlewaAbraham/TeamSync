@@ -1,4 +1,3 @@
-import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { AnimatePresence, motion } from "framer-motion";
@@ -11,12 +10,11 @@ const TableDropdown = ({
   projectId,
 }: {
   section: Section | string;
-  projectId: String;
+  projectId: string;
 }) => {
   const [localSection, setLocalSection] = useState<Section | string>(section);
   const [showMainComponent, setShowMainComponent] = useState(false);
   const [showAddTaskComponent, setShowAddTaskComponent] = useState(false);
-  const { activeProject } = useGlobalContext();
 
   if (typeof localSection === "string") return <>loading component</>;
   const [taskName, setTaskName] = useState<string>("");
@@ -35,12 +33,12 @@ const TableDropdown = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
-      if (typeof localSection === "string" || !activeProject) return;
+      if (typeof localSection === "string") return;
 
       const newLocalSection: Section = {
         sectionName: localSection.sectionName,
         tasks: [...localSection.tasks, data],
-        projectId: activeProject._id,
+        projectId: projectId,
         _id: data._id,
       };
       setLocalSection(newLocalSection);

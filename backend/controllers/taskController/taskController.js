@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { Task } = require("../../models/taskModel");
 const { Section } = require("../../models/sectionModel");
+const { Project } = require("../../models/projectModel");
 const { sendMessage } = require("../../utils/socket-io");
 
 const getTask = asyncHandler(async (req, res) => {
@@ -39,7 +40,6 @@ const createTask = asyncHandler(async (req, res) => {
   if (
     !taskName ||
     !projectId ||
-    !sectionId ||
     (dueDate && dateToStart && !rowNumber && rowNumber !== 0)
   ) {
     console.log("bad request");
@@ -54,11 +54,11 @@ const createTask = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "bad request" });
   }
   console.log(taskName, projectId, sectionId, dateToStart, dueDate);
-
+  const project = await Project.findById(projectId);
   const task = new Task({
     taskName: taskName,
     projectId: projectId,
-    sectionId: sectionId,
+    sectionId: sectionId || project.sections[0],
     dateToStart: dateToStart,
     dueDate: dueDate,
     rowNumber: rowNumber,

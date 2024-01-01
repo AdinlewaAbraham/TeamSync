@@ -1,6 +1,5 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
-import fetchProject from "@/helpers/project/fetchProject";
 import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useState } from "react";
 import {
@@ -10,9 +9,7 @@ import {
   convertFromRaw,
   convertToRaw,
 } from "draft-js";
-import { useRouter } from "next/navigation";
 import NoResourceComp from "@/components/project/home/resources/NoResourceComp";
-import MemberCard from "@/components/project/home/members/projectMembers/MemberCard";
 import ProjectMembersComponent from "@/components/project/home/members/projectMembers/ProjectMembersComponent";
 import ProjectPrivacyComponent from "@/components/project/home/projectPrivacy/ProjectPrivacyComponent";
 import WYSIWYGEditor from "@/components/editor/RichTextEditor";

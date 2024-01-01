@@ -12,36 +12,9 @@ import Section from "@/interfaces/section";
 import Board from "@/components/tasks/board/Board";
 
 const page = ({ params }: { params: { projectId: string } }) => {
-  const { activeProject, setActiveProject } = useGlobalContext();
-  useState<boolean>(false);
-  useEffect(() => {
-    const fetchProjectFunc = async () => {
-      const response = await fetchProject(params.projectId);
-      if (!response) {
-      } else {
-        const { data, status } = response;
-        await redirectToLogin(status, data?.error);
-        // console.log(data);
-        setActiveProject(data);
-        localStorage.setItem(params.projectId, JSON.stringify(data));
-      }
-    };
-    const getProject = async () => {
-      await fetchProjectFunc();
-    };
-    const resolveFuncSync = async () => {
-      await Promise.all([getProject()]);
-    };
-    resolveFuncSync();
-  }, []);
+  const { activeProject } = useGlobalContext();
 
-  if (!activeProject?.sections) return <>loading statee</>;
-
-  return (
-    <Board
-      paramsProjectId={params.projectId}
-    />
-  );
+  return <Board paramsProjectId={params.projectId} project={activeProject} />;
 };
 
 export default page;

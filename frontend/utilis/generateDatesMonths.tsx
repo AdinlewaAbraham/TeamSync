@@ -23,14 +23,6 @@ export default function generateDatesMonths(
   let currentYear = year;
   let currentMonth = month;
   const dates = [];
-  const invalidMonthPrev = currentMonth - 1 < 0;
-  const prevMonth = {
-    name: invalidMonthPrev ? monthNames[11] : monthNames[currentMonth - 1],
-    year: invalidMonthPrev ? currentYear-- : currentYear,
-    dates: invalidMonthPrev
-      ? generateDates(currentYear--, 11)
-      : generateDates(currentYear, currentMonth - 1),
-  };
   // dates.push(prevMonth);
   for (let i = 0; i < numberOfMonths; i++) {
     const inValidMonthCurrent = currentMonth > 11;
@@ -42,6 +34,8 @@ export default function generateDatesMonths(
         ? generateDates(nextYear, 0)
         : generateDates(currentYear, currentMonth),
     };
+    if (i === 0) {
+    }
     dates.push(month);
     if (inValidMonthCurrent) {
       // reset

@@ -22,9 +22,11 @@ const SubLayoutReusableNavbarNavbarItem = ({
     <Link href={href.toLowerCase()} key={title}>
       <li
         className={` flex cursor-pointer items-center p-2 text-sm text-muted-dark transition-colors duration-150 hover:text-white
-        ${isCurrentTab && "border-b-2 text-white"} border-white`}
+        ${
+          isCurrentTab ? "navbarBorderB text-inherit" : "navbarBorderBHover"
+        } border-white`}
       >
-       {icon && <i className="mr-1">{icon}</i>}
+        {icon && <i className="mr-1">{icon}</i>}
         {title.charAt(0).toUpperCase() + title.substring(1)}
       </li>
     </Link>

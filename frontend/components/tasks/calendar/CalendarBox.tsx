@@ -1,13 +1,21 @@
+import React, {
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+  DragEvent,
+} from "react";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import CalendarTaskBar from "./CalendarTaskBar";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Section from "@/interfaces/section";
+import Project from "@/interfaces/project";
 
 const CalendarBox = ({
+  project,
   date,
   projectId,
   highlight,
@@ -19,11 +27,10 @@ const CalendarBox = ({
   currentYear,
   setCurrentMonth,
   setCurrentYear,
-  taskHoverStatusObj,
-  setTaskHoverStatusObj,
   rowKey,
   rowWidth,
 }: {
+  project: Project | null;
   date: Date;
   projectId: string;
   highlight: boolean;
@@ -35,8 +42,6 @@ const CalendarBox = ({
   currentYear: number;
   setCurrentMonth: (c: number) => void;
   setCurrentYear: (c: number) => void;
-  taskHoverStatusObj: TaskHoverStatusObj;
-  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   rowKey: string;
   rowWidth: number;
 }) => {
@@ -44,7 +49,7 @@ const CalendarBox = ({
   const [taskName, setTaskName] = useState<string>("");
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
 
-  const { activeProject } = useGlobalContext();
+  const { setTaskHoverStatusObj, taskHoverStatusObj } = useGlobalContext();
   const boxRef = useRef(null);
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,21 +58,19 @@ const CalendarBox = ({
       "calendarBoxScollParent",
     );
     const handleScroll = () => {
-      if (date.getDate() === 1) {
-        const calendarBoxElement = boxRef.current as HTMLElement | null;
-        if (calendarBoxScollParentElement && calendarBoxElement) {
-          const parentRect =
-            calendarBoxScollParentElement.getBoundingClientRect();
-          const childRect = calendarBoxElement.getBoundingClientRect();
-
-          const pxToTop = childRect.top - parentRect.top;
-
-          if (pxToTop <= 96) {
-            setCurrentMonth(date.getMonth());
-            setCurrentYear(date.getFullYear());
-          }
-        }
-      }
+      // if (date.getDate() === 1) {
+      //   const calendarBoxElement = boxRef.current as HTMLElement | null;
+      //   if (calendarBoxScollParentElement && calendarBoxElement) {
+      //     const parentRect =
+      //       calendarBoxScollParentElement.getBoundingClientRect();
+      //     const childRect = calendarBoxElement.getBoundingClientRect();
+      //     const pxToTop = childRect.top - parentRect.top;
+      //     if (pxToTop <= 96) {
+      //       setCurrentMonth(date.getMonth());
+      //       setCurrentYear(date.getFullYear());
+      //     }
+      //   }
+      // }
     };
 
     if (calendarBoxScollParentElement) {
@@ -89,10 +92,7 @@ const CalendarBox = ({
 
     if (!projectId || !taskName || !date) return;
 
-    if (
-      typeof activeProject?.sections[0] !== "object" ||
-      !activeProject?.sections
-    ) {
+    if (typeof project?.sections[0] !== "object" || !project?.sections) {
       return;
     }
     const dueDate = new Date(date);
@@ -100,8 +100,7 @@ const CalendarBox = ({
     const sectionTasksWithDateRange = taskWithDateRange.filter((task) => {
       if (typeof task === "object") {
         return (
-          task.sectionId ===
-          ((activeProject.sections[0] as Section)?._id as string)
+          task.sectionId === ((project.sections[0] as Section)?._id as string)
         );
       } else {
         return false;
@@ -116,7 +115,7 @@ const CalendarBox = ({
     const postBody = {
       taskName,
       projectId,
-      sectionId: activeProject.sections[0]._id,
+      sectionId: project.sections[0]._id,
       dateToStart: date,
       dueDate: dueDate,
       rowNumber: rowNumber,
@@ -224,6 +223,23 @@ const CalendarBox = ({
       setShowInput(true);
     }
   };
+  const allowDrop = (e: DragEvent) => {
+    if (e) e.preventDefault();
+    // stuff that hanldes effects hover drop effect in calendaBox like adding _blank to component
+    console.log("i should be calculating and sorting and appending stuff");
+  };
+  const drop = (e: DragEvent) => {
+    e.preventDefault();
+    console.log(e.target);
+    if (e.dataTransfer) {
+      const data = e.dataTransfer.getData("text/plain");
+      console.log(data);
+    }
+    console.log("i tried to drop");
+  };
+  const dragLeave = () => {
+    console.log("i should be doing clean p");
+  };
   return (
     <li
       id={date.getDate() + `${date.getMonth()}` + date.getFullYear()}
@@ -241,6 +257,9 @@ const CalendarBox = ({
       } border-0 `}
       ref={boxRef}
       onClick={handleCalendarClick}
+      onDragOver={allowDrop}
+      onDrop={drop}
+      onDragLeave={dragLeave}
     >
       <div
         className={` m-2 flex h-7 max-w-max items-center justify-center p-2  ${
@@ -260,7 +279,7 @@ const CalendarBox = ({
             index={index}
             task={task}
             isLast={isLast}
-            calendarDate={date}
+            calendarBoxDate={date}
             taskHoverStatusObj={taskHoverStatusObj}
             setTaskHoverStatusObj={setTaskHoverStatusObj}
             noOfDaysThatDoesNotStartOnDayButFallInTimeFrame={

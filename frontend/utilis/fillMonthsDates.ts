@@ -20,7 +20,7 @@ export const fillMonthsDates: FillMonthsDates = (
   let lastDayPushed: Date | null = lastDayPushedProp;
   const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  return monthsDates.map((month) => {
+  return monthsDates.map((month, index) => {
     const dates: Date[] = JSON.parse(JSON.stringify(month.dates));
 
     const firstDayInDates = new Date(dates[0]);
@@ -50,7 +50,12 @@ export const fillMonthsDates: FillMonthsDates = (
         dates.splice(0, lastdayInDaysToUnshit.getDate());
       }
     } else {
-      daysToUnshit = prevMonthDays.slice(-noOfDaysToUnshift);
+      daysToUnshit =
+        noOfDaysToUnshift === 0 ? [] : prevMonthDays.slice(-noOfDaysToUnshift);
+    }
+    if (index === 0) {
+      console.log(daysToUnshit);
+      console.log(noOfDaysToUnshift);
     }
     dates.unshift(...daysToUnshit);
 

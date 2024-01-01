@@ -28,6 +28,7 @@ const validateToken = asyncHandler(async (req, res, next) => {
       next();
     });
   } else {
+    console.log("failed to verify token");
     return res.status(401).json({ error: "REDIRECT_TO_LOGIN" });
   }
 });

@@ -4,8 +4,15 @@ import Section from "@/interfaces/section";
 import Task from "@/interfaces/task";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
-import React, { useEffect, useState, MouseEvent } from "react";
+import React, {
+  useEffect,
+  useState,
+  MouseEvent,
+  DragEvent,
+  useMemo,
+} from "react";
 import { RiDraggable } from "react-icons/ri";
+import TimelineTaskBar from "./TimelineTaskBar";
 
 const HorizontalRowsForTaskMapping = ({
   index,
@@ -26,7 +33,6 @@ const HorizontalRowsForTaskMapping = ({
   sectionTasks: (Task | undefined | string)[];
   section: Section;
 }) => {
-  const { activeProject, setActiveProject } = useGlobalContext();
   const [currentDay, setcurrentDay] = useState<number>(0);
   const [noOfDaysToAdd, setNoOfDaysToAdd] = useState<number>(4);
   const [showInput, setShowInput] = useState<boolean>(false);
@@ -41,8 +47,13 @@ const HorizontalRowsForTaskMapping = ({
   const [tasksToMap, setTasksToMap] = useState<(string | Task | undefined)[]>(
     [],
   );
-  useEffect(() => {
-    const tasksToMapuseEffect: (string | Task | undefined)[] =
+  const [blankDropTaskRenderObject, setBlankDropTaskRenderObject] = useState<{
+    show: boolean;
+    left: number;
+    width: number;
+  }>();
+  const tasksToMapuseEffect: (string | Task | undefined)[] = useMemo(
+    () =>
       sectionTasks.filter((task) => {
         if (typeof task !== "object") return false;
         if (!task?.dateToStart) return false;
@@ -52,19 +63,18 @@ const HorizontalRowsForTaskMapping = ({
           month === dateToStart.getMonth() &&
           year === dateToStart.getFullYear()
         );
-      });
+      }),
+    [sectionTasks],
+  );
+  // const [lastSavedIndex, setLastSavedIndex] = useState(-1);
+  useEffect(() => {
     setTasksToMap(tasksToMapuseEffect);
-  }, [sectionTasks]);
+  }, [tasksToMapuseEffect]);
   const handleAddTask = async (day: number) => {
     setShowInput(false);
 
     if (!projectId || !taskName || !day) return;
 
-    if (
-      typeof activeProject?.sections[0] !== "object" ||
-      !activeProject?.sections
-    )
-      return;
     const startDay: Date = new Date(year, month, day);
     const lastDay: Date = new Date(startDay);
     lastDay.setDate(lastDay.getDate() + noOfDaysToAdd);
@@ -86,8 +96,6 @@ const HorizontalRowsForTaskMapping = ({
 
     await redirectToLogin(response.status, data?.error);
     if (response.ok) {
-      setTasksToMap([...tasksToMap, data as Task]);
-      // const newActiveProject = {...activeProject, sections:  }
     } else {
       console.log("something went wrong");
     }
@@ -146,13 +154,62 @@ const HorizontalRowsForTaskMapping = ({
       setShowInput(true);
     }
   };
+  const allowDrop = (e: DragEvent) => {
+    if (e) e.preventDefault();
+    // stuff that hanldes effects hover drop effect in calendaBox like adding _blank to component
+    if (e.dataTransfer) {
+      const data = sessionStorage.getItem("timelineDragTask");
+      const taskToBeMovedJson: Task = data ? JSON.parse(data) : null;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const hoverDayIndex = Math.floor(offsetX / 40);
+      if (taskToBeMovedJson) {
+        console.log(taskToBeMovedJson);
+        const { dueDate, dateToStart } = taskToBeMovedJson;
+        const newBlankDropTaskRenderObject = {
+          left: hoverDayIndex * 40,
+          show: true,
+          width:
+            calculateDaysBetweenDates(
+              new Date(dateToStart),
+              new Date(dueDate),
+            ) * 40,
+        };
+        setBlankDropTaskRenderObject(newBlankDropTaskRenderObject);
+        const newSelectedDateObject = {
+          startDate: new Date(dateToStart),
+          endDate: new Date(dueDate),
+        };
+        setSelectedDateObject(newSelectedDateObject);
+      }
+    }
+    console.log("i should be calculating and sorting and appending stuff");
+  };
+  const drop = (e: DragEvent) => {
+    e.preventDefault();
+    console.log(e.target);
+    if (e.dataTransfer) {
+      const data = e.dataTransfer.getData("text/plain");
+      console.log(JSON.parse(data));
+    }
+    setBlankDropTaskRenderObject({ left: 0, show: true, width: 80 });
+    setSelectedDateObject(null);
+  };
+  const dragLeave = () => {
+    console.log("i should be doing clean p");
+    setBlankDropTaskRenderObject({ left: 0, show: false, width: 0 });
+    setSelectedDateObject(null);
+    // setLastSavedIndex(-1);
+  };
   return (
     <div
       key={index}
-      className=" relative z-[99] flex h-12 w-full cursor-cell items-center"
+      className=" relative z-40 flex h-12 w-full cursor-cell items-center"
       onClick={handleRowClick}
+      onDragOver={allowDrop}
+      onDrop={drop}
+      onDragLeave={dragLeave}
     >
-      {/* <p className="absolute left-[50%]">{index + 1}</p> */}
       {showInput && (
         <div
           style={{
@@ -180,42 +237,18 @@ const HorizontalRowsForTaskMapping = ({
       )}
       {tasksToMap.map((task, index) => {
         if (typeof task !== "object") return;
-
-        const startDate = new Date(task.dateToStart);
-        const endDate = new Date(task.dueDate);
-        const width = calculateDaysBetweenDates(startDate, endDate) * 40;
-        return (
-          <div
-            key={task._id}
-            className="absolute flex h-full cursor-pointer items-center px-1 py-2"
-            style={{
-              left: `${(new Date(task.dateToStart).getDate() - 1) * 40}px`,
-              width: width + "px",
-              opacity: width < 0 ? 1 : 1,
-            }}
-            onClick={() => {}}
-          >
-            <div
-              className="[&>div]: [&>div]: [&>div]: group relative flex h-9 w-full items-center overflow-hidden rounded-lg border border-border-default
-              bg-bg-primary text-xs transition-all duration-150 hover:border-accent-blue [&>div]:hidden
-             [&>div]:h-full [&>div]:items-center [&>div]:justify-center [&>div]:bg-accent-blue [&>div]:transition-all [&>div]:duration-150"
-            >
-              <div className="left-0 cursor-w-resize group-hover:flex">
-                <RiDraggable />
-              </div>
-              <span
-                className="flex h-full flex-1 items-center truncate text-ellipsis pl-2"
-                draggable
-              >
-                {task.taskName}
-              </span>
-              <div className="right-0 cursor-e-resize group-hover:flex">
-                <RiDraggable />
-              </div>
-            </div>
-          </div>
-        );
+        // if (task?.type === "_blank") return <></>;
+        return <TimelineTaskBar task={task} key={task._id} />;
       })}
+      {blankDropTaskRenderObject?.show && (
+        <div
+          className="absolute h-9 rounded-lg border border-blue-300 bg-gray-500"
+          style={{
+            left: blankDropTaskRenderObject.left + "px",
+            width: blankDropTaskRenderObject.width + "px",
+          }}
+        />
+      )}
     </div>
   );
 };

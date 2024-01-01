@@ -1,6 +1,6 @@
 import Section from "@/interfaces/section";
 import Task from "@/interfaces/task";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import HorizontalRowsForTaskMapping from "./HorizontalRowsForTaskMapping";
 import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
 
@@ -98,6 +98,7 @@ const SectionHorizontalRow = ({
                 taskWithDateRange={taskWithDateRange}
                 sectionTasks={allSectionTask}
                 section={section}
+                key={index + " row"}
               />
             ),
           )}

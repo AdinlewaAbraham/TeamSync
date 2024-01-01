@@ -38,6 +38,7 @@ const WidgetComponents = ({
   };
   const allowDrop = (e: DragEvent) => {
     if (e) e.preventDefault();
+    console.log("rendered");
     const currentHoverTargetElement = e.target as HTMLElement;
     const filteredWidgetsArray = [...widgetsArray].filter(
       (widget) => widget.type !== "_blank",
@@ -94,6 +95,7 @@ const WidgetComponents = ({
     // remove the _blank element
     setWidgetsArray(widgetsArray.filter((widget) => widget.type !== "_blank"));
   };
+  console.log("rendered");
   return (
     <div
       className="flex flex-1 flex-wrap"

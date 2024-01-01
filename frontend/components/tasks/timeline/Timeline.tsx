@@ -9,7 +9,7 @@ import TimelineMonthComponent from "@/components/tasks/timeline/TimelineMonthCom
 import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
 import generateDatesMonths from "@/utilis/generateDatesMonths";
 
-const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
+const Timeline = ({ paramProjectId, project }: { paramProjectId: string, project: Project | null }) => {
   const monthNames = [
     "January",
     "February",
@@ -25,17 +25,25 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
     "December",
   ];
   const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() - 1;
+  const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
 
-  const fourMonths = generateDatesMonths(currentYear, currentMonth, 4);
+  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  1;
+
+  const fourMonths = generateDatesMonths(prevYear, prevMonth, 4);
   const [months, setMonths] = useState(fourMonths);
-  const { activeProject } = useGlobalContext();
+  console.log(currentYear, currentMonth);
+  console.log(months);
+  console.log(generateDatesMonths(currentYear, currentMonth, 4));
   const [selectedDateObject, setSelectedDateObject] = useState<{
     startDate: Date;
     endDate: Date;
   } | null>(null);
-  const [scrollposition, setScrollposition] = useState({ x: 0, y: 0 });
+  const [allowAdd, setAllowAdd] = useState(false);
+  const [allowScrollAdjust, setAllowScrollAdjust] = useState(true);
+  const [isScrolledIntoView, setScrolledIntoView] = useState(false);
   const localStorageValue = localStorage.getItem("timelineSectionObj");
 
   const defaultTimelineSectionObj = localStorageValue
@@ -68,6 +76,18 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
     };
   }, [timelineRef.current, headerRef.current, sidebarRef.current]);
 
+  const scrollElement = document.getElementById("today");
+
+  useEffect(() => {
+    console.log(scrollElement);
+    if (scrollElement && !isScrolledIntoView) {
+      scrollElement.scrollIntoView({ inline: "center" });
+
+      setScrolledIntoView(true);
+      setAllowAdd(true);
+    }
+  }, [scrollElement]);
+
   useEffect(() => {
     if (timelineHeightRef.current && sidebarRef.current) {
       const sidebarElement = sidebarRef.current as HTMLElement;
@@ -90,22 +110,30 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
       );
     }
   }, [timelineSectionObj]);
-
-  // useEffect(() => {
-  //   if (timelineRef.current) {
-  //     document.getElementById("today")?.scrollIntoView();
-  //   }
-  // }, [timelineRef.current, activeProject]);
+  useEffect(() => {
+    if (timelineRef.current && allowScrollAdjust) {
+      let allDatesAddedLength = 0;
+      const newMonths = months.slice(0, 3);
+      for (let i = 0; i < newMonths.length; i++) {
+        allDatesAddedLength += newMonths[i].dates.length;
+      }
+      if (months.length > 4)
+        (timelineRef.current as HTMLElement).scrollLeft =
+          allDatesAddedLength * 40 +
+          (timelineRef.current as HTMLElement).scrollLeft;
+      setAllowAdd(true);
+    }
+  }, [months]);
 
   const allTasks = useMemo(
     () =>
-      activeProject?.sections
+      project?.sections
         .map((section) => {
           if (typeof section === "string") return;
           return section.tasks;
         })
         .flat(1),
-    [activeProject?.sections],
+    [project?.sections],
   );
   const taskWithDateRange = useMemo(
     () =>
@@ -115,11 +143,15 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
       }),
     [allTasks],
   );
-  if (!activeProject || !taskWithDateRange) return <div>loading timeline</div>;
+
+  useEffect(() => {
+    console.log(selectedDateObject);
+  }, [selectedDateObject]);
+  if (!project || !taskWithDateRange) return <div>loading timeline</div>;
 
   const noOfMonthsTOAddToinfinityScroll = 3;
   const handleAddToLeft = () => {
-    if (!timelineRef.current) return;
+    if (!timelineRef.current || !allowAdd) return;
     let generateDatesYear = months[0].year;
     let generateDatesMonth =
       monthNames.findIndex(
@@ -136,16 +168,9 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
       noOfMonthsTOAddToinfinityScroll,
     );
     const newMonths = [...prevMonths, ...months];
-    let allDatesAddedLength = 0;
-    for (let i = 0; i < newMonths.length; i++) {
-      allDatesAddedLength += newMonths[i].dates.length;
-    }
-    (
-      timelineRef.current as HTMLElement
-    ).scrollLeft = allDatesAddedLength * 40;
-
+    setAllowAdd(false);
+    setAllowScrollAdjust(true);
     setMonths(newMonths);
-    console.log(allDatesAddedLength * 40);
   };
 
   const handleAddToRight = () => {
@@ -166,6 +191,7 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
       generateDatesMonth,
       noOfMonthsTOAddToinfinityScroll,
     );
+    setAllowScrollAdjust(false);
     setMonths([...months, ...nextMonths]);
   };
   const handleScroll = () => {
@@ -181,16 +207,15 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
     if (isNearLeftEdge) {
       console.log("near left");
       handleAddToLeft();
-      setScrollposition({ x: timelineElement.scrollLeft, y: 0 });
     }
 
     if (isNearRightEdge) {
       console.log("near rigth");
       handleAddToRight();
-      setScrollposition({ x: timelineElement.scrollLeft, y: 0 });
     }
   };
   console.log("i rerendered");
+
   return (
     <div className="flex-1 overflow-hidden ">
       {/* <nav className="flex items-center justify-between border-t border-border-default  py-2 pl-8 text-sm">
@@ -205,7 +230,7 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
                 className="absolute inset-0 flex-1 overflow-y-hidden"
                 ref={sidebarRef}
               >
-                {activeProject.sections.map((section) => (
+                {project.sections.map((section) => (
                   <TimelineSideBarItem
                     section={section}
                     timelineSectionObj={timelineSectionObj}
@@ -232,9 +257,6 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
                   </div>
                   <div className="flex">
                     {month.dates.map((day, index) => {
-                      const month = selectedDateObject?.startDate.getUTCMonth();
-                      const year = selectedDateObject?.startDate.getFullYear();
-
                       const highlightDate =
                         selectedDateObject &&
                         new Date(day) >=
@@ -245,13 +267,11 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
                         <div
                           key={index}
                           className={`w-[40px]
-                     ${
-                       (day.getDay() === 0 || day.getDay() === 6) &&
-                       !highlightDate &&
-                       "bg-bg-primary"
-                     } ${
-                       highlightDate && "bg-accent-blue"
-                     } flex items-center justify-center `}
+                                  ${
+                                    highlightDate
+                                      ? "bg-accent-blue"
+                                      : "bg-bg-primary"
+                                  } flex items-center justify-center `}
                           onClick={() => console.log(day)}
                         >
                           {index + 1}
@@ -269,7 +289,7 @@ const Timeline = ({ paramProjectId }: { paramProjectId: string }) => {
             >
               {months.map((month) => (
                 <TimelineMonthComponent
-                  activeProject={activeProject}
+                  activeProject={project}
                   month={month}
                   paramProjectId={paramProjectId}
                   setSelectedDateObject={setSelectedDateObject}

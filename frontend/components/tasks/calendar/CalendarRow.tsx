@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import CalendarBox from "./CalendarBox";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Task from "@/interfaces/task";
+import Project from "@/interfaces/project";
 const CalendarRow = ({
+  project,
   dateArr,
   projectId,
   monthIndex,
@@ -12,9 +14,8 @@ const CalendarRow = ({
   taskWithDateRange,
   setCurrentMonth,
   setCurrentYear,
-  taskHoverStatusObj,
-  setTaskHoverStatusObj,
 }: {
+  project: Project | null;
   dateArr: Date[];
   projectId: string;
   monthIndex: number;
@@ -24,8 +25,6 @@ const CalendarRow = ({
   currentYear: number;
   setCurrentMonth: (c: number) => void;
   setCurrentYear: (c: number) => void;
-  taskHoverStatusObj: TaskHoverStatusObj;
-  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
 }) => {
   const [rowTaskPositionObj, setRowTaskPositionObj] = useState<any>();
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
@@ -68,6 +67,7 @@ const CalendarRow = ({
       />
       {dateArr.map((date, index) => (
         <CalendarBox
+          project={project}
           date={new Date(date)}
           projectId={projectId}
           highlight={
@@ -83,8 +83,6 @@ const CalendarRow = ({
           currentYear={currentYear}
           setCurrentMonth={setCurrentMonth}
           setCurrentYear={setCurrentYear}
-          taskHoverStatusObj={taskHoverStatusObj}
-          setTaskHoverStatusObj={setTaskHoverStatusObj}
           rowKey={rowKey}
           rowWidth={rowWidth}
         />

@@ -6,12 +6,17 @@ import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 
-const Table = ({ paramsProjectId }: { paramsProjectId: string }) => {
-  const { activeProject } = useGlobalContext();
+const Table = ({
+  paramsProjectId,
+  project,
+}: {
+  paramsProjectId: string;
+  project: Project | null;
+}) => {
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(true);
-  if (!activeProject) {
+  if (!project) {
     return <div>loading comp</div>;
   }
   const addSection = async () => {
@@ -19,11 +24,11 @@ const Table = ({ paramsProjectId }: { paramsProjectId: string }) => {
     if (sectionName === "") {
       return;
     }
-    if (!activeProject) return;
+    if (!project) return;
     try {
       const response = await fetch("/api/section/", {
         method: "POST",
-        body: JSON.stringify({ sectionName, projectId: activeProject._id }),
+        body: JSON.stringify({ sectionName, projectId: project._id }),
       });
       const data = await response.json();
       await redirectToLogin(response.status, data.error);
@@ -46,7 +51,7 @@ const Table = ({ paramsProjectId }: { paramsProjectId: string }) => {
         </ul>
       </header>
       <div className="  max-h-full overflow-y-auto">
-        {activeProject.sections.map((section, index) => (
+        {project.sections.map((section, index) => (
           <TableDropdown
             section={section}
             projectId={paramsProjectId}

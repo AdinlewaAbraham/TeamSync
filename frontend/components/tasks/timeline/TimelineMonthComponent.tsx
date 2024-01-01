@@ -41,7 +41,6 @@ const TimelineMonthComponent = ({
     "November",
     "December",
   ];
-  console.log(timelineSectionObj);
   const TimelineVerticalBarsMinHeight: number = activeProject.sections.reduce(
     (accumulator, section) => {
       const currentSectionHeight =
@@ -52,7 +51,6 @@ const TimelineMonthComponent = ({
     },
     0,
   );
-  console.log(TimelineVerticalBarsMinHeight);
   return (
     <div
       className="relative flex w-full flex-1"

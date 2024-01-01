@@ -71,8 +71,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
   return (
     <Table
       paramsProjectId={params.projectId}
-      project={activeProject}
-      setProject={setActiveProject}
     />
   );
 };

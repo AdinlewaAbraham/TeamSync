@@ -1,3 +1,4 @@
+import { redirect } from "next/dist/server/api-utils";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,7 +22,13 @@ export async function fetchWithAuth(
     // if (!response.ok) {
     //   console.log("something is wrong wih your response check fetchWithAuth this is your status     " + response.status );
     // }
+    if (response.status === 401 && data?.error === "REDIRECT_TO_LOGIN") {
+      console.log("failed to verify token");
 
+      return NextResponse.redirect(
+        "https://music.youtube.com/watch?v=HvkixSPkOHg&list=RDAMVMIstt2aXmWFg",
+      );
+    }
     return { data, status: response.status };
   } catch (error) {
     console.error(error);

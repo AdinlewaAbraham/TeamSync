@@ -6,16 +6,20 @@ import generateDates from "@/utilis/generateDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Project from "@/interfaces/project";
 import { redirectToLogin } from "@/helpers/redirect";
-import fetchProject from "@/helpers/project/fetchProject";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { fillMonthsDates } from "@/utilis/fillMonthsDates";
 import generateDatesMonths from "@/utilis/generateDatesMonths";
 import { fillMonthsDatesReverse } from "@/utilis/fillMonthsDatesReverse";
 import Task from "@/interfaces/task";
 
-const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
-  const { activeProject } = useGlobalContext();
-  if (!activeProject) return <>loading</>;
+const Calendar = ({
+  paramsProjectId,
+  project,
+}: {
+  paramsProjectId: string;
+  project: Project | null;
+}) => {
+  if (!project) return <>loading</>;
   const currentDate = new Date();
   const cM = currentDate.getMonth();
   const cY = currentDate.getFullYear();
@@ -31,8 +35,6 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
   const [currentMonth, setCurrentMonth] = useState<number>(cM);
   const [currentYear, setCurrentYear] = useState<number>(cY);
   const [filledMonthsDates, setFilledMonthsDates] = useState(fillEdFourMonths);
-  const [taskHoverStatusObj, setTaskHoverStatusObj] =
-    useState<TaskHoverStatusObj>({ shutUpTs: true });
 
   const calendarBoxScollParent = useRef(null);
 
@@ -190,13 +192,13 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
   // get all tasks in project
   const allTasks = useMemo(
     () =>
-      activeProject.sections
+      project.sections
         .map((section) => {
           if (typeof section === "string") return;
           return section.tasks;
         })
         .flat(1),
-    [activeProject.sections],
+    [project.sections],
   );
   const taskWithDateRange = allTasks.filter((task) => {
     if (typeof task !== "object") return;
@@ -204,7 +206,7 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
   });
   useMemo(() => {
     localStorage.removeItem("localTaskPositionObject");
-  }, [activeProject.sections]);
+  }, [project.sections]);
   useEffect(() => {
     const todayElement = document.getElementsByClassName("today");
     if (todayElement[0]) {
@@ -224,15 +226,14 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
     const isNearTop = calendarBoxScollParentElement.scrollTop <= threshold;
 
     if (isNearTop) {
-      console.log("near top");
       addPrevMonth();
     }
 
     if (isNearBottom) {
-      console.log("near bottom");
       addNextMonth();
     }
   };
+  console.log("i rerendered");
   return (
     <div className="flex flex-1 select-none flex-col">
       <nav className="flex items-center justify-between border-y border-border-default px-8 py-2 text-sm">
@@ -313,6 +314,7 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
                   // localStorage.removeItem(rowKey);
                   return (
                     <CalendarRow
+                      project={project}
                       dateArr={dateArr}
                       monthIndex={monthIndex}
                       rowIndex={rowIndex}
@@ -322,8 +324,7 @@ const Calendar = ({ paramsProjectId }: { paramsProjectId: string }) => {
                       currentYear={currentYear}
                       setCurrentMonth={setCurrentMonth}
                       setCurrentYear={setCurrentYear}
-                      taskHoverStatusObj={taskHoverStatusObj}
-                      setTaskHoverStatusObj={setTaskHoverStatusObj}
+                      key={rowKey}
                     />
                   );
                 })}
