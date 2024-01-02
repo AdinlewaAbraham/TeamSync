@@ -7,12 +7,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const cookieStore = cookies();
     const token = cookieStore.get("userToken")?.value;
     console.log(token);
-
-    const loginUrl = new URL("/login", req.url);
-    console.log(req.url);
-    console.log(loginUrl);
-    
-    return NextResponse.redirect(loginUrl);
     const response = await fetch(process.env.API_HOST + "/user/", {
       method: "GET",
       headers: {

@@ -1,6 +1,11 @@
-export async function redirectToLogin(status: number, errorMessage: string) {
-  if (status === 401 && errorMessage === "REDIRECT_TO_LOGIN") {
-    console.log("redirect to login now!!!");
-    // window.location.href = "/login";
+export async function fetchAndHelpRedirect(url: string, options: object) {
+  const response = await fetch(url, {
+    ...options,
+  });
+  const data = await response.json();
+  console.log(url);
+  if (response.status === 401 && data?.error === "REDIRECT_TO_LOGIN") {
+    window.location.href = "/login";
   }
+  return { status: response.status, data, _response: response };
 }

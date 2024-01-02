@@ -53,7 +53,7 @@ const layout = ({
       >
         toggle nav
       </button>
-      <main className="relative flex-1 overflow-auto">
+      <main className="relative mt-4 flex-1 overflow-auto">
         <div className="absolute inset-0 flex"> {children}</div>
       </main>
     </div>

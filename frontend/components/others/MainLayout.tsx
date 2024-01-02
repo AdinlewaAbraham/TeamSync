@@ -25,30 +25,8 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     };
     getUser();
   }, []);
-  // useEffect(() => {
-  //   console.log("fetching workspace");
-  //   const getActiveWorkspace = async () => {
-  //     if (!user) return;
-  //     const workspace = await fetchWorkspace(user.activeWorkspaceId);
-  //     setActiveWorkspace(workspace);
-  //   };
-  //   getActiveWorkspace();
-  // }, [user]);
 
-  useEffect(() => {
-    const updateUser = async () => {
-      const userString = localStorage.getItem("user");
-      const user = userString ? JSON.parse(userString) : null;
-      if (user) {
-        const updatedUser = await fetchUser();
-        setUser(updatedUser);
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-      }
-    };
-    updateUser();
-  }, []);
 
-  // const { sidebarWidth, setTaskComponentHeight } = useGlobalContext();
   return (
     <div className="flex flex-1 flex-col">
       <nav className="">

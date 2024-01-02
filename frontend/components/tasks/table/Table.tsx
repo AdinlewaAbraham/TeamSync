@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TableDropdown from "./TableDropdown";
 import Project from "@/interfaces/project";
 import { IoMdAdd } from "react-icons/io";
-import { redirectToLogin } from "@/helpers/redirect";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 
@@ -26,12 +26,11 @@ const Table = ({
     }
     if (!project) return;
     try {
-      const response = await fetch("/api/section/", {
+      const response = await fetchAndHelpRedirect("/api/section/", {
         method: "POST",
         body: JSON.stringify({ sectionName, projectId: project._id }),
       });
-      const data = await response.json();
-      await redirectToLogin(response.status, data.error);
+      const { data, status } = response;
     } catch (err) {
       // isError = true;
     }

@@ -1,5 +1,4 @@
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
 import Project from "@/interfaces/project";
 import Workspace from "@/interfaces/workspace";
 import { useRouter } from "next/navigation";
@@ -27,7 +26,6 @@ const CreateProjectMOdal = () => {
     });
     const data = await response.json();
     console.log(data);
-    await redirectToLogin(response.status, data?.error);
     const Projects = [...(activeWorkspace?.projects || []), data];
     const newWorkspace: Workspace = {
       ...(activeWorkspace || []),

@@ -1,22 +1,21 @@
-import { redirectToLogin } from "../redirect";
+import { fetchAndHelpRedirect } from "../redirect";
 
 export default async function deleteSection(
   sectionId: string,
   projectId: string,
 ) {
   try {
-    const response = await fetch(
+    const response = await fetchAndHelpRedirect(
       "/api/section/" + projectId + "/" + sectionId,
       {
         method: "DELETE",
       },
     );
-    const data = await response.json();
-    await redirectToLogin(response.status, data.error);
+    const { data, status } = response;
     // if (!response.ok) {
     //   throw new Error(`HTTP error! Status: ${response.status}`);
     // }
-    return { data, status: response.status };
+    return { data, status };
   } catch (error) {
     console.error(error);
   }

@@ -5,7 +5,6 @@ import { IoMdAdd } from "react-icons/io";
 import { BsThreeDots } from "react-icons/bs";
 import { MdClose } from "react-icons/md";
 import { fetchWithAuth } from "@/app/api/fetchWithAuth";
-import { redirectToLogin } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 import RenderStatus, { RenderPriority } from "../ConditionalRender";
@@ -74,7 +73,6 @@ const BoardCard = ({
 
     const data = await response.json();
 
-    await redirectToLogin(response.status, data?.error);
     if (response.ok) {
     } else {
       console.log("something went wrong");

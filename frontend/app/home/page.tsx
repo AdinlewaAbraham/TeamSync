@@ -31,7 +31,7 @@ const page = () => {
     }
   }, [user]);
 
-  return <LoadingComponent />;
+  return <>this page is not used again</>;
 };
 
 export default page;

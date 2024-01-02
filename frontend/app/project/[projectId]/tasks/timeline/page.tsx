@@ -1,7 +1,6 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
@@ -23,7 +22,8 @@ export interface TimelineSectionObj {
 }
 
 const page = ({ params }: { params: { projectId: string } }) => {
-  return <Timeline paramProjectId={params.projectId} />;
+  const { activeProject } = useGlobalContext();
+  return <Timeline paramProjectId={params.projectId} project={activeProject} />;
 };
 
 export default page;

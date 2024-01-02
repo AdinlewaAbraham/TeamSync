@@ -1,6 +1,5 @@
 "use client";
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useState } from "react";
 import {
   Editor,

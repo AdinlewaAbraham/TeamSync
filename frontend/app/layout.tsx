@@ -3,10 +3,15 @@ import "./globals.css";
 import MainLayout from "@/components/others/MainLayout";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { GeneralContextProvider } from "@/context/GeneralContext";
+import {
+  GeneralContextProvider,
+  useGlobalContext,
+} from "@/context/GeneralContext";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import fetchUser from "@/helpers/user/fetchUser";
 const inter = Inter({ subsets: ["latin"] });
+import { useRouter } from "next/navigation";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -18,7 +23,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
   const pathname = usePathname();
+  const { user, setUser } = useGlobalContext();
+  useEffect(() => {
+    const handleUser = async () => {
+      try {
+        const user = await fetchUser();
+        console.log(user);
+        if (user) {
+          setUser(user);
+          // router.push("/workspace/" + user?.activeWorkspaceId + "/home");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    handleUser();
+  }, []);
   return (
     <html lang="en" className="h-full w-full ">
       <body className={`${inter.className} flex-1`}>

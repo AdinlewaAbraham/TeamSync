@@ -5,7 +5,6 @@ import generateDatesForFourMonths from "@/utilis/generateDatesMonths";
 import generateDates from "@/utilis/generateDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Project from "@/interfaces/project";
-import { redirectToLogin } from "@/helpers/redirect";
 import { useGlobalContext } from "@/context/GeneralContext";
 import { fillMonthsDates } from "@/utilis/fillMonthsDates";
 import generateDatesMonths from "@/utilis/generateDatesMonths";

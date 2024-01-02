@@ -2,7 +2,6 @@
 import BoardCard from "@/components/tasks/board/BoardCard";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { MdClose } from "react-icons/md";

@@ -66,7 +66,12 @@ export const GeneralContextProvider = ({
   );
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [userProject, setUserProject] = useState<Project | null>(null);
-  const [sidebarWidth, setSidebarWidth] = useState(0);
+
+  const localStoredWidthString = localStorage.getItem("localSidebarWidth");
+  const storedWidthString = localStoredWidthString
+    ? JSON.parse(localStoredWidthString)
+    : null;
+  const [sidebarWidth, setSidebarWidth] = useState(storedWidthString ?? 0);
   const [taskComponentHeight, setTaskComponentHeight] = useState(0);
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
     useState<TaskHoverStatusObj>({ shutUpTs: true });

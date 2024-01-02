@@ -14,6 +14,8 @@ import Project from "@/interfaces/project";
 import project from "@/interfaces/project";
 import Task from "@/interfaces/task";
 import useTrackProject from "@/hooks/UseTrackProject";
+import Skeleton from "react-loading-skeleton";
+import LoadingThemeProvider from "@/components/loading/LoadingThemeProvider";
 
 const NavbarItem = ({
   title,
@@ -73,21 +75,38 @@ const layout = ({
   return (
     <div className="flex h-full flex-1 flex-col ">
       <nav className="ml-8 py-4 ">
-        <ul className="flex h-9 max-w-max items-center justify-center rounded-lg bg-bg-primary p-1">
-          {[
-            { title: "Board", icon: <BiSolidBarChartAlt2 /> },
-            { title: "Table", icon: <FaRegListAlt /> },
-            { title: "Calendar", icon: <FaRegCalendar /> },
-            { title: "Timeline", icon: <FaChartLine /> },
-          ].map((listItem) => (
-            <NavbarItem
-              title={listItem.title}
-              projectId={params.projectId}
-              icon={listItem.icon}
-              key={listItem.title}
-            />
-          ))}
-        </ul>
+        {activeProject ? (
+          <ul className="flex h-9 max-w-max items-center justify-center rounded-lg bg-bg-primary p-1">
+            {[
+              { title: "Board", icon: <BiSolidBarChartAlt2 /> },
+              { title: "Table", icon: <FaRegListAlt /> },
+              { title: "Calendar", icon: <FaRegCalendar /> },
+              { title: "Timeline", icon: <FaChartLine /> },
+            ].map((listItem) => (
+              <NavbarItem
+                title={listItem.title}
+                projectId={params.projectId}
+                icon={listItem.icon}
+                key={listItem.title}
+              />
+            ))}
+          </ul>
+        ) : (
+          <LoadingThemeProvider>
+            <div className="flex h-9 max-w-max items-center justify-center gap-1 rounded-lg bg-bg-primary p-1">
+              {[1232, 3423, 2423, 232].map((key) => (
+                <div>
+                  <Skeleton
+                    key={key}
+                    height={24}
+                    width={76}
+                    className="flex items-center"
+                  />
+                </div>
+              ))}
+            </div>
+          </LoadingThemeProvider>
+        )}
       </nav>
       <main className="relative flex-1 overflow-auto">
         <div className="absolute inset-0 flex"> {children}</div>

@@ -2,7 +2,6 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import { usePopper } from "react-popper";
 import fetchProject from "@/helpers/project/fetchProject";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { ReactNode, useEffect, useState } from "react";
 import Project from "@/interfaces/project";
 import Section from "@/interfaces/section";
@@ -26,53 +25,10 @@ import {
 import Task from "@/interfaces/task";
 import Table from "@/components/tasks/table/Table";
 
-
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
-  // useEffect(() => {
-  //   const fetchProjectFunc = async () => {
-  //     const response = await fetchProject(params.projectId);
-  //     if (!response) {
-  //     } else {
-  //       const { data, status } = response;
-  //       await redirectToLogin(status, data?.error);
-  //       setActiveProject(data);
-  //       localStorage.setItem(params.projectId, JSON.stringify(data));
-  //     }
-  //   };
-  //   const getProject = async () => {
-  //     if (activeProject) return;
-  //     const stringData = localStorage.getItem(params.projectId);
-  //     const project: Project = stringData ? JSON.parse(stringData) : undefined;
 
-  //     if (project?._id) {
-  //       setActiveProject(project);
-  //     } else {
-  //       await fetchProjectFunc();
-  //     }
-  //   };
-  //   const syncProject = async () => {
-  //     if (activeProject?._id) {
-  //       await fetchProjectFunc();
-  //     }
-  //   };
-  //   const resolveFuncSync = async () => {
-  //     await Promise.all([getProject(), syncProject()]);
-  //   };
-  //   resolveFuncSync();
-  // }, []);
-
-  if (!activeProject?.sections)
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        loading state
-      </div>
-    );
-  return (
-    <Table
-      paramsProjectId={params.projectId}
-    />
-  );
+  return <Table paramsProjectId={params.projectId} project={activeProject} />;
 };
 
 export default page;

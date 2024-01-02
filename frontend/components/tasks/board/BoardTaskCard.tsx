@@ -60,7 +60,7 @@ const BoardTaskCard = ({
           <div className="flex items-center">
             <div className="mr-2 h-5 w-5 rounded-full bg-slate-600" />
             <div className="text-xs text-muted-light">today - sep 19</div>
-            <button
+            {/* <button
               className="ml-3 mr-2 rounded-lg bg-teal-300 px-2 py-1"
               onClick={handleUpdateTask}
             >
@@ -71,7 +71,7 @@ const BoardTaskCard = ({
               onClick={handleDeleteTask}
             >
               de
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

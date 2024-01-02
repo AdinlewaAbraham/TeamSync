@@ -1,17 +1,13 @@
-import { redirectToLogin } from "../redirect";
+import { fetchAndHelpRedirect } from "../redirect";
 
 export default async function fetchProject(id: string) {
   try {
-    const response = await fetch("/api/project/" + id, {
+    const response = await fetchAndHelpRedirect("/api/project/" + id, {
       method: "GET",
     });
-    const data = await response.json();
-    console.log(data);
-    await redirectToLogin(response.status, data.error);
-    // if (!response.ok) {
-    //   throw new Error(`HTTP error! Status: ${response.status}`);
-    // }
-    return { data, status: response.status };
+    const { data, status } = response;
+
+    return { data, status };
   } catch (error) {
     console.error(error);
   }

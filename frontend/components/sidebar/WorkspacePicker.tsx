@@ -8,6 +8,8 @@ import { usePopper } from "react-popper";
 import { AnimatePresence, motion } from "framer-motion";
 import Workspace from "@/interfaces/workspace";
 import Link from "next/link";
+import Skeleton from "react-loading-skeleton";
+import LoadingThemeProvider from "../loading/LoadingThemeProvider";
 
 const WorkspaceBar = ({ workspace }: { workspace: Workspace }) => {
   const { user, setUser } = useGlobalContext();
@@ -138,23 +140,44 @@ const WorkspacePicker = () => {
         )}
       </AnimatePresence>
       <div className="flex items-center justify-between p-4">
-        <div
-          className={`workspaceMenu flex w-full items-center justify-between p-4  ${
-            showWorkpaceMenu ? "bg-menuItem-active" : "hover:bg-menuItem-hover"
-          } cursor-pointer rounded-lg`}
-          ref={setReferenceElement}
-          onClick={() => setShowWorkpaceMenu(!showWorkpaceMenu)}
-        >
-          <div className="mr-2 flex flex-1 flex-row  items-center truncate whitespace-nowrap ">
-            <div className="mr-3 h-8 w-8 flex-shrink-0 rounded-full bg-slate-400" />
-            <p className="flex-1 truncate text-ellipsis ">
-              {activeWorkspace?.name}
-            </p>
+        {activeWorkspace ? (
+          <div
+            className={`workspaceMenu flex w-full items-center justify-between p-4  ${
+              showWorkpaceMenu
+                ? "bg-menuItem-active"
+                : "hover:bg-menuItem-hover"
+            } cursor-pointer rounded-lg`}
+            ref={setReferenceElement}
+            onClick={() => setShowWorkpaceMenu(!showWorkpaceMenu)}
+          >
+            <div className="mr-2 flex flex-1 flex-row  items-center truncate whitespace-nowrap ">
+              <div className="mr-3 h-8 w-8 flex-shrink-0 rounded-full bg-slate-400" />
+              <p className="flex-1 truncate text-ellipsis ">
+                {activeWorkspace?.name}
+              </p>
+            </div>
+            <i>
+              <MdOutlineUnfoldMore />
+            </i>
           </div>
-          <i>
-            <MdOutlineUnfoldMore />
-          </i>
-        </div>
+        ) : (
+          <LoadingThemeProvider>
+            <div className="flex items-center p-4">
+              <Skeleton
+                borderRadius={9999}
+                height={32}
+                width={32}
+                className="mr-2 "
+              />
+              <Skeleton
+                borderRadius={6}
+                height={15}
+                width={120}
+                className="mx--2 "
+              />
+            </div>
+          </LoadingThemeProvider>
+        )}
       </div>
     </div>
   );

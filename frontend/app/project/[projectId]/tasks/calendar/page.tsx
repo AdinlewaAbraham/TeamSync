@@ -2,7 +2,6 @@
 import CalendarBox from "@/components/tasks/calendar/CalendarBox";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useRef, useState } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import Project from "@/interfaces/project";
@@ -41,8 +40,6 @@ const page = ({ params }: { params: { projectId: string } }) => {
     <Calendar
       paramsProjectId={params.projectId}
       project={activeProject}
-      setProject={setActiveProject}
-      isLoading={!activeProject}
     />
   );
 };

@@ -1,5 +1,4 @@
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
 import User from "@/interfaces/user";
 import React, { useEffect, useState } from "react";
 
@@ -46,7 +45,6 @@ const CreateWorkspaceModal = () => {
 
       console.log(user);
 
-      await redirectToLogin(response.status, data.error);
     } catch (error) {
       console.error(error);
     }

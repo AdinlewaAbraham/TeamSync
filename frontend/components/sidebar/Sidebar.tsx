@@ -20,6 +20,7 @@ import CreateProjectMOdal from "./project/CreateProjectModal";
 import SortOptions from "./project/SortOptions";
 import WorkspacePicker from "./WorkspacePicker";
 import { GoInbox } from "react-icons/go";
+import MainLayoutSidebarLoadingComponent from "../loading/sidebar/MainLayoutSidebarLoadingComponent";
 
 const SidebarComponent = ({
   menuName,
@@ -93,17 +94,6 @@ const Sidebar = () => {
     },
   );
   useEffect(() => {
-    const locallyStoredSidebarWidth = localStorage.getItem("localSidebarWidth");
-
-    const parsedSidebarWidth =
-      locallyStoredSidebarWidth !== null
-        ? JSON.parse(locallyStoredSidebarWidth)
-        : null;
-    if (parsedSidebarWidth) {
-      setSidebarWidth(parsedSidebarWidth);
-    }
-  }, []);
-  useEffect(() => {
     if (sidebarWidth <= 200) {
       setSidebarWidth(200);
       localStorage.setItem("localSidebarWidth", JSON.stringify(200));
@@ -148,41 +138,14 @@ const Sidebar = () => {
   useEffect(() => {
     const getWorkspace = async () => {
       if (!user?.activeWorkspaceId) return;
-      const workspaceString = localStorage.getItem(user?.activeWorkspaceId);
-      const localWorkspace = workspaceString
-        ? JSON.parse(workspaceString)
-        : null;
-      if (localWorkspace) {
-        setActiveWorkspace(localWorkspace);
-      } else {
-        const data = await fetchWorkspace(user?.activeWorkspaceId);
-        localStorage.setItem(user?.activeWorkspaceId, JSON.stringify(data));
-        setActiveWorkspace(data);
-      }
-    };
-    getWorkspace();
-  }, [user?.activeWorkspaceId]);
-  useEffect(() => {
-    const getWorkspace = async () => {
-      if (!user?.activeWorkspaceId) return;
-      const workspaceString = localStorage.getItem(user?.activeWorkspaceId);
-      const localWorkspace = workspaceString
-        ? JSON.parse(workspaceString)
-        : null;
-      if (localWorkspace) {
-        const updatedWorkspace = await fetchWorkspace(user.activeWorkspaceId);
-        localStorage.setItem(
-          user.activeWorkspaceId,
-          JSON.stringify(updatedWorkspace),
-        );
-        setActiveWorkspace(updatedWorkspace);
-      }
+      const updatedWorkspace = await fetchWorkspace(user.activeWorkspaceId);
+      setActiveWorkspace(updatedWorkspace);
     };
     getWorkspace();
   }, [user?.activeWorkspaceId]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {showSidebar && (
         <motion.div
           initial={{ width: 0 }}
@@ -192,107 +155,115 @@ const Sidebar = () => {
           className="relative flex flex-col justify-between overflow-hidden bg-bg-primary"
           style={{ width: sidebarWidth }}
         >
-          <div>
-            <span
-              onMouseDown={(e) => {
-                document.body.classList.add("select-none");
-                setIsResizing(true);
-                setInitialX(e.clientX);
-              }}
-              onMouseUp={() => {
-                setIsResizing(false);
-                document.body.classList.remove("select-none");
-              }}
-              className={`${
-                isResizing ? "bg-accent-blue" : "bg-transparent" 
-              }  absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent transition-all duration-150 hover:bg-accent-blue`}
-            />
-            <div className="border-b-[1px] border-border-default p-4">
-              {[
-                {
-                  menuName: "Home",
-                  redirectLink: "/home/" + user?._id,
-                  icon: <BiHomeAlt2 />,
-                },
-                {
-                  menuName: "My tasks",
-                  redirectLink: "/mytasks/" + user?._id + "/board",
-                  icon: <LuClipboardCheck />,
-                },
-                {
-                  menuName: "Inbox",
-                  redirectLink: "/inbox/" + user?._id,
-                  icon: <GoInbox />,
-                },
-              ].map((SidebarComponentObj) => (
-                <SidebarComponent
-                  menuName={SidebarComponentObj.menuName}
-                  redirectLink={SidebarComponentObj.redirectLink}
-                  iconComp={SidebarComponentObj.icon}
+          {activeWorkspace ? (
+            <div className="flex flex-1 flex-col justify-between">
+              <div>
+                <span
+                  onMouseDown={(e) => {
+                    document.body.classList.add("select-none");
+                    setIsResizing(true);
+                    setInitialX(e.clientX);
+                  }}
+                  onMouseUp={() => {
+                    setIsResizing(false);
+                    document.body.classList.remove("select-none");
+                  }}
+                  className={`${
+                    isResizing ? "bg-accent-blue" : "bg-transparent"
+                  }  absolute bottom-0 right-0 top-0 w-1.5 cursor-col-resize bg-transparent transition-all duration-150 hover:bg-accent-blue`}
                 />
-              ))}
-            </div>
-            <DropDownComponent
-              MainComponent={<ProjectMainSection />}
-              title={"Projects"}
-              sidebarIconComponent={
-                <div className="grid grid-flow-col ">
-                  <div
-                    onClick={() => {
-                      setShowSortOptions(!showSortOptions);
-                    }}
-                  >
-                    <div ref={setReferenceElement}>
-                      <SidebarIconComponent
-                        icon={<BsThreeDots />}
-                        toolTipText="Show options"
-                      />
-                    </div>
-                    {showSortOptions && (
-                      <div
-                        ref={setPopperElement}
-                        style={styles.popper}
-                        {...attributes.popper}
-                        className="absolute"
-                      >
-                        <SortOptions />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <div
-                      ref={setReferenceElement2}
-                      onClick={() => {
-                        setShowAddProjectComponent(!showAddProjectComponent);
-                      }}
-                    >
-                      <SidebarIconComponent
-                        icon={<IoMdAdd />}
-                        toolTipText={"Add project"}
-                      />
-                    </div>
-                    {showAddProjectComponent && (
-                      <div
-                        ref={setPopperElement2}
-                        style={styles2.popper}
-                        {...attributes2.popper}
-                        className="fixed "
-                      >
-                        <CreateProjectMOdal />
-                      </div>
-                    )}
-                  </div>
+                <div className="border-b-[1px] border-border-default p-4">
+                  {[
+                    {
+                      menuName: "Home",
+                      redirectLink: "/home/" + user?._id,
+                      icon: <BiHomeAlt2 />,
+                    },
+                    {
+                      menuName: "My tasks",
+                      redirectLink: "/mytasks/" + user?._id + "/board",
+                      icon: <LuClipboardCheck />,
+                    },
+                    {
+                      menuName: "Inbox",
+                      redirectLink: "/inbox/" + user?._id,
+                      icon: <GoInbox />,
+                    },
+                  ].map((SidebarComponentObj) => (
+                    <SidebarComponent
+                      menuName={SidebarComponentObj.menuName}
+                      redirectLink={SidebarComponentObj.redirectLink}
+                      iconComp={SidebarComponentObj.icon}
+                    />
+                  ))}
                 </div>
-              }
-            />
-            <DropDownComponent
-              MainComponent={<WorkspaceMainsection />}
-              title={"workspace"}
-              sidebarIconComponent={false}
-            />
-          </div>
+                <DropDownComponent
+                  MainComponent={<ProjectMainSection />}
+                  title={"Projects"}
+                  sidebarIconComponent={
+                    <div className="grid grid-flow-col ">
+                      <div
+                        onClick={() => {
+                          setShowSortOptions(!showSortOptions);
+                        }}
+                      >
+                        <div ref={setReferenceElement}>
+                          <SidebarIconComponent
+                            icon={<BsThreeDots />}
+                            toolTipText="Show options"
+                          />
+                        </div>
+                        {showSortOptions && (
+                          <div
+                            ref={setPopperElement}
+                            style={styles.popper}
+                            {...attributes.popper}
+                            className="absolute"
+                          >
+                            <SortOptions />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div
+                          ref={setReferenceElement2}
+                          onClick={() => {
+                            setShowAddProjectComponent(
+                              !showAddProjectComponent,
+                            );
+                          }}
+                        >
+                          <SidebarIconComponent
+                            icon={<IoMdAdd />}
+                            toolTipText={"Add project"}
+                          />
+                        </div>
+                        {showAddProjectComponent && (
+                          <div
+                            ref={setPopperElement2}
+                            style={styles2.popper}
+                            {...attributes2.popper}
+                            className="fixed "
+                          >
+                            <CreateProjectMOdal />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  }
+                />
+                <DropDownComponent
+                  MainComponent={<WorkspaceMainsection />}
+                  title={"workspace"}
+                  sidebarIconComponent={false}
+                />
+              </div>
 
-          <WorkspacePicker />
+              <WorkspacePicker />
+            </div>
+          ) : (
+            <MainLayoutSidebarLoadingComponent />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
