@@ -1,6 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const { User } = require("../../models/userModel");
 const { PrivateNote } = require("../../models/privateNote");
+const { Project } = require("../../models/projectModel");
+const { db } = require("../../sever");
+const { Section } = require("../../models/sectionModel");
 const getUser = asyncHandler(async (req, res) => {
   const authUser = req.user;
   const user = await User.findById(authUser.id).populate("workspaces").exec();
@@ -43,6 +46,42 @@ const updatePrivateNote = asyncHandler(async (req, res) => {
     // update private note
   }
   res.status(200).json({});
+});
+
+const getUserProject = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      res.status(401);
+    }
+    const project = await Project.findById(userId);
+    if (!project) {
+      const finishedection = new Section({
+        sectionName: "Finished",
+        projectId: userId,
+      });
+      const doneSection = new Section({
+        sectionName: "In Progress",
+        projectId: userId,
+      });
+      const Section = new Section({
+        sectionName: "Upcoming",
+        projectId: userId,
+      });
+      const userProject = {
+        _id: userId,
+        name: "personal project",
+        sections: [],
+      };
+
+      db.projects.insertOne(userProject);
+    } else {
+      res.status(200).json(project);
+    }
+  } catch {
+    console.log(error);
+    res.status(500);
+  }
 });
 
 module.exports = { getUser, updateUser, getPrivateNote, updatePrivateNote };

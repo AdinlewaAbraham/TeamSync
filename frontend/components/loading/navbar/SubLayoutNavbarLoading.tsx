@@ -15,7 +15,7 @@ const SubLayoutNavbarLoading = () => {
               borderRadius={4}
               height={15}
               width={140}
-              className="mx--2 "
+              className="mx--2 flex items-center"
             />
           </div>
         </div>

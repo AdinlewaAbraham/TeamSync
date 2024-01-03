@@ -21,7 +21,7 @@ const layout = ({
   return (
     <div className="relative flex flex-1 flex-col">
       <SubLayoutReusableNavbar
-        isLoading={!user?._id}
+        isLoading={!user?._id || !userProject}
         navHeader="My tasks"
         navbarItemsArray={[
           {

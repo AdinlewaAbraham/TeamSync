@@ -23,7 +23,7 @@ const SubLayoutReusableNavbarNavbarItem = ({
       <li
         className={` flex cursor-pointer items-center p-2 text-sm text-muted-dark transition-colors duration-150 hover:text-white
         ${
-          isCurrentTab ? "navbarBorderB text-inherit" : "navbarBorderBHover"
+          isCurrentTab ? "navbarBorderB text-white" : "navbarBorderBHover"
         } border-white`}
       >
         {icon && <i className="mr-1">{icon}</i>}

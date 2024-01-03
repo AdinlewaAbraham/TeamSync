@@ -1,18 +1,13 @@
 "use client";
-import EditableComp from "@/components/others/EditableTextComponent";
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import { FaChartLine } from "react-icons/fa";
 import { LuClipboardCheck } from "react-icons/lu";
-import { PiFlowArrowBold } from "react-icons/pi";
 import { BiHomeAlt2 } from "react-icons/bi";
-import { AnimatePresence, motion } from "framer-motion";
 import SubLayoutReusableNavbar from "@/components/navbar/SubLayoutReusableNavbar/SubLayoutReusableNavbar";
-import Section from "@/interfaces/section";
-import Task from "@/interfaces/task";
+import { FiMessageSquare } from "react-icons/fi";
 
 const layout = ({
   params,
@@ -70,6 +65,11 @@ const layout = ({
             href: navbarBaseUrl + "files",
             title: "files",
             icon: <FaChartLine />,
+          },
+          {
+            href: navbarBaseUrl + "messages",
+            title: "messages",
+            icon: <FiMessageSquare />,
           },
         ]}
         showNavbar={showNavbar}
