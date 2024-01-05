@@ -1,7 +1,7 @@
 import React from "react";
-import DoughnutChart from "./chart/DoughnutChart";
-import ColumnBar from "./chart/ColumnBar";
-import LineChart from "./chart/LineChart";
+import DoughnutChart from "./charts/DoughnutChart";
+import ColumnBar from "./charts/ColumnBar";
+import LineChart from "./charts/LineChart";
 import { MdClose } from "react-icons/md";
 
 const WidgetCreatorModal = ({

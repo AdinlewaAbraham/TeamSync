@@ -2,7 +2,11 @@ import Task from "@/interfaces/task";
 import React, { ReactNode, useState } from "react";
 import { BiCircle } from "react-icons/bi";
 import { FiCheck, FiLoader } from "react-icons/fi";
-import { HiOutlineArrowSmDown, HiOutlineArrowSmRight, HiOutlineArrowSmUp } from "react-icons/hi";
+import {
+  HiOutlineArrowSmDown,
+  HiOutlineArrowSmRight,
+  HiOutlineArrowSmUp,
+} from "react-icons/hi";
 import { IoIosArrowDown } from "react-icons/io";
 import { RiTimerLine } from "react-icons/ri";
 import { usePopper } from "react-popper";
@@ -82,8 +86,8 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
   );
   return (
     <ul
-      className="flex h-12 w-full justify-between border-t
-       border-border-default text-sm [&>li]:flex [&>li]:w-[20%]
+      className="flex h-12 w-full justify-between border-t border-border-default
+       text-sm first:border-t-0 [&>li]:flex [&>li]:w-[20%]
       [&>li]:items-center [&>li]:pr-2"
       key={task._id}
       onClick={() => console.log(task)}

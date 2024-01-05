@@ -5,6 +5,7 @@ import { IoMdAdd } from "react-icons/io";
 import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
+import TableSkeletonLoader from "@/components/loading/tasks/table/TableSkeletonLoader";
 
 const Table = ({
   paramsProjectId,
@@ -16,9 +17,6 @@ const Table = ({
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(true);
-  if (!project) {
-    return <div>loading comp</div>;
-  }
   const addSection = async () => {
     setShowAddSectionComponent(true);
     if (sectionName === "") {
@@ -35,6 +33,9 @@ const Table = ({
       // isError = true;
     }
   };
+  if (!project) {
+    return <TableSkeletonLoader />;
+  }
   return (
     <div className="flex flex-1 flex-col pl-8">
       <header className="w-full  bg-inherit ">
@@ -49,16 +50,16 @@ const Table = ({
           <li> Status </li>
         </ul>
       </header>
-      <div className="  max-h-full overflow-y-auto">
+      <div className="  relative max-h-full overflow-y-auto ">
         {project.sections.map((section, index) => (
           <TableDropdown
             section={section}
             projectId={paramsProjectId}
-            // isLast={project.sections.length - 1 === index}
+            isLast={project.sections.length - 1 === index}
           />
         ))}
       </div>
-      <footer className="w-full rounded-b-lg  border border-border-default ">
+      <footer className="border- w-full  rounded-b-lg border border-border-default ">
         {showAddSectionComponent ? (
           <div
             className="flex h-12 cursor-pointer items-center py-2 pl-2 text-muted-dark hover:bg-menuItem-hover"

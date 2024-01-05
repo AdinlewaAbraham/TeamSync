@@ -1,6 +1,6 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
-import LoadingThemeProvider from "../LoadingThemeProvider";
+import LoadingThemeProvider from "../../LoadingThemeProvider";
 import BoardCardSkeletonLoader from "./BoardCardSkeletonLoader";
 
 const BoardSkeletonLoader = () => {

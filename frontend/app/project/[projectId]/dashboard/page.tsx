@@ -5,8 +5,10 @@ import React from "react";
 const months = generateDates(2023, 8);
 const page = () => {
   return (
-    <div className="flex max-w-6xl flex-1 justify-center px-10">
-      <DashboardWidgetsComponent />
+    <div className="relative flex-1 ">
+      <div className="absolute inset-0 overflow-auto">
+        <DashboardWidgetsComponent />
+      </div>
     </div>
   );
 };

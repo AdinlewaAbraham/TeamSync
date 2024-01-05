@@ -25,7 +25,7 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, setUser } = useGlobalContext();
+  const { user, setUser } = useGlobalContext()
   useEffect(() => {
     const handleUser = async () => {
       try {

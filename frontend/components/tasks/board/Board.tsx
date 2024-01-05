@@ -7,7 +7,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useGlobalContext } from "@/context/GeneralContext";
 import Task from "@/interfaces/task";
 import socket from "@/config/WebSocketManager";
-import BoardSkeletonLoader from "@/components/loading/tasks/BoardSkeletonLoader";
+import BoardSkeletonLoader from "@/components/loading/tasks/board/BoardSkeletonLoader";
 
 const Board = ({
   paramsProjectId,
