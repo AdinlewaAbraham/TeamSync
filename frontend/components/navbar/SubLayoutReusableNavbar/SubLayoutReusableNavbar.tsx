@@ -44,25 +44,29 @@ const SubLayoutReusableNavbar = ({
           ) : (
             <div className="">
               <div className="ml-4 mt-4 flex items-center">
-                <div className="mr-2 h-10 w-10 rounded-lg bg-slate-400" />
-                <h1 className="">
-                  <EditableComp
-                    text={navHeader}
-                    styles="mx-2 font-medium text-xl"
-                  />
-                </h1>
-              </div>
+                <div className="flex h-full items-start">
+                  <div className="mr-2 h-10 w-10 rounded-lg bg-slate-400" />
+                </div>
+                <div>
+                  <h1 className="">
+                    <EditableComp
+                      text={navHeader}
+                      styles="mx-2 font-medium text-xl"
+                    />
+                  </h1>
 
-              <ul className="ml-4 flex rounded-lg p-2 pb-0 pl-0">
-                {navbarItemsArray.map((item, index) => (
-                  <SubLayoutReusableNavbarNavbarItem
-                    key={item.title + index}
-                    title={item.title}
-                    icon={item.icon}
-                    href={item.href}
-                  />
-                ))}
-              </ul>
+                  <ul className="flex rounded-lg pr-2">
+                    {navbarItemsArray.map((item, index) => (
+                      <SubLayoutReusableNavbarNavbarItem
+                        key={item.title + index}
+                        title={item.title}
+                        icon={item.icon}
+                        href={item.href}
+                      />
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
         </motion.nav>

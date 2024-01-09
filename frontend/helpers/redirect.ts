@@ -3,7 +3,7 @@ export async function fetchAndHelpRedirect(url: string, options: object) {
     ...options,
   });
   const data = await response.json();
-  console.log(url);
+  console.log(data);
   if (response.status === 401 && data?.error === "REDIRECT_TO_LOGIN") {
     window.location.href = "/login";
   }

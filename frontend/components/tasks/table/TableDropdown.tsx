@@ -14,8 +14,20 @@ const TableDropdown = ({
   projectId: string;
   isLast: boolean;
 }) => {
+  const localTableMainComponentShowObjectString = localStorage.getItem(
+    "localTableMainComponentRenderObject",
+  );
+  const localTableMainComponentShowObject =
+    localTableMainComponentShowObjectString
+      ? JSON.parse(localTableMainComponentShowObjectString)
+      : {};
+
   const [localSection, setLocalSection] = useState<Section | string>(section);
-  const [showMainComponent, setShowMainComponent] = useState(false);
+  const [showMainComponent, setShowMainComponent] = useState<boolean>(
+    !!(typeof localSection === "object"
+      ? localTableMainComponentShowObject?.[localSection?._id]
+      : false),
+  );
   const [showAddTaskComponent, setShowAddTaskComponent] = useState(false);
 
   if (typeof localSection === "string") return <>loading component</>;
@@ -59,15 +71,35 @@ const TableDropdown = ({
     return () => window.removeEventListener("click", handleClick);
   }, [taskName]);
 
+  const hanldeToggleMainComponent = () => {
+    if (typeof localStorage !== "object") return;
+    const localTableMainComponentShowObjectString = localStorage.getItem(
+      "localTableMainComponentRenderObject",
+    );
+    const localTableMainComponentShowObject =
+      localTableMainComponentShowObjectString
+        ? JSON.parse(localTableMainComponentShowObjectString)
+        : {};
+
+    const newLocalTableMainComponentShowObjectString = {
+      ...localTableMainComponentShowObject,
+      [localSection._id]: !showMainComponent,
+    };
+    localStorage.setItem(
+      "localTableMainComponentRenderObject",
+      JSON.stringify(newLocalTableMainComponentShowObjectString),
+    );
+    setShowMainComponent(!showMainComponent);
+  };
   return (
     <div
-      className={`border-x border-border-default `}
+      className={`border- mb- border-border-default `}
       key={typeof section === "string" ? section : section._id}
     >
       <header
-        onClick={() => setShowMainComponent(!showMainComponent)}
+        onClick={hanldeToggleMainComponent}
         className={` ${
-          isLast && !showMainComponent ? "border-b-0" : "border-b"
+          !showMainComponent ? "border-b-0" : "border-b"
         } sticky top-0 z-40 flex h-12 w-full cursor-pointer 
         items-center border-border-default bg-bg-secondary py-2 font-medium`}
       >
@@ -108,9 +140,7 @@ const TableDropdown = ({
               </div>
             ) : (
               <div
-                className={`${
-                  !isLast && "border-b"
-                } flex h-12 w-full cursor-pointer items-center border-t
+                className={` flex h-12 w-full cursor-pointer items-center
                      border-border-default pl-8 text-sm text-muted-dark hover:bg-menuItem-hover`}
                 onClick={() => setShowAddTaskComponent(true)}
               >

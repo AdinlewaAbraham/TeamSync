@@ -85,7 +85,7 @@ const MainLayoutNavbar = () => {
         <div
           data-after-sm="+"
           data-after-lg="Create"
-          className="accent-color text-xs flex justify-center items-center rounded-lg sm:py-0 font-bold sm:px-2 px-3 py-0 button-default
+          className="accent-color h-9 text-xs flex justify-center items-center rounded-lg sm:py-0 font-bold sm:px-2 px-3 py-0 button-default
          after:content-[attr(data-after-sm)] sm:after:content-[attr(data-after-lg)] 
          createMenu"
           onClick={() => setShowCreateMenu(!showCreateMenu)}

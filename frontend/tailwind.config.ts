@@ -38,10 +38,11 @@ const config: Config = {
         accent: {
           primary: "#F9F9F9",
           blue: "#4573D2",
-          green: "#4573D2",
+          green: "#5da283",
         },
         border: {
           default: "#424244",
+          verymuted: "",
         },
         icon: {
           default: "#a2a0a2",

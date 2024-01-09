@@ -10,13 +10,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsThreeDots } from "react-icons/bs";
 import { IoMdAdd } from "react-icons/io";
-import DropDownComponent from "./DropDownComponent";
+import MainLayoutDropDownComponent from "./MainLayoutDropDownComponent";
 import ProjectMainSection from "./project/ProjectMainSection";
 import WorkspaceMainsection from "./workspace/WorkspaceMainsection";
 import fetchWorkspace from "@/helpers/workspace/fetchWorkspace";
 import SidebarIconComponent from "./SidebarIconComponent";
 import { usePopper } from "react-popper";
-import CreateProjectMOdal from "./project/CreateProjectModal";
 import SortOptions from "./project/SortOptions";
 import WorkspacePicker from "./WorkspacePicker";
 import { GoInbox } from "react-icons/go";
@@ -197,7 +196,7 @@ const Sidebar = () => {
                     />
                   ))}
                 </div>
-                <DropDownComponent
+                <MainLayoutDropDownComponent
                   MainComponent={<ProjectMainSection />}
                   title={"Projects"}
                   sidebarIconComponent={
@@ -225,34 +224,17 @@ const Sidebar = () => {
                         )}
                       </div>
                       <div>
-                        <div
-                          ref={setReferenceElement2}
-                          onClick={() => {
-                            setShowAddProjectComponent(
-                              !showAddProjectComponent,
-                            );
-                          }}
-                        >
-                          <SidebarIconComponent
-                            icon={<IoMdAdd />}
-                            toolTipText={"Add project"}
-                          />
-                        </div>
-                        {showAddProjectComponent && (
-                          <div
-                            ref={setPopperElement2}
-                            style={styles2.popper}
-                            {...attributes2.popper}
-                            className="fixed "
-                          >
-                            <CreateProjectMOdal />
-                          </div>
-                        )}
+                          <Link href={"/project/new"}>
+                            <SidebarIconComponent
+                              icon={<IoMdAdd />}
+                              toolTipText={"Add project"}
+                            />
+                          </Link>
                       </div>
                     </div>
                   }
                 />
-                <DropDownComponent
+                <MainLayoutDropDownComponent
                   MainComponent={<WorkspaceMainsection />}
                   title={"workspace"}
                   sidebarIconComponent={false}

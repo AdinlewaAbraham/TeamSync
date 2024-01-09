@@ -40,38 +40,39 @@ const layout = ({
     getProject();
   }, [params.projectId]);
   const navbarBaseUrl = "/project/" + activeProject?._id + "/";
+  const navbarItemsArray = [
+    {
+      href: navbarBaseUrl + "home",
+      title: "home",
+      icon: <BiHomeAlt2 />,
+    },
+    {
+      href: navbarBaseUrl + "dashboard",
+      title: "dashboard",
+      icon: <FaChartLine />,
+    },
+    {
+      href: navbarBaseUrl + "tasks/board",
+      title: "tasks",
+      icon: <LuClipboardCheck />,
+    },
+    {
+      href: navbarBaseUrl + "files",
+      title: "files",
+      icon: <FaChartLine />,
+    },
+    {
+      href: navbarBaseUrl + "messages",
+      title: "messages",
+      icon: <FiMessageSquare />,
+    },
+  ]
   return (
     <section className="relative flex flex-1 flex-col overflow-x-hidden">
       <SubLayoutReusableNavbar
         isLoading={!activeProject}
         navHeader={activeProject?.projectName || ""}
-        navbarItemsArray={[
-          {
-            href: navbarBaseUrl + "home",
-            title: "home",
-            icon: <BiHomeAlt2 />,
-          },
-          {
-            href: navbarBaseUrl + "dashboard",
-            title: "dashboard",
-            icon: <FaChartLine />,
-          },
-          {
-            href: navbarBaseUrl + "tasks/board",
-            title: "tasks",
-            icon: <LuClipboardCheck />,
-          },
-          {
-            href: navbarBaseUrl + "files",
-            title: "files",
-            icon: <FaChartLine />,
-          },
-          {
-            href: navbarBaseUrl + "messages",
-            title: "messages",
-            icon: <FiMessageSquare />,
-          },
-        ]}
+        navbarItemsArray={navbarItemsArray}
         showNavbar={showNavbar}
       />
 

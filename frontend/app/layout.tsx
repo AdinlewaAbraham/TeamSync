@@ -25,12 +25,11 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, setUser } = useGlobalContext()
+  const { user, setUser } = useGlobalContext();
   useEffect(() => {
     const handleUser = async () => {
       try {
         const user = await fetchUser();
-        console.log(user);
         if (user) {
           setUser(user);
           // router.push("/workspace/" + user?.activeWorkspaceId + "/home");
@@ -47,6 +46,7 @@ export default function RootLayout({
         <GeneralContextProvider>
           {pathname.startsWith("/login") ||
           pathname.startsWith("/signup") ||
+          pathname.startsWith("/project/new") ||
           // pathname.startsWith("/home") ||
           pathname === "/" ? (
             <>{children}</>

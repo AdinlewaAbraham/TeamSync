@@ -86,13 +86,12 @@ const TaskRowComponent = ({ task }: { task: Task }) => {
   );
   return (
     <ul
-      className="flex h-12 w-full justify-between border-t border-border-default
-       text-sm first:border-t-0 [&>li]:flex [&>li]:w-[20%]
-      [&>li]:items-center [&>li]:pr-2"
+      className="flex h-12 w-full items-center justify-between border-b border-border-default
+      text-sm [&>li]:flex [&>li]:w-[20%] [&>li]:px-2"
       key={task._id}
       onClick={() => console.log(task)}
     >
-      <li className="pl-8">{task.taskName}</li>
+      <li className="">{task.taskName}</li>
       <li className="flex items-center">
         <div className="mr-2 h-5 w-5 rounded-full bg-slate-600" />
         {"debo"}

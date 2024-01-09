@@ -6,13 +6,13 @@ import React, {
   DragEvent,
 } from "react";
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
 import CalendarTaskBar from "./CalendarTaskBar";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import Section from "@/interfaces/section";
 import Project from "@/interfaces/project";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
 
 const CalendarBox = ({
   project,
@@ -58,19 +58,19 @@ const CalendarBox = ({
       "calendarBoxScollParent",
     );
     const handleScroll = () => {
-      // if (date.getDate() === 1) {
-      //   const calendarBoxElement = boxRef.current as HTMLElement | null;
-      //   if (calendarBoxScollParentElement && calendarBoxElement) {
-      //     const parentRect =
-      //       calendarBoxScollParentElement.getBoundingClientRect();
-      //     const childRect = calendarBoxElement.getBoundingClientRect();
-      //     const pxToTop = childRect.top - parentRect.top;
-      //     if (pxToTop <= 96) {
-      //       setCurrentMonth(date.getMonth());
-      //       setCurrentYear(date.getFullYear());
-      //     }
-      //   }
-      // }
+      if (date.getDate() === 1) {
+        const calendarBoxElement = boxRef.current as HTMLElement | null;
+        if (calendarBoxScollParentElement && calendarBoxElement) {
+          const parentRect =
+            calendarBoxScollParentElement.getBoundingClientRect();
+          const childRect = calendarBoxElement.getBoundingClientRect();
+          const pxToTop = childRect.top - parentRect.top;
+          if (pxToTop <= 96) {
+            setCurrentMonth(date.getMonth());
+            setCurrentYear(date.getFullYear());
+          }
+        }
+      }
     };
 
     if (calendarBoxScollParentElement) {
@@ -120,16 +120,16 @@ const CalendarBox = ({
       dueDate: dueDate,
       rowNumber: rowNumber,
     };
-    const response = await fetch("/api/task/", {
-      method: "POST",
-      body: JSON.stringify(postBody),
-    });
+    const { _response, data, status } = await fetchAndHelpRedirect(
+      "/api/task/",
+      {
+        method: "POST",
+        body: JSON.stringify(postBody),
+      },
+    );
     setTaskName("");
 
-    const data = await response.json();
-
-    await redirectToLogin(response.status, data?.error);
-    if (response.ok) {
+    if (_response.ok) {
       // update localtasks
     } else {
       console.log("something went wrong");
@@ -215,6 +215,7 @@ const CalendarBox = ({
       );
     }).length;
   const calendarBoxDate = new Date(date).getDate();
+
   const handleCalendarClick = (e: MouseEvent) => {
     const clickTarget = e.target as HTMLElement;
     if (clickTarget.closest(".taskBar")) {
@@ -223,11 +224,13 @@ const CalendarBox = ({
       setShowInput(true);
     }
   };
+
   const allowDrop = (e: DragEvent) => {
     if (e) e.preventDefault();
     // stuff that hanldes effects hover drop effect in calendaBox like adding _blank to component
     console.log("i should be calculating and sorting and appending stuff");
   };
+
   const drop = (e: DragEvent) => {
     e.preventDefault();
     console.log(e.target);
@@ -237,6 +240,7 @@ const CalendarBox = ({
     }
     console.log("i tried to drop");
   };
+
   const dragLeave = () => {
     console.log("i should be doing clean p");
   };
@@ -262,7 +266,7 @@ const CalendarBox = ({
       onDragLeave={dragLeave}
     >
       <div
-        className={` m-2 flex h-7 max-w-max items-center justify-center p-2  ${
+        className={`m-2 flex h-7 max-w-max items-center justify-center p-2 text-sm  ${
           !highlight && "text-muted-dark"
         } ${isToday && "rounded-lg bg-accent-blue"} `}
       >

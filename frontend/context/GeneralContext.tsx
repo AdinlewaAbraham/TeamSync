@@ -3,7 +3,7 @@ import Project from "@/interfaces/project";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import User from "@/interfaces/user";
 import Workspace from "@/interfaces/workspace";
-import React, { ReactNode, createContext, useState, useContext } from "react";
+import React, { ReactNode, createContext, useState, useContext, useEffect } from "react";
 
 export type GeneralContextType = {
   showSidebar: boolean;
@@ -67,14 +67,20 @@ export const GeneralContextProvider = ({
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [userProject, setUserProject] = useState<Project | null>(null);
 
-  const localStoredWidthString = localStorage.getItem("localSidebarWidth");
-  const storedWidthString = localStoredWidthString
-    ? JSON.parse(localStoredWidthString)
-    : null;
-  const [sidebarWidth, setSidebarWidth] = useState(storedWidthString ?? 0);
+  const [sidebarWidth, setSidebarWidth] = useState(0);
   const [taskComponentHeight, setTaskComponentHeight] = useState(0);
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
     useState<TaskHoverStatusObj>({ shutUpTs: true });
+
+  useEffect(() => {
+    const localStoredWidthString = localStorage.getItem("localSidebarWidth");
+    const storedWidth = localStoredWidthString
+      ? JSON.parse(localStoredWidthString)
+      : null;
+    if (storedWidth) {
+      setSidebarWidth(storedWidth);
+    }
+  }, []);
 
   return (
     <GeneralContext.Provider

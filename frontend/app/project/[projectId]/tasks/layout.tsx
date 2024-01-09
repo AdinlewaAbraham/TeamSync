@@ -93,12 +93,12 @@ const layout = ({
           </ul>
         ) : (
           <LoadingThemeProvider>
-            <div className="flex h-9 max-w-max items-center justify-center gap-1 rounded-lg bg-bg-primary p-1">
+            <div className="flex h-9 max-w-max items-center justify-center gap-1 ">
               {[1232, 3423, 2423, 232].map((key) => (
                 <div>
                   <Skeleton
                     key={key}
-                    height={24}
+                    height={15}
                     width={76}
                     className="flex items-center"
                   />

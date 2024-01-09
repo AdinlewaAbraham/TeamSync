@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TableDropdown from "./TableDropdown";
 import Project from "@/interfaces/project";
 import { IoMdAdd } from "react-icons/io";
@@ -6,6 +6,8 @@ import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import { useGlobalContext } from "@/context/GeneralContext";
 import TableSkeletonLoader from "@/components/loading/tasks/table/TableSkeletonLoader";
+import TableHeaderColumn from "./TableHeaderColumn";
+import { TableColumn } from "@/interfaces/Table";
 
 const Table = ({
   paramsProjectId,
@@ -17,6 +19,24 @@ const Table = ({
   const [sectionName, setSectionName] = useState<string>("");
   const [showAddSectionComponent, setShowAddSectionComponent] =
     useState<boolean>(true);
+
+  const tableDropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (tableDropdownRef.current) {
+      const tableDropdownElement = tableDropdownRef.current as HTMLElement;
+      const handleResize = () => {
+        getComputedStyle(tableDropdownElement)
+        console.log(tableDropdownElement.clientWidth);
+      };
+      handleResize();
+      tableDropdownElement.addEventListener("resize", handleResize);
+
+      return () =>
+        tableDropdownElement.removeEventListener("resize", handleResize);
+    }
+  }, [tableDropdownRef]);
+
   const addSection = async () => {
     setShowAddSectionComponent(true);
     if (sectionName === "") {
@@ -33,24 +53,36 @@ const Table = ({
       // isError = true;
     }
   };
+
   if (!project) {
     return <TableSkeletonLoader />;
   }
+  const tableColumns: TableColumn[] = [
+    { title: "Task name", default: true, type: "task_name" },
+    { title: "Assignee", default: false, type: "assignee" },
+    { title: "Due date", default: false, type: "due_date" },
+    { title: "Priority", default: false, type: "priority" },
+    { title: "Status", default: false, type: "status" },
+  ];
   return (
-    <div className="flex flex-1 flex-col pl-8">
-      <header className="w-full  bg-inherit ">
+    <div className="flex flex-1 flex-col ">
+      <header className="w-full  bg-inherit px-8">
         <ul
-          className="gutter flex w-full justify-between rounded-t-lg border border-border-default bg-bg-secondary text-sm 
-         text-muted-dark [&>li]:w-[20%] [&>li]:py-2"
+          className="gutter flex h-9 w-full items-center justify-between rounded-t-lg border-y border-border-default
+         text-xs text-muted-dark "
         >
-          <li className="pl-2">Task name</li>
-          <li> Assignee</li>
-          <li> Due date </li>
-          <li> Priority </li>
-          <li> Status </li>
+          {tableColumns.map((tableColumnObject) => (
+            <TableHeaderColumn
+              tableColumnObject={tableColumnObject}
+              key={tableColumnObject.type}
+            />
+          ))}
         </ul>
       </header>
-      <div className="  relative max-h-full overflow-y-auto ">
+      <div
+        className="relative max-h-full overflow-y-scroll border px-8"
+        ref={tableDropdownRef}
+      >
         {project.sections.map((section, index) => (
           <TableDropdown
             section={section}
@@ -59,10 +91,10 @@ const Table = ({
           />
         ))}
       </div>
-      <footer className="border- w-full  rounded-b-lg border border-border-default ">
+      <footer className="w-full rounded-b-lg px-8">
         {showAddSectionComponent ? (
           <div
-            className="flex h-12 cursor-pointer items-center py-2 pl-2 text-muted-dark hover:bg-menuItem-hover"
+            className="flex h-12 cursor-pointer items-center py-2 pl-2 text-muted-dark hover:bg-menuItem-active"
             onClick={() => setShowAddSectionComponent(false)}
           >
             <i className="mr-2">
