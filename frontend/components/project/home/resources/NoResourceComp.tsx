@@ -25,7 +25,7 @@ const NoResourceComp = ({
   const [referenceElement, setReferenceElement] =
     useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
 
@@ -46,25 +46,25 @@ const NoResourceComp = ({
 
   return (
     <div
-      className="flex h-[160px] p-2 px- border border-border-default 
-    rounded-lg items-center justify-center "
+      className="flex h-[160px] gap-2 items-center justify-center rounded-lg 
+    border border-border-default p-2 "
     >
       <div>
         <Image src={EmptyProjectResourceIMG} alt="" />
       </div>
-      <div>
-        <p className="text-sm max-w-[320x]">
+      <div className="flex flex-col items-center justify-center">
+        <p className="max-w-[450px] text-center text-sm">
           Align your team around a shared vision with a project brief and
           supporting resources.
         </p>
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           <Link href={"/project/" + activeProject._id + "/brief"}>
-            <div className="px-4 py-2 flex justify-center items-center text-muted-dark">
+            <div className="flex items-center justify-center px-4 py-2 text-muted-dark">
               <i className="mr-2">
                 <IoDocumentTextOutline />
               </i>
               <span className="text-sm "> create project brief</span>
-            </div>{" "}
+            </div>
           </Link>
           {showAddLinkModal && (
             <div
@@ -79,25 +79,25 @@ const NoResourceComp = ({
           <div
             ref={setReferenceElement}
             onClick={() => setShowAddLinkModal(!showAddLinkModal)}
-            className="addLinkModal p-2 px-4 flex items-center group hover:bg-menuItem-active cursor-pointer"
+            className="addLinkModal group flex cursor-pointer items-center p-2 px-4 text-sm  text-muted-dark hover:bg-menuItem-active"
           >
-            <i className="text-muted-dark text-lg mr-2 group-hover:text-[#f5f4f3]">
+            <i className="mr-2 text-lg text-muted-dark group-hover:text-[#f5f4f3]">
               <HiOutlineLink />
             </i>
-            Add a link
+            <span> Add a link</span>
           </div>
           <label
             htmlFor=""
-            className="flex items-center cursor-pointer p-2 px-4 relative
-                  hover:bg-menuItem-active tracking-tight group"
+            className="group relative flex cursor-pointer items-center p-2
+                  px-4 text-sm tracking-tight text-muted-dark hover:bg-menuItem-active"
           >
-            <i className="text-muted-dark text-lg mr-2 group-hover:text-[#f5f4f3]">
+            <i className="mr-2 text-lg text-muted-dark group-hover:text-[#f5f4f3]">
               <LuFile />
-            </i>{" "}
-            Attach a file
+            </i>
+            <span>Attach a file</span>
             <input
               type="file"
-              className="opacity-0 h-full w-full cursor-pointer absolute inset-0"
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
             />
           </label>
         </div>

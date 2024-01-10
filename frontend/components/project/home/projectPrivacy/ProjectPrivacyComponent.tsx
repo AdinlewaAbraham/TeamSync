@@ -8,7 +8,7 @@ const ProjectPrivacyComponent = () => {
   if (activeProject)
     return (
       <div>
-        <div className="flex w-full rounded-lg border border-border-default p-10 ">
+        <div className="flex w-full gap-2 rounded-lg border border-border-default p-10 ">
           {[
             {
               icon: <FaLock />,
@@ -25,10 +25,11 @@ const ProjectPrivacyComponent = () => {
               className={`${
                 privacyOption.objectKey === "private" &&
                 activeProject.isProjectPrivate
-                  ? "border-blue-700 bg-[#4573d2] bg-opacity-20 hover:bg-opacity-30"
-                  : "border-border-default hover:border-white"
+                  ? "border-accent-blue bg-accent-blue/20 bg-opacity-20 hover:bg-opacity-30"
+                  : "border-border-default hover:border-border-default/5"
               } flex w-1/2 cursor-pointer flex-col items-center justify-center 
-              rounded-lg border py-4 first:mr-2 duration-150 transition-all`}
+              rounded-lg border py-4 transition-all duration-150`}
+              key={privacyOption.objectKey}
             >
               <i className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-bg-primary">
                 {privacyOption.icon}

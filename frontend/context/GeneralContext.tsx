@@ -67,20 +67,24 @@ export const GeneralContextProvider = ({
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [userProject, setUserProject] = useState<Project | null>(null);
 
-  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const localStoredWidthString = localStorage.getItem("localSidebarWidth");
+  const storedWidth = localStoredWidthString
+    ? JSON.parse(localStoredWidthString)
+    : null;
+  const [sidebarWidth, setSidebarWidth] = useState(storedWidth ?? 200);
   const [taskComponentHeight, setTaskComponentHeight] = useState(0);
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
     useState<TaskHoverStatusObj>({ shutUpTs: true });
 
-  useEffect(() => {
-    const localStoredWidthString = localStorage.getItem("localSidebarWidth");
-    const storedWidth = localStoredWidthString
-      ? JSON.parse(localStoredWidthString)
-      : null;
-    if (storedWidth) {
-      setSidebarWidth(storedWidth);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const localStoredWidthString = localStorage.getItem("localSidebarWidth");
+  //   const storedWidth = localStoredWidthString
+  //     ? JSON.parse(localStoredWidthString)
+  //     : null;
+  //   if (storedWidth) {
+  //     setSidebarWidth(storedWidth);
+  //   }
+  // }, []);
 
   return (
     <GeneralContext.Provider

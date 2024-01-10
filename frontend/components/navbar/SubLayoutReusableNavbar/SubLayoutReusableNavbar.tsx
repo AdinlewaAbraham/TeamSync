@@ -1,21 +1,24 @@
 import SubLayoutNavbarLoading from "@/components/loading/navbar/SubLayoutNavbarLoading";
-import EditableComp from "@/components/others/EditableTextComponent";
+import EditableTextComponent from "@/components/others/EditableTextComponent";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { ReactNode } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import SubLayoutReusableNavbarNavbarItem from "./SubLayoutReusableNavbarNavbarItem";
+import { IoMdAdd } from "react-icons/io";
 
 const SubLayoutReusableNavbar = ({
   showNavbar,
   navHeader,
   isLoading,
   navbarItemsArray,
+  hanldeTextSave,
 }: {
   showNavbar: boolean;
   navHeader: string;
   isLoading: boolean;
   navbarItemsArray: { icon?: ReactNode | null; title: string; href: string }[];
+  hanldeTextSave: (text: string) => void;
 }) => {
   return (
     <AnimatePresence initial={false}>
@@ -49,13 +52,15 @@ const SubLayoutReusableNavbar = ({
                 </div>
                 <div>
                   <h1 className="">
-                    <EditableComp
+                    <EditableTextComponent
                       text={navHeader}
-                      styles="mx-2 font-medium text-xl"
+                      handleTextSave={hanldeTextSave}
+                      styles="mx-2 font-medium text-xl max-w-max"
+                      key={navHeader}
                     />
                   </h1>
 
-                  <ul className="flex rounded-lg pr-2">
+                  <ul className="flex gap-1 rounded-lg pr-2">
                     {navbarItemsArray.map((item, index) => (
                       <SubLayoutReusableNavbarNavbarItem
                         key={item.title + index}
@@ -64,6 +69,11 @@ const SubLayoutReusableNavbar = ({
                         href={item.href}
                       />
                     ))}
+                    <li role="button" className="flex items-center">
+                      <i className="rounded-lg p-2 hover:bg-menuItem-active">
+                        <IoMdAdd />
+                      </i>
+                    </li>
                   </ul>
                 </div>
               </div>

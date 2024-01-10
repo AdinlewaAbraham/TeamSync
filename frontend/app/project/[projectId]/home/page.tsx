@@ -49,11 +49,10 @@ const page = ({ params }: { params: { projectId: string } }) => {
     if (JSON.stringify(contentStateJSON) !== JSON.stringify(data)) {
       setContentStateJSON(data);
       const body = {
-        projectDescription: JSON.stringify(data),
-        projectId: activeProject._id,
+        description: JSON.stringify(data),
       };
       try {
-        const response = await fetch("/api/project/updateprojectdescription/", {
+        const response = await fetch("/api/project/" + activeProject._id, {
           method: "PUT",
           body: JSON.stringify(body),
         });
@@ -70,7 +69,7 @@ const page = ({ params }: { params: { projectId: string } }) => {
     }
   };
   return (
-    <div className="[&>div>div>div>h3]:text-[20px absolute inset-0 flex flex-1 overflow-y-auto [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:font-medium ">
+    <div className="absolute inset-0 flex flex-1 overflow-y-auto [&>div>div>div>h3]:mb-2 [&>div>div>div>h3]:text-[20px] [&>div>div>div>h3]:font-medium ">
       <div className="flex flex-1">
         {process.env.API_HOST}
         <div className="flex max-h-full flex-1 justify-center overflow-y-auto p-10">
@@ -81,7 +80,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
                 editorState={editorState}
                 onBlurFunc={onBlurWYSIWYGEditorFunction}
                 turnOffBorders={false}
-                alwaysShowButtons={false} mainDivClasses="min-h-[131px]"
+                alwaysShowButtons={false}
+                mainDivClasses="min-h-[131px]"
               />
             </div>
             <div className="w-full">

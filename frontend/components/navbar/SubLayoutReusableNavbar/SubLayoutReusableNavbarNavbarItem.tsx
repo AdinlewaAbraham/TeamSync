@@ -21,7 +21,7 @@ const SubLayoutReusableNavbarNavbarItem = ({
   return (
     <Link href={href.toLowerCase()} key={title}>
       <li
-        className={` flex cursor-pointer items-center p-2 text-sm text-muted-dark transition-colors duration-150 hover:text-white
+        className={` flex cursor-pointer items-center p-2 px-1 text-sm text-muted-dark transition-colors duration-150 hover:text-white
         ${
           isCurrentTab ? "navbarBorderB text-white" : "navbarBorderBHover"
         } border-white`}

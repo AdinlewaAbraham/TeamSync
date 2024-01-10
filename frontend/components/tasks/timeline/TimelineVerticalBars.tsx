@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import Task from "@/interfaces/task";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -32,16 +32,13 @@ const TimelineVerticalBars = ({
       dateToStart: day,
       dueDate: lastDay,
     };
-    const response = await fetch("/api/task/", {
+    const { _response, data } = await fetchAndHelpRedirect("/api/task/", {
       method: "POST",
       body: JSON.stringify(postBody),
     });
     setTaskName("");
 
-    const data = await response.json();
-
-    await redirectToLogin(response.status, data?.error);
-    if (response.ok) {
+    if (_response.ok) {
       // update localtasks
     } else {
       console.log("something went wrong");
@@ -89,7 +86,7 @@ const TimelineVerticalBars = ({
       }
       ref={verticalBarRef}
     >
-      {isToday && <div className="h-full w-0.5 bg-green-500" />}
+      {isToday && <div className="h-full w-px bg-accent-blue" />}
     </div>
   );
 };

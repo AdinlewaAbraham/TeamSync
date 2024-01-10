@@ -3,9 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 const EditableTextComponent = ({
   text,
   styles,
+  containerStyles,
+  handleTextSave,
 }: {
   text: string;
   styles: string;
+  containerStyles?: string;
+  handleTextSave: (text: string) => void;
 }) => {
   const [editableText, setEditableText] = useState<string>(text);
   const [editableMode, setEditableMode] = useState<boolean>(false);
@@ -15,26 +19,28 @@ const EditableTextComponent = ({
     setEditableMode(true);
     setInputText(text);
   };
-  useEffect(() => {
-    
-  }, [])
-  
+  useEffect(() => {}, []);
+  const handleInputBur = () => {
+    setEditableMode(false);
+    handleTextSave(inputText);
+  };
+
   return (
-    <div className="file:border ">
+    <div className={`${containerStyles}`}>
       {editableMode ? (
         <input
           type="text"
           ref={inputRef}
-          className={`max-w-max border border-transparent bg-inherit focus-visible:outline-none focus-visible:ring-0 ${styles}`}
+          className={`border border-transparent bg-inherit p-px focus-visible:outline-none focus-visible:ring-0 ${styles}`}
           value={inputText}
           autoFocus
-          onChange={(e) => console.log(e)}
-          onBlur={() => setEditableMode(false)}
+          onChange={(e) => setInputText(e.target.value)}
+          onBlur={handleInputBur}
         />
       ) : (
         <div
           onClick={handleTextClick}
-          className={`border border-transparent  hover:border-gray-500 ${styles}`}
+          className={`border border-transparent p-px  hover:border-gray-500 ${styles}`}
         >
           {editableText}
         </div>

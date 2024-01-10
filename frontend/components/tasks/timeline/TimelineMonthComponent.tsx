@@ -3,7 +3,7 @@ import SectionHorizontalRow from "./SectionHorizontalRow";
 import TimelineVerticalBars from "./TimelineVerticalBars";
 import Project from "@/interfaces/project";
 import Task from "@/interfaces/task";
-import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
+import { TimelineSectionObj } from "@/app/project/[projectId]/timeline/page";
 
 const TimelineMonthComponent = ({
   month,

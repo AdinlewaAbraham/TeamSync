@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
 import Section from "@/interfaces/section";
-import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
+import { TimelineSectionObj } from "@/app/project/[projectId]/timeline/page";
+import EditableTextComponent from "@/components/others/EditableTextComponent";
 
 const TimelineSideBarItem = ({
   section,
@@ -27,11 +28,14 @@ const TimelineSideBarItem = ({
     }
   }, [timelineSectionObj, section._id]);
 
+  const hanldeTextSave = (text: string) => {
+    console.log(text);
+  };
   return (
     <div
       key={section._id}
       style={{ height: sectionDateObj.componentHeight }}
-      className="border-b border-border-default"
+      className="overflow-hidden border-b border-border-default"
       onClick={() => console.log(sectionDateObj.componentHeight)}
     >
       <div className="sticky top-0 flex h-[52px] items-center">
@@ -53,7 +57,13 @@ const TimelineSideBarItem = ({
         >
           <IoMdArrowDropdown />
         </i>
-        {section.sectionName}
+        <EditableTextComponent
+          text={section.sectionName}
+          handleTextSave={hanldeTextSave}
+          styles="p-px whitespace-nowrap truncate text-ellipsis group-hover:bg-bg-secondary group-hover:border-gray-500"
+          containerStyles="flex flex-1  truncate text-ellipsis"
+          key={section.sectionName}
+        />
       </div>
     </div>
   );

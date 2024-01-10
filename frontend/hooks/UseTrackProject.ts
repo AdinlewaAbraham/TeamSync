@@ -10,6 +10,7 @@ const useTrackProject = (
   project: Project | null,
   setProject: (c: Project | null) => void,
 ) => {
+  const { setActiveWorkspace, activeWorkspace } = useGlobalContext();
   useEffect(() => {
     if (project?._id !== paramProjectId && project) {
       setProject(null);
@@ -19,7 +20,18 @@ const useTrackProject = (
       socket.emit("join_room", `project_${paramProjectId}`);
 
       // project controllers
+      const handleProjectUpdated = (updatedProject: Project) => {
+        console.log("i have received project update");
+        console.log(updatedProject);
+        setProject({
+          ...updatedProject,
+          sections: project.sections,
+          members: project.members,
+        });
+      };
+
       const handleProjectAdded = (project: Project) => {};
+
       const handleProjectDeleted = (projectId: string) => {
         if (projectId === project._id) {
         }
@@ -33,6 +45,7 @@ const useTrackProject = (
         };
         setProject(newProject);
       };
+
       const handleSectionUpdated = (section: Section) => {
         const newSections: (Section | string)[] = project.sections.map(
           (_section) => {
@@ -45,6 +58,7 @@ const useTrackProject = (
         const newProject: Project = { ...project, sections: newSections };
         setProject(newProject);
       };
+
       const handleSectionDeleted = (sectionId: string) => {
         const filteredSections = project.sections.filter(
           (section) => typeof section === "object" && section._id !== sectionId,
@@ -69,6 +83,7 @@ const useTrackProject = (
         // localStorage.removeItem("localTaskPositionObject");
         setProject({ ...deepProjectCopy, sections: NewSections });
       };
+
       const handleTaskUpdated = (task: Task) => {
         const updatedSections = project.sections.map((section) => {
           if (typeof section === "string" || section._id !== task.sectionId) {
@@ -84,6 +99,7 @@ const useTrackProject = (
 
         setProject({ ...project, sections: updatedSections });
       };
+
       const handleTaskDeleted = (
         taskId: string,
         sectionId: string,
@@ -126,7 +142,7 @@ const useTrackProject = (
       };
 
       // add project event
-      socket.on("project_updated", handleProjectAdded);
+      socket.on("project_updated", handleProjectUpdated);
       socket.on("project_deleted", handleProjectDeleted);
 
       // add section event
@@ -141,7 +157,7 @@ const useTrackProject = (
 
       return () => {
         // remove project event
-        socket.off("project_updated", handleProjectAdded);
+        socket.off("project_updated", handleProjectUpdated);
         socket.off("project_deleted", handleProjectDeleted);
 
         // remove section event

@@ -1,15 +1,20 @@
 import { useGlobalContext } from "@/context/GeneralContext";
 import fetchProject from "@/helpers/project/fetchProject";
-import { redirectToLogin } from "@/helpers/redirect";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Project from "@/interfaces/project";
 import generateDates from "@/utilis/generateDates";
 import TimelineSideBarItem from "@/components/tasks/timeline/TimelineSideBarItem";
 import TimelineMonthComponent from "@/components/tasks/timeline/TimelineMonthComponent";
-import { TimelineSectionObj } from "@/app/project/[projectId]/tasks/timeline/page";
+import { TimelineSectionObj } from "@/app/project/[projectId]/timeline/page";
 import generateDatesMonths from "@/utilis/generateDatesMonths";
 
-const Timeline = ({ paramProjectId, project }: { paramProjectId: string, project: Project | null }) => {
+const Timeline = ({
+  paramProjectId,
+  project,
+}: {
+  paramProjectId: string;
+  project: Project | null;
+}) => {
   const monthNames = [
     "January",
     "February",

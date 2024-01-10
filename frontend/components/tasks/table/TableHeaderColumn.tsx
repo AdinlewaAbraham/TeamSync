@@ -2,13 +2,18 @@ import { TableColumn } from "@/interfaces/Table";
 import React from "react";
 
 const TableHeaderColumn = ({
-  tableColumnObject,
+  tableColumsRenderArray,
+  setTableColumsRenderArray,
 }: {
-  tableColumnObject: TableColumn;
+  tableColumsRenderArray: TableColumn;
+  setTableColumsRenderArray: (c: TableColumn[]) => void;
 }) => {
   return (
-    <li className="w-[20%] border-r border-border-default px-2 py-2 last:border-r-0">
-      {tableColumnObject.title}
+    <li
+      className="border-r border-border-default px-2 py-2"
+      style={{ width: tableColumsRenderArray.width || 230 }}
+    >
+      {tableColumsRenderArray.title}
     </li>
   );
 };

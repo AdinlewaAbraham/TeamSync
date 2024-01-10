@@ -29,10 +29,12 @@ export default function RootLayout({
   useEffect(() => {
     const handleUser = async () => {
       try {
-        const user = await fetchUser();
-        if (user) {
-          setUser(user);
-          // router.push("/workspace/" + user?.activeWorkspaceId + "/home");
+        if (!user) {
+          const data = await fetchUser();
+          if (data) {
+            setUser(data);
+            // router.push("/workspace/" + user?.activeWorkspaceId + "/home");
+          }
         }
       } catch (error) {
         console.error(error);

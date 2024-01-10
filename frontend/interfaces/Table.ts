@@ -9,4 +9,5 @@ export interface TableColumn {
   title: string;
   default: boolean;
   type: TableColumnsTypes;
+  width: number;
 }

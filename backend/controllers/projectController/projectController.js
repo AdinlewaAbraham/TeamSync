@@ -68,25 +68,31 @@ const getProject = asyncHandler(async (req, res) => {
   }
 });
 
-const updateProjectDescription = asyncHandler(async (req, res) => {
+const updateProject = asyncHandler(async (req, res) => {
   try {
-    const { projectDescription, projectId } = req.body;
-    const filter = { _id: projectId };
+    const projectId = req.params.id;
+    const updateObject = req.body;
 
+    console.log(updateObject);
     const update = {
       $set: {
-        description: projectDescription,
+        ...updateObject,
       },
     };
     const project = await Project.findById(projectId);
     if (project) {
-      await Project.updateOne(filter, update);
+      for (key in updateObject) {
+        project[key] = updateObject[key];
+      }
+
+      await project.save();
+      // await Project.updateOne(filter, );
     } else {
       res.status(404);
     }
-    console.log(project.description);
-    // io.emit("projectUpdate", description);
-    res.status(200).json(project.description);
+    console.log(project);
+    sendMessage(`project_${projectId}`, "project_updated", [project]);
+    res.status(200).json(project);
   } catch (error) {
     console.log(error);
     res.status(500);
@@ -99,5 +105,5 @@ module.exports = {
   deleteProject,
   editProject,
   getProject,
-  updateProjectDescription,
+  updateProject,
 };

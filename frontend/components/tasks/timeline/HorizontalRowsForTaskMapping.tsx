@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/context/GeneralContext";
-import { redirectToLogin } from "@/helpers/redirect";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import Section from "@/interfaces/section";
 import Task from "@/interfaces/task";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
@@ -86,16 +86,14 @@ const HorizontalRowsForTaskMapping = ({
       dueDate: lastDay,
       rowNumber: index,
     };
-    const response = await fetch("/api/task/", {
+    const {data, _response} = await fetchAndHelpRedirect("/api/task/", {
       method: "POST",
       body: JSON.stringify(postBody),
     });
     setTaskName("");
 
-    const data = await response.json();
 
-    await redirectToLogin(response.status, data?.error);
-    if (response.ok) {
+    if (_response.ok) {
     } else {
       console.log("something went wrong");
     }
