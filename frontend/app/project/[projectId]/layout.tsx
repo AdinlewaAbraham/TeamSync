@@ -11,6 +11,8 @@ import { FiMessageSquare } from "react-icons/fi";
 import useTrackProject from "@/hooks/UseTrackProject";
 import Workspace from "@/interfaces/workspace";
 import Project from "@/interfaces/project";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
+import LayoutHeaderSideComponent from "@/components/project/LayoutHeaderSideComponent";
 
 const layout = ({
   params,
@@ -81,11 +83,6 @@ const layout = ({
       icon: <FaChartLine />,
     },
     {
-      href: navbarBaseUrl + "tasks/board",
-      title: "tasks",
-      icon: <LuClipboardCheck />,
-    },
-    {
       href: navbarBaseUrl + "files",
       title: "files",
       icon: <FaChartLine />,
@@ -124,12 +121,13 @@ const layout = ({
       } as Workspace;
       setActiveWorkspace(newWorkspace);
       try {
-        const response = await fetch("/api/project/" + activeProject._id, {
-          method: "PUT",
-          body: JSON.stringify(body),
-        });
-        if (response.ok) {
-        }
+        const { _response } = await fetchAndHelpRedirect(
+          "/api/project/" + activeProject._id,
+          {
+            method: "PUT",
+            body: JSON.stringify(body),
+          },
+        );
       } catch (error) {
         console.error(error);
       }
@@ -143,6 +141,7 @@ const layout = ({
         navbarItemsArray={navbarItemsArray}
         showNavbar={showNavbar}
         hanldeTextSave={hanldeTextSave}
+        headerSideComponent={<LayoutHeaderSideComponent />}
         // key={activeProject?.projectName}
       />
 

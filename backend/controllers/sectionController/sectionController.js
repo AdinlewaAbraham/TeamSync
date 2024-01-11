@@ -5,7 +5,32 @@ const { sendMessage } = require("../../utils/socket-io");
 const { Task } = require("../../models/taskModel");
 
 const getSection = asyncHandler(async (req, res) => {});
-const updateSection = asyncHandler(async (req, res) => {});
+const updateSection = asyncHandler(async (req, res) => {
+  try {
+    const sectionId = req.params.id;
+    const updateObject = req.body;
+
+    console.log(updateObject);
+    
+    const section = await Section.findById(sectionId);
+    if (section) {
+      for (key in updateObject) {
+        section[key] = updateObject[key];
+      }
+
+      await section.save();
+      // await Project.updateOne(filter, );
+    } else {
+      res.status(404);
+    }
+    console.log(section);
+    sendMessage(`project_${section.projectId}`, "section_updated", [section]);
+    res.status(200).json(project);
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
 const deleteSection = asyncHandler(async (req, res) => {
   const sectionID = req.params.sectionId;
   const projectId = req.params.projectId;

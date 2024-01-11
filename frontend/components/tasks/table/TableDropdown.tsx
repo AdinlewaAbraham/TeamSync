@@ -99,7 +99,7 @@ const TableDropdown = ({
     );
     setShowMainComponent(!showMainComponent);
   };
-  const hanldeTextSave = async (text: string) => {
+  const handleTextSave = async (text: string) => {
     console.log(text);
   };
 
@@ -110,13 +110,13 @@ const TableDropdown = ({
     >
       <header
         onClick={hanldeToggleMainComponent}
-        className="stickyy z-40w-full top-0 cursor-pointer 
+        className="max-w-full overflow-hidden cursor-pointer 
         bg-bg-secondary px-8"
       >
         <div
           className={`${
-            !showMainComponent ? "border-b-0" : "border-b"
-          } flex  h-12 items-center border-border-default font-medium`}
+            !showMainComponent ? "border-transparent" : "border-border-default"
+          } border-b flex  h-12 items-center font-medium`}
         >
           <i
             className={` px-2 ${
@@ -128,8 +128,8 @@ const TableDropdown = ({
           <h1 className="tableHeader">
             <EditableTextComponent
               text={localSection.sectionName}
-              handleTextSave={hanldeTextSave}
-              styles="max-w-max"
+              handleTextSave={handleTextSave}
+              styles=""
               key={localSection.sectionName}
             />
           </h1>

@@ -28,7 +28,7 @@ const TimelineSideBarItem = ({
     }
   }, [timelineSectionObj, section._id]);
 
-  const hanldeTextSave = (text: string) => {
+  const handleTextSave = (text: string) => {
     console.log(text);
   };
   return (
@@ -59,7 +59,7 @@ const TimelineSideBarItem = ({
         </i>
         <EditableTextComponent
           text={section.sectionName}
-          handleTextSave={hanldeTextSave}
+          handleTextSave={handleTextSave}
           styles="p-px whitespace-nowrap truncate text-ellipsis group-hover:bg-bg-secondary group-hover:border-gray-500"
           containerStyles="flex flex-1  truncate text-ellipsis"
           key={section.sectionName}

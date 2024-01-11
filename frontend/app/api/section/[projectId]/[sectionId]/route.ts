@@ -17,3 +17,17 @@ export async function DELETE(
 
   return NextResponse.json(data, { status: status });
 }
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { projectId: string; sectionId: string } }
+) {
+  const postBody = await req.json();
+  const url = process.env.API_HOST + "/section/" + params.sectionId;
+  const { data, status } = await fetchWithAuth(url, {
+    method: "PUT",
+    body: JSON.stringify(postBody),
+  });
+
+  return NextResponse.json(data, { status: status });
+}

@@ -74,11 +74,7 @@ const updateProject = asyncHandler(async (req, res) => {
     const updateObject = req.body;
 
     console.log(updateObject);
-    const update = {
-      $set: {
-        ...updateObject,
-      },
-    };
+    
     const project = await Project.findById(projectId);
     if (project) {
       for (key in updateObject) {

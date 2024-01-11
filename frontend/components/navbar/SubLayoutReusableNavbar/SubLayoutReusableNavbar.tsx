@@ -13,12 +13,14 @@ const SubLayoutReusableNavbar = ({
   isLoading,
   navbarItemsArray,
   hanldeTextSave,
+  headerSideComponent,
 }: {
   showNavbar: boolean;
   navHeader: string;
   isLoading: boolean;
   navbarItemsArray: { icon?: ReactNode | null; title: string; href: string }[];
   hanldeTextSave: (text: string) => void;
+  headerSideComponent?: ReactNode;
 }) => {
   return (
     <AnimatePresence initial={false}>
@@ -46,36 +48,35 @@ const SubLayoutReusableNavbar = ({
             <SubLayoutNavbarLoading />
           ) : (
             <div className="">
-              <div className="ml-4 mt-4 flex items-center">
-                <div className="flex h-full items-start">
-                  <div className="mr-2 h-10 w-10 rounded-lg bg-slate-400" />
-                </div>
-                <div>
+              <div className="ml-4 mt-4 flex flex-col">
+                <div className="flex h-full items-center">
+                  <div className="mr-2 h-9 w-9 rounded-lg bg-slate-400" />
                   <h1 className="">
                     <EditableTextComponent
                       text={navHeader}
                       handleTextSave={hanldeTextSave}
-                      styles="mx-2 font-medium text-xl max-w-max"
+                      styles="mx-2 font-medium text-xl border"
+                      containerStyles="max-w-max p-px"
                       key={navHeader}
                     />
                   </h1>
-
-                  <ul className="flex gap-1 rounded-lg pr-2">
-                    {navbarItemsArray.map((item, index) => (
-                      <SubLayoutReusableNavbarNavbarItem
-                        key={item.title + index}
-                        title={item.title}
-                        icon={item.icon}
-                        href={item.href}
-                      />
-                    ))}
-                    <li role="button" className="flex items-center">
-                      <i className="rounded-lg p-2 hover:bg-menuItem-active">
-                        <IoMdAdd />
-                      </i>
-                    </li>
-                  </ul>
+                  {headerSideComponent}
                 </div>
+                <ul className="flex gap-1 rounded-lg pr-2">
+                  {navbarItemsArray.map((item, index) => (
+                    <SubLayoutReusableNavbarNavbarItem
+                      key={item.title + index}
+                      title={item.title}
+                      icon={item.icon}
+                      href={item.href}
+                    />
+                  ))}
+                  <li role="button" className="flex items-center">
+                    <i className="rounded-lg p-2 hover:bg-menuItem-active">
+                      <IoMdAdd />
+                    </i>
+                  </li>
+                </ul>
               </div>
             </div>
           )}

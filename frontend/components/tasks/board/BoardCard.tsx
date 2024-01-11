@@ -14,6 +14,8 @@ import findMinFreeRowNumber from "@/utilis/findMinFreeRowNumber";
 import BoardTaskCard from "./BoardTaskCard";
 import socket from "@/config/WebSocketManager";
 import Task from "@/interfaces/task";
+import EditableTextComponent from "@/components/others/EditableTextComponent";
+import { fetchAndHelpRedirect } from "@/helpers/redirect";
 
 const BoardCard = ({
   section,
@@ -25,6 +27,7 @@ const BoardCard = ({
   const [showAddTaskComponent, setShowAddTaskComponent] =
     useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
+  const [sectionName, setSectionName] = useState(section.sectionName);
   const [showBoardMenu, setShowBoardMenu] = useState<boolean>(false);
 
   const [referenceElement, setReferenceElement] =
@@ -135,48 +138,74 @@ const BoardCard = ({
   }, [section, section]);
 
   if (typeof section === "string") return <>loading this is a string </>;
+  const handleTextSave = async (text: string) => {
+    if (
+      text.trim() !== "" &&
+      section?.sectionName &&
+      text !== section?.sectionName
+    ) {
+      setSectionName(text);
+      const url = "/api/section/" + projectId + "/" + section._id;
+      const response = await fetchAndHelpRedirect(url, {
+        method: "PUT",
+        body: JSON.stringify({ sectionName: text }),
+      });
+      const { status, data } = response;
+      console.log(status);
+    }
+  };
   return (
-    <div onClick={() => console.log(section._id)}>
+    <div onClick={() => console.log(section._id)} className="pb-2">
       <div className="mr-2 flex max-h-full w-[280px] flex-1 flex-col overflow-auto rounded-lg bg-bg-primary py-2">
-        <header className="flex items-center justify-between px-4 py-2">
-          <h1>{section.sectionName}</h1>
-          <div className="addTaskComponent flex items-start">
-            <div
-              onClick={() => {
-                setShowAddTaskComponent(!showAddTaskComponent);
-              }}
-              className="cursor-pointer"
-            >
-              <SidebarIconComponent
-                icon={<IoMdAdd />}
-                toolTipText={"Add project"}
+        <header className="px-4 py-2">
+          <div className="flex h-11 items-center justify-between">
+            <h1 className="relative flex h-full max-w-full flex-1 items-center">
+              <EditableTextComponent
+                text={sectionName}
+                handleTextSave={handleTextSave}
+                styles="p-px truncate text-ellipsis max-w-max group-hover:bg-bg-secondary group-hover:border-gray-500"
+                containerStyles="absolute flex items-center inset-0 truncate text-ellipsis"
+                key={sectionName}
               />
-            </div>
-            <div
-              onClick={() => setShowBoardMenu(!showBoardMenu)}
-              className="cursor-pointer"
-              ref={setReferenceElement}
-            >
-              <SidebarIconComponent
-                icon={<BsThreeDots />}
-                toolTipText="Show options"
-              />
-            </div>
-            {showBoardMenu && (
+            </h1>
+            <div className="addTaskComponent flex items-center">
               <div
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-                className="[&>div]:  [&>div]: rounded-lg border border-border-default bg-bg-primary  
-              [&>div]:cursor-pointer [&>div]:px-4 [&>div]:py-2 hover:[&>div]:bg-menuItem-hover "
+                onClick={() => {
+                  setShowAddTaskComponent(!showAddTaskComponent);
+                }}
+                className="cursor-pointer"
               >
-                <div>rename section</div>
-                <div onClick={() => deleteSectionFunc()} className="">
-                  {" "}
-                  delete section
-                </div>
+                <SidebarIconComponent
+                  icon={<IoMdAdd />}
+                  toolTipText={"Add project"}
+                />
               </div>
-            )}
+              <div
+                onClick={() => setShowBoardMenu(!showBoardMenu)}
+                className="cursor-pointer"
+                ref={setReferenceElement}
+              >
+                <SidebarIconComponent
+                  icon={<BsThreeDots />}
+                  toolTipText="Show options"
+                />
+              </div>
+              {showBoardMenu && (
+                <div
+                  ref={setPopperElement}
+                  style={styles.popper}
+                  {...attributes.popper}
+                  className="[&>div]:  [&>div]: rounded-lg border border-border-default bg-bg-primary  
+              [&>div]:cursor-pointer [&>div]:px-4 [&>div]:py-2 hover:[&>div]:bg-menuItem-hover "
+                >
+                  <div>rename section</div>
+                  <div onClick={() => deleteSectionFunc()} className="">
+                    {" "}
+                    delete section
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
         <div className={`scrollBar max-h-full flex-1 overflow-y-auto `}>

@@ -6,6 +6,7 @@ export type TableColumnsTypes =
   | "status";
 
 export interface TableColumn {
+  id: string;
   title: string;
   default: boolean;
   type: TableColumnsTypes;

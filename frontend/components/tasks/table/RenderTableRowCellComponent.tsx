@@ -2,6 +2,7 @@ import EditableTextComponent from "@/components/others/EditableTextComponent";
 import { TableColumn } from "@/interfaces/Table";
 import Task from "@/interfaces/task";
 import formatTaskDate from "@/utilis/formatTaskDate";
+import { motion } from "framer-motion";
 import React, { ReactNode, useState } from "react";
 import { BiCircle } from "react-icons/bi";
 import { FaRegCircleCheck } from "react-icons/fa6";
@@ -15,19 +16,13 @@ import { IoIosArrowDown } from "react-icons/io";
 import { RiTimerLine } from "react-icons/ri";
 import { usePopper } from "react-popper";
 
-const RenderTableRowCellComponent = ({
-  tableColumnRenderObject,
-  task,
-}: {
-  tableColumnRenderObject: TableColumn;
-  task: Task;
-}) => {
-  const TaskNameTableCell = () => {
-    const hanldeTextSave = (text: string) => {
+  const TaskNameTableCell = ({task}:{task: Task}) => {
+    const handleTextSave = (text: string) => {
       console.log(text);
     };
+    console.log("render");
     return (
-      <li className="group">
+      <div className="group flex flex-1 items-center">
         <i
           className={`${
             task.isComplete
@@ -37,24 +32,26 @@ const RenderTableRowCellComponent = ({
         >
           <FaRegCircleCheck />
         </i>
-        <EditableTextComponent
-          text={task.taskName}
-          handleTextSave={hanldeTextSave}
-          styles="mx-2 max-w-max p-px group-hover:bg-bg-secondary group-hover:border-gray-500"
-          key={task.taskName}
-        />
-      </li>
+        <div className="relative flex h-7 w-full flex-1 items-center">
+          <EditableTextComponent
+            text={task.taskName}
+            handleTextSave={handleTextSave}
+            styles="mx-2 p-px group-hover:bg-bg-secondary group-hover:border-gray-500 truncate text-ellipsis"
+            containerStyles="absolute inset-0 flex items-center truncate text-ellipsis"
+          />
+        </div>
+      </div>
     );
   };
   const TaskAssigneeTableCell = () => {
     return (
-      <li className="flex items-center">
+      <div className="flex items-center">
         <div className="mr-2 h-5 w-5 rounded-full bg-slate-600" />
         {"debo"}
-      </li>
+      </div>
     );
   };
-  const TaskDueDateTableCell = () => {
+  const TaskDueDateTableCell = ({task}:{task: Task}) => {
     const taskDueDate = new Date(task.dueDate);
     const today = new Date();
     const formattedTaskDueDate = formatTaskDate(taskDueDate);
@@ -66,16 +63,16 @@ const RenderTableRowCellComponent = ({
           ? "accent-green"
           : "muted-dark";
     return (
-      <li>
+      <div>
         {task.dueDate && (
           <div className={`text-xs text-${textColor} `}>
             {formattedTaskDueDate}{" "}
           </div>
         )}
-      </li>
+      </div>
     );
   };
-  const TaskPriorityTableCell = () => {
+  const TaskPriorityTableCell = ({task}:{task: Task}) => {
     interface PriorityObj {
       [key: string]: {
         color: string;
@@ -152,7 +149,7 @@ const RenderTableRowCellComponent = ({
       </li>
     );
   };
-  const TaskStatusTableCell = () => {
+  const TaskStatusTableCell = ({task}:{task: Task}) => {
     interface StatusObj {
       [key: string]: {
         color: string;
@@ -232,51 +229,67 @@ const RenderTableRowCellComponent = ({
     );
   };
 
+const RenderTableRowCellComponent = ({
+  tableColumnRenderObject,
+  task,
+}: {
+  tableColumnRenderObject: TableColumn;
+  task: Task;
+}) => {
   const renderRowFromRowType = (): ReactNode => {
     switch (tableColumnRenderObject.type) {
       case "task_name":
-        return <TaskNameTableCell />;
+        return <TaskNameTableCell task={task} />;
       case "assignee":
         return <TaskAssigneeTableCell />;
       case "due_date":
-        return <TaskDueDateTableCell />;
+        return <TaskDueDateTableCell task={task}/>;
       case "priority":
-        return <TaskPriorityTableCell />;
+        return <TaskPriorityTableCell task={task}/>;
       case "status":
-        return <TaskStatusTableCell />;
+        return <TaskStatusTableCell task={task}/>;
     }
   };
 
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLDivElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null,
-  );
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+  // const [showToolTip, setShowToolTip] = useState(false);
 
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "top",
-    strategy: "absolute",
-    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
-  });
+  // const [referenceElement, setReferenceElement] =
+  //   useState<HTMLDivElement | null>(null);
+  // const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+  //   null,
+  // );
+  // const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
+
+  // const { styles, attributes } = usePopper(referenceElement, popperElement, {
+  //   placement: "top",
+  //   strategy: "absolute",
+  //   modifiers: [{ name: "arrow", options: { element: arrowElement } }],
+  // });
   return (
-    <div
-      className="tableCellBorder group h-full cursor-pointer [&>li]:flex [&>li]:h-full [&>li]:items-center
-      [&>li]:border-r [&>li]:border-border-default [&>li]:px-2"
+    <li
+      className="tableCellBorder group flex h-full cursor-pointer items-center
+      border-r border-border-default px-2"
       style={{ width: tableColumnRenderObject.width || 230 }}
       role="gridcell"
-      ref={setReferenceElement}
+      // ref={setReferenceElement}
     >
       {renderRowFromRowType()}
-      <div
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-        className="hidden group-hover:flex"
-      >
-        hello
-      </div>
-    </div>
+      {/* {showToolTip && (
+        <motion.div
+          // initial={{ opacity: 0 }}
+          // animate={
+          //   showToolTip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }
+          // }
+          // transition={{ duration: 0, delay: 0.5 }}
+          className="whitespace-nowrap rounded-lg bg-menuItem-active p-2 text-xs"
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          {"hello"}
+        </motion.div>
+      )} */}
+    </li>
   );
 };
 

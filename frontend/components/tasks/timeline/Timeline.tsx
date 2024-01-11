@@ -222,92 +222,101 @@ const Timeline = ({
   console.log("i rerendered");
 
   return (
-    <div className="flex-1 overflow-hidden ">
-      {/* <nav className="flex items-center justify-between border-t border-border-default  py-2 pl-8 text-sm">
-        <div className="flex h-9 items-center justify-center"> add task</div>
-      </nav> */}
-      <div className="relative flex h-full border-t border-border-default">
-        <div className="h-full w-[200px]">
-          <div className="flex h-full flex-1 flex-col">
-            <div className="h-[50px] w-full border-b border-border-default" />
-            <div className="relative h-full flex-1 overflow-y-hidden border-r border-border-default">
-              <div
-                className="absolute inset-0 flex-1 overflow-y-hidden"
-                ref={sidebarRef}
-              >
-                {project.sections.map((section) => (
-                  <TimelineSideBarItem
-                    section={section}
-                    timelineSectionObj={timelineSectionObj}
-                    setTimelineSectionObj={setTimelineSectionObj}
-                  />
-                ))}
+    <div className="flex flex-1 flex-col">
+      <nav className="flex h-14 items-center justify-between px-8">
+        <div className="flex gap-2">
+          <div>add task</div>
+          <div>filter</div>
+          <div>sort</div>
+          <div>hide</div>
+        </div>
+        <div>more options</div>
+      </nav>
+      <div className="flex-1 overflow-hidden">
+        <div className="relative flex h-full border-t border-border-default">
+          <div className="h-full w-[200px]">
+            <div className="flex h-full flex-1 flex-col">
+              <div className="h-[50px] w-full border-b border-border-default" />
+              <div className="relative h-full flex-1 overflow-y-hidden border-r border-border-default">
+                <div
+                  className="absolute inset-0 flex-1 overflow-y-hidden"
+                  ref={sidebarRef}
+                >
+                  {project.sections.map((section) => (
+                    <TimelineSideBarItem
+                      section={section}
+                      timelineSectionObj={timelineSectionObj}
+                      setTimelineSectionObj={setTimelineSectionObj}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="relative flex-1">
-          <div className="absolute inset-0 flex flex-1 flex-col overflow-x-auto ">
-            <header
-              className="relative flex h-[50px] overflow-x-hidden border-b border-border-default pr-[20px]"
-              ref={headerRef}
-            >
-              {months.map((month, index) => (
-                <div
-                  className="flex flex-col"
-                  key={month.name + month.year + "header"}
-                >
-                  <div className="sticky left-0 max-w-max px-2 ">
-                    {month.name} {month.year}
-                  </div>
-                  <div className="flex">
-                    {month.dates.map((day, index) => {
-                      const highlightDate =
-                        selectedDateObject &&
-                        new Date(day) >=
-                          new Date(selectedDateObject?.startDate) &&
-                        new Date(day) <= new Date(selectedDateObject?.endDate);
+          <div className="relative flex-1">
+            <div className="absolute inset-0 flex flex-1 flex-col overflow-x-auto ">
+              <header
+                className="relative flex h-[50px] overflow-x-hidden border-b border-border-default pr-[20px]"
+                ref={headerRef}
+              >
+                {months.map((month, index) => (
+                  <div
+                    className="flex flex-col"
+                    key={month.name + month.year + "header"}
+                  >
+                    <div className="sticky left-0 max-w-max px-2 ">
+                      {month.name} {month.year}
+                    </div>
+                    <div className="flex">
+                      {month.dates.map((day, index) => {
+                        const highlightDate =
+                          selectedDateObject &&
+                          new Date(day) >=
+                            new Date(selectedDateObject?.startDate) &&
+                          new Date(day) <=
+                            new Date(selectedDateObject?.endDate);
 
-                      return (
-                        <div
-                          key={index}
-                          className={`w-[40px]
+                        return (
+                          <div
+                            key={index}
+                            className={`w-[40px]
                                   ${
                                     highlightDate
                                       ? "bg-accent-blue"
                                       : "bg-bg-primary"
                                   } flex items-center justify-center `}
-                          onClick={() => console.log(day)}
-                        >
-                          {index + 1}
-                        </div>
-                      );
-                    })}
+                            onClick={() => console.log(day)}
+                          >
+                            {index + 1}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </header>
-            <div
-              className="relative flex h-full  flex-1  overflow-auto"
-              ref={timelineRef}
-              onScroll={handleScroll}
-            >
-              {months.map((month) => (
-                <TimelineMonthComponent
-                  activeProject={project}
-                  month={month}
-                  paramProjectId={paramProjectId}
-                  setSelectedDateObject={setSelectedDateObject}
-                  setTimelineSectionObj={setTimelineSectionObj}
-                  taskWithDateRange={taskWithDateRange}
-                  timelineSectionObj={timelineSectionObj}
-                  key={month.name + month.year}
-                />
-              ))}
+                ))}
+              </header>
               <div
-                className="absolute bottom-0 top-0 h-full w-1 opacity-0"
-                ref={timelineHeightRef}
-              />
+                className="relative flex h-full  flex-1  overflow-auto"
+                ref={timelineRef}
+                onScroll={handleScroll}
+              >
+                {months.map((month) => (
+                  <TimelineMonthComponent
+                    activeProject={project}
+                    month={month}
+                    paramProjectId={paramProjectId}
+                    setSelectedDateObject={setSelectedDateObject}
+                    setTimelineSectionObj={setTimelineSectionObj}
+                    taskWithDateRange={taskWithDateRange}
+                    timelineSectionObj={timelineSectionObj}
+                    key={month.name + month.year}
+                  />
+                ))}
+                <div
+                  className="absolute bottom-0 top-0 h-full w-1 opacity-0"
+                  ref={timelineHeightRef}
+                />
+              </div>
             </div>
           </div>
         </div>

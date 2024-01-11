@@ -42,11 +42,21 @@ const Board = ({
     setAddingSection(false);
     setShowAddSectionComponent(false);
   };
+  if (!project) return <BoardSkeletonLoader />;
   return (
-    <>
-      {project ? (
+    <div className="flex flex-1 flex-col">
+      <nav className="flex h-14 items-center justify-between px-8">
+        <div className="flex gap-2">
+          <div>add task</div>
+          <div>filter</div>
+          <div>sort</div>
+          <div>hide</div>
+        </div>
+        <div>more options</div>
+      </nav>
+      <div className="relative flex flex-1 ">
         <div
-          className="overflow-x relative flex flex-1 overflow-auto  px-8 "
+          className="overflow-x absolute inset-0 flex flex-1 overflow-auto  px-8 "
           id="overflowElement"
         >
           {project.sections.map((section, index) => {
@@ -102,10 +112,8 @@ const Board = ({
             )}
           </div>
         </div>
-      ) : (
-        <BoardSkeletonLoader />
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 

@@ -22,11 +22,11 @@ const Table = ({
 
   const [tableDropDownInnerwidth, setTableDropDownInnerwidth] = useState(0);
   const tableColumsRenderArrayDefault: TableColumn[] = [
-    { title: "Task name", default: true, type: "task_name", width: 430 },
-    { title: "Assignee", default: false, type: "assignee", width: 130 },
-    { title: "Due date", default: false, type: "due_date", width: 130 },
-    // { title: "Priority", default: false, type: "priority", width: 130 },
-    // { title: "Status", default: false, type: "status", width: 130 },
+    { title: "Task name", default: true, type: "task_name", width: 430 ,id: "1wdfbeq"},
+    { title: "Assignee", default: false, type: "assignee", width: 130 ,id: "1wqhjmd"},
+    { title: "Due date", default: false, type: "due_date", width: 130 ,id: "1wqhyj"},
+    // { title: "Priority", default: false, type: "priority", width: 130 ,id: "1wqsds"},
+    // { title: "Status", default: false, type: "status", width: 130 ,id: "1wqwfrew"},
   ];
   const [tableColumsRenderArray, setTableColumsRenderArray] = useState<
     TableColumn[]
@@ -70,7 +70,7 @@ const Table = ({
     return <TableSkeletonLoader />;
   }
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col overflow-y-hidden">
       <nav className="flex h-14 items-center justify-between px-8">
         <div className="flex gap-2">
           <div>add task</div>
@@ -94,7 +94,8 @@ const Table = ({
           >
             {tableColumsRenderArray.map((tableColumnObject) => (
               <TableHeaderColumn
-                tableColumsRenderArray={tableColumnObject}
+                tableColumsRenderObject={tableColumnObject}
+                tableColumsRenderArray={tableColumsRenderArray}
                 setTableColumsRenderArray={setTableColumsRenderArray}
                 key={tableColumnObject.type}
               />

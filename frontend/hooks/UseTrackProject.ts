@@ -52,7 +52,7 @@ const useTrackProject = (
             if (typeof _section !== "object" || _section._id !== section._id) {
               return _section;
             }
-            return section;
+            return { ...section, tasks: _section.tasks };
           },
         );
         const newProject: Project = { ...project, sections: newSections };
