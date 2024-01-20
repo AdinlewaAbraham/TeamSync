@@ -6,45 +6,45 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaChartLine, FaRegCalendar, FaRegListAlt } from "react-icons/fa";
 
-const layout = ({
-  params,
-  children,
-}: {
+const layout: React.FC<{
   params: { userId: string };
   children: ReactNode;
-}) => {
+}> = ({ params, children }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const { user } = useGlobalContext();
   const navbarBaseUrl = "/mytasks/" + user?._id + "/";
   const { userProject, setUserProject } = useGlobalContext();
   useTrackProject(params.userId, userProject, setUserProject);
+
+  const navbarItemsArray = [
+    {
+      href: navbarBaseUrl + "board",
+      title: "board",
+      icon: <BiSolidBarChartAlt2 />,
+    },
+    {
+      href: navbarBaseUrl + "table",
+      title: "table",
+      icon: <FaRegListAlt />,
+    },
+    {
+      href: navbarBaseUrl + "calendar",
+      title: "calendar",
+      icon: <FaRegCalendar />,
+    },
+    {
+      href: navbarBaseUrl + "timeline",
+      title: "timeline",
+      icon: <FaChartLine />,
+    },
+  ];
   return (
     <div className="relative flex flex-1 flex-col">
       <SubLayoutReusableNavbar
         isLoading={!user?._id || !userProject}
         navHeader="My tasks"
-        navbarItemsArray={[
-          {
-            href: navbarBaseUrl + "board",
-            title: "board",
-            icon: <BiSolidBarChartAlt2 />,
-          },
-          {
-            href: navbarBaseUrl + "table",
-            title: "table",
-            icon: <FaRegListAlt />,
-          },
-          {
-            href: navbarBaseUrl + "calendar",
-            title: "calendar",
-            icon: <FaRegCalendar />,
-          },
-          {
-            href: navbarBaseUrl + "timeline",
-            title: "timeline",
-            icon: <FaChartLine />,
-          },
-        ]}
+        hanldeTextSave={() => {}}
+        navbarItemsArray={navbarItemsArray}
         showNavbar={showNavbar}
       />
       <button

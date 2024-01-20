@@ -8,7 +8,7 @@ import LoadingComponent from "@/components/others/LoadingComponent";
 import fetchUser from "@/helpers/user/fetchUser";
 import { useRouter } from "next/navigation";
 
-const page = () => {
+const page: React.FC = () => {
   const { user, setUser } = useGlobalContext();
   const router = useRouter();
 

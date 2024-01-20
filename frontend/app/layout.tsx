@@ -41,7 +41,7 @@ export default function RootLayout({
       }
     };
     handleUser();
-  }, []);
+  });
   return (
     <html lang="en" className="h-full w-full ">
       <body className={`${inter.className} flex-1`}>

@@ -40,7 +40,7 @@ const SidebarIconComponent = ({
           // animate={
           //   showToolTip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }
           // }
-          // transition={{ duration: 0, delay: 0.5 }}
+          transition={{ duration: 0, delay: 0.5 }}
           className="whitespace-nowrap rounded-lg bg-menuItem-active p-2 text-xs"
           ref={setPopperElement}
           style={styles.popper}
