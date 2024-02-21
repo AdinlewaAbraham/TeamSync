@@ -13,12 +13,13 @@ import ReactFlow, {
   Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import ProjectNode from "./nodeTypes/ProjectNode";
 
 const MindMap = () => {
   const initialNodes: Node[] = [
     {
       id: "1",
-      type: "input",
+      type: "projectNode",
       data: { label: "Input Node" },
       position: { x: 250, y: 25 },
       deletable: true,
@@ -38,6 +39,8 @@ const MindMap = () => {
     },
   ];
 
+  const nodeTypes = { projectNode: ProjectNode };
+
   const initialEdges: Edge[] = [
     { id: "e1-2", source: "1", target: "2", type: "new" },
     { id: "e2-3", source: "2", target: "3", animated: true },
@@ -55,9 +58,13 @@ const MindMap = () => {
     [setEdges],
   );
   const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    (connection) => {
+      console.log(connection);
+      setEdges((eds) => addEdge(connection, eds));
+    },
     [setEdges],
   );
+
   return (
     <div style={{ height: "100%" }}>
       <ReactFlow
@@ -66,6 +73,7 @@ const MindMap = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
       >
         <Background />
         <MiniMap nodeStrokeWidth={3} position="bottom-center" pannable />
