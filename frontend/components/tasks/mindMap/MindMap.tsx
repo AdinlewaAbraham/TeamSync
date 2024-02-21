@@ -10,6 +10,7 @@ import ReactFlow, {
   applyEdgeChanges,
   addEdge,
   Node,
+  Edge,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
@@ -37,8 +38,8 @@ const MindMap = () => {
     },
   ];
 
-  const initialEdges = [
-    { id: "e1-2", source: "1", target: "2" },
+  const initialEdges: Edge[] = [
+    { id: "e1-2", source: "1", target: "2", type: "new" },
     { id: "e2-3", source: "2", target: "3", animated: true },
   ];
 
