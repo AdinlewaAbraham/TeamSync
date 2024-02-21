@@ -12,6 +12,14 @@ curent task: finish project home/overview page
                     add tooltip and hotkey instrutions to tooltip
 
 
+timeline 
+1. make timeliine sidebar width adjustable and closable
+2. move timeline row calc to sever 
+3. make task date adjustable 
+4. add task dependencie and draw svg to indicate dependencie
+
+calendar 
+1. 
 
 
 messages  

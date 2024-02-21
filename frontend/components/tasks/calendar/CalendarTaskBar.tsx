@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, DragEvent } from "react";
+import React, { useEffect, useRef, useState, DragEvent, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Task from "@/interfaces/task";
 import { BiCheckCircle } from "react-icons/bi";
@@ -7,182 +7,172 @@ import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
 import { useGlobalContext } from "@/context/GeneralContext";
+import CalendarRowTaskPositionObject from "@/interfaces/calendarRowTaskPositionObject";
+import { days, properlyIndexedDays } from "@/constants/calendar";
 
 const CalendarTaskBar = ({
   index,
   task,
   isLast,
   calendarBoxDate,
-  taskHoverStatusObj,
-  setTaskHoverStatusObj,
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
   calendarIndex,
   rowKey,
   boxWidth,
   tasksThatStartOnDay,
+  tasksInRow,
+  calendarRowTaskPositionObject,
 }: {
   index: number;
   task: Task;
   isLast: boolean;
   calendarBoxDate: Date;
-  taskHoverStatusObj: TaskHoverStatusObj;
-  setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
   noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
   calendarIndex: number;
   rowKey: string;
   boxWidth: number;
   tasksThatStartOnDay: (Task | undefined | string)[];
+  tasksInRow: Task[];
+  calendarRowTaskPositionObject: CalendarRowTaskPositionObject;
 }) => {
+  const {
+    setTaskHoverStatusObj,
+    taskHoverStatusObj,
+    calendarTaskbarHoverStatusObj,
+  } = useGlobalContext();
+
+  const [top, setTop] = useState(0);
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
+
   const taskDateToStart = new Date(task.dateToStart);
   const doesNotStartOnDay =
     taskDateToStart.getFullYear() !== calendarBoxDate.getFullYear() ||
     taskDateToStart.getMonth() !== calendarBoxDate.getMonth() ||
     taskDateToStart.getDate() !== calendarBoxDate.getDate();
 
-  const properlyIndexedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
   const taskStartDay = new Date(task.dateToStart);
   const dateIndex = properlyIndexedDays.findIndex(
     (day) => days[taskStartDay.getDay()] === day,
   );
 
-  const daysInDateRange = calculateDaysBetweenDates(
-    new Date(task.dateToStart),
-    new Date(task.dueDate),
+  const daysInDateRange = useMemo(
+    () =>
+      calculateDaysBetweenDates(
+        new Date(task.dateToStart),
+        new Date(task.dueDate),
+      ),
+    [task.dateToStart, task.dueDate],
   );
   const noOfDaysToEnd = 7 - dateIndex;
   const hasOverflowToRight = daysInDateRange > noOfDaysToEnd;
-  const widthForTasksWithOverflowToRight = hasOverflowToRight //remove right padding if task has overflow to right(if tasks does not end on that week)
+  const widthForTasksWithOverflowToRight = hasOverflowToRight
     ? noOfDaysToEnd * boxWidth
     : daysInDateRange * boxWidth;
-  const daysRemainingFromSpillOver = calculateDaysBetweenDates(
-    new Date(calendarBoxDate),
-    new Date(task.dueDate),
+
+  const daysRemainingFromSpillOver = useMemo(
+    () =>
+      calculateDaysBetweenDates(
+        new Date(calendarBoxDate),
+        new Date(task.dueDate),
+      ),
+    [JSON.stringify(calendarBoxDate), JSON.stringify(task.dueDate)],
   );
-  const goesAcross = daysRemainingFromSpillOver > 6;
+  const goesAcross = daysRemainingFromSpillOver > 7;
   const doesTaskRunThrough = daysRemainingFromSpillOver > 7; // if tasks spans through the week
   const widthForTasksThatDoesNotStartOnDay = doesTaskRunThrough
     ? boxWidth * 7
     : daysRemainingFromSpillOver * boxWidth;
 
-  // implement heigth or as you may say top
+  // implement height or as you may say top
   const isMonday = calendarIndex === 0;
+  const tasksInRowDateMapping = useMemo(
+    () =>
+      tasksInRow
+        .sort((a, b) => a.taskName.localeCompare(b.taskName))
+        .map((task) => {
+          if (typeof task !== "object") return task;
+          return {
+            dueDate: task?.dueDate,
+            dateToStart: task?.dateToStart,
+          };
+        }),
+    [JSON.stringify(tasksInRow)],
+  );
+  useEffect(() => {
+    const calculateTop = () => {
+      const margin = index * 4;
+      const taskbarHeight = 36;
+      const mondayTop = index * taskbarHeight + margin;
+      if (isMonday) {
+        return mondayTop;
+      }
+      if (
+        typeof calendarRowTaskPositionObject !== "object" ||
+        Object.keys(calendarRowTaskPositionObject).length === 0
+      ) {
+        return 0;
+      }
 
-  const [top, setTop] = useState(0);
+      const taskTimeFrame = {
+        startDate: task.dateToStart,
+        dueDate: task.dueDate,
+      };
 
-  const calculateTop = () => {
-    const mondayTop =
-      /* doesNotStartOnDay
-    ?*/ index * 36 /* height of taskbar */ +
-      40 /*hieght of top header */ +
-      index * 4; //margin
-    if (isMonday) {
-      return mondayTop;
-    }
-    const localTaskPositionString = localStorage.getItem(
-      "localTaskPositionObject",
-    );
-    const localTaskPositionObject = localTaskPositionString
-      ? JSON.parse(localTaskPositionString)
-      : null;
-    const rowTaskPositionObj =
-      typeof localTaskPositionObject === "object"
-        ? localTaskPositionObject?.[rowKey]
-        : null;
-    if (
-      typeof rowTaskPositionObj !== "object" ||
-      Object.keys(rowTaskPositionObj).length === 0
-    ) {
-      return 40;
-    }
+      for (let i = 0; ; i += 40) {
+        let isAvailable = true;
 
-    const taskTimeFrame = {
-      startDate: task.dateToStart,
-      dueDate: task.dueDate,
-    };
+        for (const key in calendarRowTaskPositionObject) {
+          const taskPositionObj = calendarRowTaskPositionObject[key];
+          const currentTaskTimeFrame = {
+            startDate: taskPositionObj.dateToStart,
+            dueDate: taskPositionObj.dueDate,
+          };
 
-    for (let i = 40; ; i += 40) {
-      let isAvailable = true;
+          if (key === task._id) return taskPositionObj.top;
 
-      for (const key in rowTaskPositionObj) {
-        const taskPositionObj = rowTaskPositionObj[key];
-        const currentTaskTimeFrame = {
-          startDate: taskPositionObj.dateToStart,
-          dueDate: taskPositionObj.dueDate,
-        };
-
-        if (key === task._id) return taskPositionObj.top;
-
-        if (doTimeFramesOverlap(taskTimeFrame, currentTaskTimeFrame)) {
-          if (i === taskPositionObj.top) {
+          if (
+            doTimeFramesOverlap(taskTimeFrame, currentTaskTimeFrame) &&
+            i === taskPositionObj.top
+          ) {
             isAvailable = false;
             break;
           }
         }
-      }
 
-      if (isAvailable) {
-        return i;
+        if (isAvailable) {
+          return i;
+        }
       }
-    }
-  };
-
-  useEffect(() => {
+    };
     const newTop = calculateTop();
-    const localTaskPositionString = localStorage.getItem(
-      "localTaskPositionObject",
-    );
-    const localTaskPositionObject = localTaskPositionString
-      ? JSON.parse(localTaskPositionString)
-      : {};
-    const parsedLocalRowTaskPositionObj = localTaskPositionObject?.[rowKey]
-      ? localTaskPositionObject?.[rowKey]
-      : {};
 
-    localStorage.setItem(
-      `localTaskPositionObject`,
-      JSON.stringify({
-        ...localTaskPositionObject,
-        [rowKey]: {
-          ...parsedLocalRowTaskPositionObj,
-          [task._id]: {
-            dateToStart: task.dateToStart,
-            dueDate: task.dueDate,
-            top: newTop,
-          },
-        },
-      }),
-    );
+    calendarRowTaskPositionObject[task._id] = {
+      dateToStart: task.dateToStart,
+      dueDate: task.dueDate,
+      top: newTop,
+    };
     setTop(newTop);
-  }, [task, tasksThatStartOnDay]);
-  // useEffect(() => {
-  //   setTaskHoverStatusObj({ [task._id]: true });
-  //   setTaskHoverStatusObj({ [task._id]: false });
-  // }, [top]);
+    return () => {
+      delete calendarRowTaskPositionObject[task._id];
+    };
+  }, [tasksInRow.length, JSON.stringify(tasksInRowDateMapping)]);
 
-  /*
-  NOTE: this will only run for all except mondays 
-  function that calculates position top
-  1. first create new obj that gets all task that fall on timeframe
-  2. then use a for loop to increment from lowest top position and check if it is already occupied till top is found
-  */
   const handleMouseEnter = () => {
+    calendarTaskbarHoverStatusObj[task._id] = true;
+    setShowCheckMark(true);
     if (goesAcross || hasOverflowToRight || doesNotStartOnDay) {
       setTaskHoverStatusObj({ [task._id]: true });
-      setShowCheckMark(true);
     }
   };
   const handleMouseLeave = () => {
+    calendarTaskbarHoverStatusObj[task._id] = false;
+    setShowCheckMark(false);
     if (goesAcross || hasOverflowToRight || doesNotStartOnDay) {
       setTaskHoverStatusObj({ [task._id]: false });
-      setShowCheckMark(false);
     }
   };
 
   const handleDeleteTask = async () => {
-    console.log("handling task");
     try {
       const response = await fetch("/api/task/" + task._id, {
         method: "DELETE",
@@ -194,6 +184,34 @@ const CalendarTaskBar = ({
       console.error(error);
     }
   };
+
+  const handleUpdateTask = async () => {
+    const body = { taskName: "random" + Math.random() };
+    try {
+      const response = await fetch("/api/task/" + task._id, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
+      console.log(response.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleTaskDateChange = async () => {
+    const NewTaskDueDate = new Date(task.dueDate);
+    NewTaskDueDate.setDate(NewTaskDueDate.getDate() + 1);
+    const body = { dueDate: NewTaskDueDate };
+    try {
+      const response = await fetch("/api/task/" + task._id, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
+      console.log(response.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const dragStart = (e: DragEvent) => {
     if (e.dataTransfer) {
       e.dataTransfer.setData("text/plain", task._id);
@@ -202,13 +220,13 @@ const CalendarTaskBar = ({
   return (
     <div
       onClick={() => {
-        console.log(goesAcross);
-        console.log(hasOverflowToRight);
+        console.log(daysRemainingFromSpillOver);
+        console.log(task._id);
       }}
     >
       <div
         key={task._id + index}
-        onClick={() => console.log(calculateTop())}
+        // onClick={() => console.log(calculateTop())}
         style={{
           width: doesNotStartOnDay
             ? widthForTasksThatDoesNotStartOnDay
@@ -228,26 +246,17 @@ const CalendarTaskBar = ({
            hasOverflowToRight &&
            !doesNotStartOnDay &&
            "rounded-r-none border-r-0"
-         } ${goesAcross && "border-r-0"} ${
-           doesTaskRunThrough && "rounded-r-none"
-         } ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
+         } 
+         ${goesAcross && "border-r-0"}
+         ${doesTaskRunThrough && "rounded-r-none"}
+         ${doesNotStartOnDay && "rounded-l-none border-l-0 "}
          ${
            taskHoverStatusObj?.[task._id]
              ? "border-accent-blue"
              : "border-border-default"
          }  `}
-          style={
-            {
-              // width: doesNotStartOnDay
-              //   ? widthForTasksThatDoesNotStartOnDay
-              //   : widthForTasksWithOverflowToRight,
-              // left: doesNotStartOnDay ? 0 : padding / 2,
-              // top: calculateTop(),
-            }
-          }
           onClick={() =>
             console.log(
-              noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
               index,
               new Date(task.dateToStart).toDateString(),
               new Date(task.dueDate).toDateString(),
@@ -276,6 +285,12 @@ const CalendarTaskBar = ({
           <div className="flex-1 truncate whitespace-nowrap">
             {task.taskName}
           </div>
+
+          {/* <div className="flex [&>button]:mx-4 [&>button]:border [&>button]:px-4">
+            <button onClick={() => setTop(0)}>reset top</button>
+            <button onClick={handleUpdateTask}>change name</button>
+            <button onClick={handleTaskDateChange}>change date</button>
+          </div> */}
           <i onClick={handleDeleteTask} className="px-4 hover:border">
             <AiOutlineDelete />
           </i>

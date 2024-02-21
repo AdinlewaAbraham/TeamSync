@@ -6,7 +6,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get("userToken")?.value;
-    console.log(token);
+    // console.log(token);
     const response = await fetch(process.env.API_HOST + "/user/", {
       method: "GET",
       headers: {

@@ -9,6 +9,7 @@ import React, {
   useState,
   useContext,
   useEffect,
+  useRef,
 } from "react";
 
 export type GeneralContextType = {
@@ -30,6 +31,7 @@ export type GeneralContextType = {
   setTaskComponentHeight: (c: number) => void;
   taskHoverStatusObj: TaskHoverStatusObj;
   setTaskHoverStatusObj: (c: TaskHoverStatusObj) => void;
+  calendarTaskbarHoverStatusObj: { [key: string]: boolean };
   userProject: Project | null;
   setUserProject: (c: Project | null) => void;
 };
@@ -53,6 +55,7 @@ const GeneralContext = createContext<GeneralContextType>({
   setTaskComponentHeight: () => {},
   taskHoverStatusObj: { shutUpTs: true },
   setTaskHoverStatusObj: () => {},
+  calendarTaskbarHoverStatusObj: {},
   userProject: null,
   setUserProject: () => {},
 });
@@ -81,6 +84,8 @@ export const GeneralContextProvider = ({
   const [taskComponentHeight, setTaskComponentHeight] = useState(0);
   const [taskHoverStatusObj, setTaskHoverStatusObj] =
     useState<TaskHoverStatusObj>({ shutUpTs: true });
+
+  const calendarTaskbarHoverStatusObj = {};
 
   useEffect(() => {
     const localStoredWidthString = localStorage.getItem("localSidebarWidth");
@@ -113,6 +118,7 @@ export const GeneralContextProvider = ({
         setTaskComponentHeight,
         taskHoverStatusObj,
         setTaskHoverStatusObj,
+        calendarTaskbarHoverStatusObj,
         userProject,
         setUserProject,
       }}
@@ -121,5 +127,4 @@ export const GeneralContextProvider = ({
     </GeneralContext.Provider>
   );
 };
-
 export const useGlobalContext = () => useContext(GeneralContext);

@@ -42,9 +42,10 @@ export default function RootLayout({
     };
     handleUser();
   });
+
   return (
     <html lang="en" className="h-full w-full ">
-      <body className={`${inter.className} flex-1`}>
+      <body className={`${inter.className}  flex-1`}>
         <GeneralContextProvider>
           {pathname.startsWith("/login") ||
           pathname.startsWith("/signup") ||

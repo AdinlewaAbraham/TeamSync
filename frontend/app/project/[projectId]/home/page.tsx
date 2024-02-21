@@ -17,6 +17,7 @@ import Project from "@/interfaces/project";
 const page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject, activeWorkspace } =
     useGlobalContext();
+
   const [showAddLinkModal, setShowAddLinkModal] = useState(false);
   const [contentStateJSON, setContentStateJSON] =
     useState<RawDraftContentState>();
@@ -32,7 +33,9 @@ const page = ({ params }: { params: { projectId: string } }) => {
         projectDescription ||
         convertToRaw(EditorState.createEmpty().getCurrentContent());
       setContentStateJSON(contentStateJSON);
+
       contentStateJSON.entityMap = {};
+
       if (contentStateJSON) {
         console.log(contentStateJSON);
         const contentState = convertFromRaw(contentStateJSON);

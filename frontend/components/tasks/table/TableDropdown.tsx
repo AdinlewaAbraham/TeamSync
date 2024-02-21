@@ -110,13 +110,13 @@ const TableDropdown = ({
     >
       <header
         onClick={hanldeToggleMainComponent}
-        className="max-w-full overflow-hidden cursor-pointer 
+        className="max-w-full cursor-pointer overflow-hidden 
         bg-bg-secondary px-8"
       >
         <div
           className={`${
             !showMainComponent ? "border-transparent" : "border-border-default"
-          } border-b flex  h-12 items-center font-medium`}
+          } flex h-12  items-center border-b font-medium`}
         >
           <i
             className={` px-2 ${
@@ -138,19 +138,16 @@ const TableDropdown = ({
       <AnimatePresence>
         {showMainComponent && (
           <motion.main>
-            {localSection.tasks.map((task) => {
-              if (typeof task === "string") {
-                return <div key={task}>loading comp</div>;
-              } else {
-                return (
+            {localSection.tasks.map(
+              (task) =>
+                typeof task === "object" && (
                   <TaskRowComponent
                     task={task}
                     tableColumsRenderArray={tableColumsRenderArray}
                     key={task._id}
                   />
-                );
-              }
-            })}
+                ),
+            )}
 
             {showAddTaskComponent ? (
               <div

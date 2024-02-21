@@ -19,17 +19,19 @@ const SubLayoutReusableNavbarNavbarItem = ({
     (lowercaseTitle === "tasks" &&
       pathNameFragment[pathNameFragment.length - 2] === "tasks");
   return (
-    <Link href={href.toLowerCase()} key={title}>
-      <li
-        className={` flex cursor-pointer items-center p-2 px-1 text-sm text-muted-dark transition-colors duration-150 hover:text-white
+    <li className="px-1">
+      <Link
+        href={href.toLowerCase()}
+        key={title}
+        className={` flex cursor-pointer items-center px-1 pb-1 text-sm font-medium text-muted-dark transition-colors duration-150 hover:text-white
         ${
           isCurrentTab ? "navbarBorderB text-white" : "navbarBorderBHover"
         } border-white`}
       >
         {icon && <i className="mr-1">{icon}</i>}
         {title.charAt(0).toUpperCase() + title.substring(1)}
-      </li>
-    </Link>
+      </Link>
+    </li>
   );
 };
 

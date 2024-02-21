@@ -1,20 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import CalendarBox from "./CalendarBox";
 import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
 import Task from "@/interfaces/task";
 import Project from "@/interfaces/project";
-const CalendarRow = ({
-  project,
-  dateArr,
-  projectId,
-  monthIndex,
-  rowIndex,
-  currentMonth,
-  currentYear,
-  taskWithDateRange,
-  setCurrentMonth,
-  setCurrentYear,
-}: {
+import CalendarRowTaskPositionObject from "@/interfaces/calendarRowTaskPositionObject";
+import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
+
+type Props = {
   project: Project | null;
   dateArr: Date[];
   projectId: string;
@@ -25,8 +23,21 @@ const CalendarRow = ({
   currentYear: number;
   setCurrentMonth: (c: number) => void;
   setCurrentYear: (c: number) => void;
+  showWeekend: boolean;
+};
+const CalendarRow: React.FC<Props> = ({
+  project,
+  dateArr,
+  projectId,
+  monthIndex,
+  rowIndex,
+  currentMonth,
+  currentYear,
+  taskWithDateRange,
+  setCurrentMonth,
+  setCurrentYear,
+  showWeekend,
 }) => {
-  const [rowTaskPositionObj, setRowTaskPositionObj] = useState<any>();
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
 
@@ -51,14 +62,35 @@ const CalendarRow = ({
     }
   }, []);
 
-  // useEffect(() => {
-  //   localStorage.removeItem("localTaskPositionObject");
-  // }, [taskWithDateRange]);
+  const calendarRowTaskPositionObject: CalendarRowTaskPositionObject = useRef(
+    {},
+  ).current;
+  const tasksInRow = useMemo(
+    () =>
+      taskWithDateRange.filter((task) => {
+        if (typeof task !== "object") return false;
+        const firstRowDate = new Date(dateArr[0]);
+        const lastRowDate = new Date(dateArr[dateArr.length - 1]);
+        const taskStartDate = new Date(task.dateToStart);
+        const taskDueDate = new Date(task.dueDate);
 
+        const rowDateTimeframe = {
+          startDate: firstRowDate,
+          dueDate: lastRowDate,
+        };
+        const taskDateTimeframe = {
+          startDate: taskStartDate,
+          dueDate: taskDueDate,
+        };
+
+        return doTimeFramesOverlap(rowDateTimeframe, taskDateTimeframe);
+      }),
+    [JSON.stringify(taskWithDateRange)],
+  );
   return (
     <ul
-      className="relative grid grid-flow-col grid-cols-7"
-      // onClick={() => console.log(JSON.parse(localStorage.getItem(rowKey)))}
+      className="relative flex"
+      onClick={() => console.log(tasksInRow.length)}
       key={rowKey}
     >
       <div
@@ -78,6 +110,7 @@ const CalendarRow = ({
           rowIndex={rowIndex}
           index={index}
           taskWithDateRange={taskWithDateRange}
+          tasksInRow={tasksInRow as Task[]}
           key={index + new Date(date).getMonth()}
           currentMonth={currentMonth}
           currentYear={currentYear}
@@ -85,6 +118,8 @@ const CalendarRow = ({
           setCurrentYear={setCurrentYear}
           rowKey={rowKey}
           rowWidth={rowWidth}
+          calendarRowTaskPositionObject={calendarRowTaskPositionObject}
+          showWeekend={showWeekend}
         />
       ))}
     </ul>

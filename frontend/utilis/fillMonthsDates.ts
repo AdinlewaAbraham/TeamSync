@@ -1,3 +1,4 @@
+import { days, properlyIndexedDays } from "@/constants/calendar";
 import generateDates from "./generateDates";
 import { getNextMonthDays, getPrevMonthDays } from "./getMonthDays";
 
@@ -18,8 +19,6 @@ export const fillMonthsDates: FillMonthsDates = (
   lastDayPushedProp,
 ) => {
   let lastDayPushed: Date | null = lastDayPushedProp;
-  const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   return monthsDates.map((month, index) => {
     const dates: Date[] = JSON.parse(JSON.stringify(month.dates));
 
@@ -52,10 +51,6 @@ export const fillMonthsDates: FillMonthsDates = (
     } else {
       daysToUnshit =
         noOfDaysToUnshift === 0 ? [] : prevMonthDays.slice(-noOfDaysToUnshift);
-    }
-    if (index === 0) {
-      console.log(daysToUnshit);
-      console.log(noOfDaysToUnshift);
     }
     dates.unshift(...daysToUnshit);
 

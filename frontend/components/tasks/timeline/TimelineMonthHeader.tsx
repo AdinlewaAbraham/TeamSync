@@ -11,7 +11,10 @@ const TimelineMonthHeader = ({
   } | null;
 }) => {
   return (
-    <div className="flex flex-col" key={month.name + month.year + "header"}>
+    <div
+      className="flex flex-col text-xs"
+      key={month.name + month.year + "header"}
+    >
       <div className="sticky left-0 max-w-max px-2 ">
         {month.name} {month.year}
       </div>
@@ -36,7 +39,7 @@ const TimelineMonthHeader = ({
          } flex items-center justify-center `}
               onClick={() => console.log(day)}
             >
-              {index + 1}
+              {day.getDate()}
             </div>
           );
         })}

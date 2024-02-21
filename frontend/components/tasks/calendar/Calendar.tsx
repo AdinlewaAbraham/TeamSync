@@ -1,24 +1,30 @@
-import React, { useEffect, useMemo, useRef, useState, MouseEvent } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  MouseEvent,
+  useCallback,
+} from "react";
 import CalendarRow from "./CalendarRow";
 import { MdAccessTime, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
-import generateDatesForFourMonths from "@/utilis/generateDatesMonths";
-import generateDates from "@/utilis/generateDates";
-import TaskHoverStatusObj from "@/interfaces/taskHoverStatusObj";
-import Project from "@/interfaces/project";
-import { useGlobalContext } from "@/context/GeneralContext";
 import { fillMonthsDates } from "@/utilis/fillMonthsDates";
 import generateDatesMonths from "@/utilis/generateDatesMonths";
 import { fillMonthsDatesReverse } from "@/utilis/fillMonthsDatesReverse";
 import Task from "@/interfaces/task";
+import {
+  days,
+  daysWithoutWeekend,
+  hideWeekendDayWidth,
+} from "@/constants/calendar";
+import Project from "@/interfaces/project";
 
-const Calendar = ({
-  paramsProjectId,
-  project,
-}: {
+type Props = {
   paramsProjectId: string;
   project: Project | null;
-}) => {
-  if (!project) return <>loading</>;
+};
+
+const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
   const currentDate = new Date();
   const cM = currentDate.getMonth();
   const cY = currentDate.getFullYear();
@@ -26,19 +32,27 @@ const Calendar = ({
   const prevMonth = cM === 0 ? 11 : cM - 1;
   const prevYear = cM === 0 ? cY - 1 : cY;
 
-  const fillEdFourMonths = fillMonthsDates(
-    generateDatesMonths(prevYear, prevMonth, 4),
-    null,
-  );
+  const filledFourMonths = useRef(
+    fillMonthsDates(generateDatesMonths(prevYear, prevMonth, 4), null),
+  ).current;
 
   const [currentMonth, setCurrentMonth] = useState<number>(cM);
   const [currentYear, setCurrentYear] = useState<number>(cY);
-  const [filledMonthsDates, setFilledMonthsDates] = useState(fillEdFourMonths);
+  const setCurrentMonthCallback = useCallback(
+    (value: number) => setCurrentMonth(value),
+    [],
+  );
+
+  const [showWeekend, setShowWeekend] = useState(false);
+
+  const setCurrentYearCallback = useCallback(
+    (value: number) => setCurrentYear(value),
+    [],
+  );
+
+  const [filledMonthsDates, setFilledMonthsDates] = useState(filledFourMonths);
 
   const calendarBoxScollParent = useRef(null);
-
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const properlyIndexedDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const months = [
     "January",
@@ -61,6 +75,7 @@ const Calendar = ({
       date1.getDate() === date2.getDate()
     );
   }
+
   const addNextMonth = () => {
     const lastMonthInFilledMonthsDates =
       filledMonthsDates[filledMonthsDates.length - 1];
@@ -158,6 +173,7 @@ const Calendar = ({
     }
     monthElementToScrollTo?.scrollIntoView({ behavior: "smooth" });
   };
+
   const goToNextMonth = () => {
     let _currentMonth;
     let _currentYear = currentYear;
@@ -172,7 +188,6 @@ const Calendar = ({
     }
     scrollToElement(_currentMonth, _currentYear, true);
   };
-
   const goToPrevMonth = () => {
     let _currentMonth;
     let _currentYear = currentYear;
@@ -188,24 +203,6 @@ const Calendar = ({
     scrollToElement(_currentMonth, _currentYear, false);
   };
 
-  // get all tasks in project
-  const allTasks = useMemo(
-    () =>
-      project.sections
-        .map((section) => {
-          if (typeof section === "string") return;
-          return section.tasks;
-        })
-        .flat(1),
-    [project.sections],
-  );
-  const taskWithDateRange = allTasks.filter((task) => {
-    if (typeof task !== "object") return;
-    return task?.dateToStart && task.dueDate;
-  });
-  useMemo(() => {
-    localStorage.removeItem("localTaskPositionObject");
-  }, [project.sections]);
   useEffect(() => {
     const todayElement = document.getElementsByClassName("today");
     if (todayElement[0]) {
@@ -232,6 +229,29 @@ const Calendar = ({
       addNextMonth();
     }
   };
+
+  // get all tasks in project
+  const allTasks = useMemo(() => {
+    if (!project) return [];
+    return project.sections
+      .map((section) => {
+        if (typeof section === "string") return;
+        return section.tasks;
+      })
+      .flat(1);
+  }, [project?.sections]);
+
+  const taskWithDateRange = useMemo(
+    () =>
+      allTasks.filter((task) => {
+        if (typeof task !== "object") return;
+        return task?.dateToStart && task.dueDate;
+      }),
+    [allTasks],
+  );
+
+  if (!project) return <>loading</>;
+
   console.log("i rerendered");
   return (
     <div className="flex flex-1 select-none flex-col">
@@ -239,12 +259,12 @@ const Calendar = ({
         <div
           className="flex items-center text-muted-dark 
            [&>i]:flex [&>i]:h-9 [&>i]:w-7
-       [&>i]:cursor-pointer [&>i]:items-center [&>i]:justify-center  [&>i]:rounded-lg  [&>i]:text-lg 
-       [&>i]:text-muted-dark [&>i]:transition-colors [&>i]:duration-150  hover:[&>i]:bg-menuItem-active hover:[&>i]:text-white   "
+           [&>i]:cursor-pointer [&>i]:items-center [&>i]:justify-center  [&>i]:rounded-lg  [&>i]:text-lg 
+          [&>i]:text-muted-dark [&>i]:transition-colors [&>i]:duration-150  hover:[&>i]:bg-menuItem-active hover:[&>i]:text-white   "
         >
           <button
             className="flex h-9 items-center justify-center rounded-lg border border-border-default px-2
-        hover:border-white hover:bg-menuItem-hover hover:text-white"
+            text-xs hover:border-white hover:bg-menuItem-hover hover:text-white"
             onClick={() => {
               const todayElement = document.getElementsByClassName("today");
               if (todayElement[0]) {
@@ -261,33 +281,49 @@ const Calendar = ({
             <MdNavigateNext />
           </i>
           <div className="text-xl text-white">
-            {months[currentMonth]} {cY !== currentYear && currentYear}
+            {months[currentMonth]} {currentYear}
           </div>
         </div>
         <div className="flex">
           {/* <button onClick={}> back </button>
           <button onClick={}>forward</button> */}
 
-          <div>month view</div>
+          {/* <div>month view</div>
           <div>filter</div>
-          <div>color</div>
+          <div>color</div> */}
+          {JSON.stringify(showWeekend)}
+          <input
+            type="checkbox"
+            checked={showWeekend}
+            onChange={(e) => setShowWeekend(e.target.checked)}
+          />
         </div>
       </nav>
       <div className=" border-border-defaultt flex flex-1 flex-col rounded-l-lg  ">
         <header>
           <ul
-            className="flex w-full border-b border-border-default
-           py-1 pr-[18px] text-sm  last:border-r-0 [&>li]:w-[calc(100%/7)]
-         [&>li]:pl-2 [&>li]:text-muted-dark"
+            className={`first-letter: flex w-full border-b
+            border-border-default py-1  pr-[18px] 
+            last:border-r-0 [&>li]:pl-2 [&>li]:text-muted-dark
+            ${
+              showWeekend
+                ? "[&>li]:w-[calc(100%/7)]"
+                : `[&>li]:w-[calc(100%-${88}px/5)]`
+            }
+            `}
+            style={{
+              paddingLeft: showWeekend ? 0 : hideWeekendDayWidth,
+              paddingRight: showWeekend ? 0 : hideWeekendDayWidth,
+            }}
           >
-            {days.map((day, index) => (
+            {(showWeekend ? days : daysWithoutWeekend).map((day, index) => (
               <li
-                className={`border- border-border-default ${
+                className={`border- border-border-default text-xs font-medium ${
                   index === days.length ? "" : ""
                 } `}
                 key={index}
               >
-                {day}
+                {day.toUpperCase()}
               </li>
             ))}
           </ul>
@@ -297,7 +333,7 @@ const Calendar = ({
             className="absolute inset-0 h-full overflow-y-auto overflow-x-hidden"
             id="calendarBoxScollParent"
             ref={calendarBoxScollParent}
-            onScroll={handleSCroll}
+            // onScroll={handleSCroll}
           >
             {filledMonthsDates.map((month, monthIndex) => (
               <li
@@ -321,9 +357,10 @@ const Calendar = ({
                       taskWithDateRange={taskWithDateRange}
                       currentMonth={currentMonth}
                       currentYear={currentYear}
-                      setCurrentMonth={setCurrentMonth}
-                      setCurrentYear={setCurrentYear}
+                      setCurrentMonth={setCurrentMonthCallback}
+                      setCurrentYear={setCurrentYearCallback}
                       key={rowKey}
+                      showWeekend={showWeekend}
                     />
                   );
                 })}

@@ -36,10 +36,8 @@ const SidebarIconComponent = ({
       </div>
       {showToolTip && (
         <motion.div
-          // initial={{ opacity: 0 }}
-          // animate={
-          //   showToolTip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }
-          // }
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0, delay: 0.5 }}
           className="whitespace-nowrap rounded-lg bg-menuItem-active p-2 text-xs"
           ref={setPopperElement}

@@ -50,7 +50,7 @@ const layout = ({
     getProject();
   }, [params.projectId]);
   useTrackProject(params.projectId, activeProject, setActiveProject);
-  const navbarBaseUrl = "/project/" + activeProject?._id + "/";
+  const navbarBaseUrl = "/project/" + params.projectId + "/";
   const navbarItemsArray = [
     {
       href: navbarBaseUrl + "home",
@@ -75,6 +75,11 @@ const layout = ({
     {
       href: navbarBaseUrl + "timeline",
       title: "Timeline",
+      icon: <FaChartLine />,
+    },
+    {
+      href: navbarBaseUrl + "map",
+      title: "map",
       icon: <FaChartLine />,
     },
     {
