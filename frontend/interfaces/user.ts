@@ -8,5 +8,4 @@ export default interface User {
   userDisplayImage: string;
   workspaces: Workspace[];
   activeWorkspaceId: string;
-  privateNote: string;
 }
