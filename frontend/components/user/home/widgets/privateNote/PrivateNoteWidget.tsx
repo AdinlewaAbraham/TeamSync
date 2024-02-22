@@ -17,7 +17,7 @@ const PrivateNoteWidget = () => {
 
   useEffect(() => {
     if (user) {
-      const projectDescriptionString = user.privateNote;
+      const projectDescriptionString = null;
       const projectDescription = projectDescriptionString
         ? JSON.parse(projectDescriptionString)
         : null;
@@ -51,7 +51,7 @@ const PrivateNoteWidget = () => {
         });
         console.log(response.status);
         const data = await response.json();
-        setUser({ ...user, privateNote: data });
+        // setUser({ ...user, privateNote: data });
       } catch (error) {
         console.error(error);
       }
