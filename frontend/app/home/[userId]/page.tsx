@@ -9,7 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const page: React.FC = () => {
+const Page: React.FC = () => {
   const { userId } = useParams();
   const [showAddWidgetSideBar, setShowAddWidgetSideBar] = useState(false);
   const [isMouseDownOnSidebarWidget, setIsMouseDownOnSidebarWidget] =
@@ -61,4 +61,4 @@ const page: React.FC = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -10,10 +10,10 @@ import Project from "@/interfaces/project";
 import Section from "@/interfaces/section";
 import Board from "@/components/tasks/board/Board";
 
-const page = ({ params }: { params: { projectId: string } }) => {
+const Page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject } = useGlobalContext();
 
   return <Board paramsProjectId={params.projectId} project={activeProject} />;
 };
 
-export default page;
+export default Page;

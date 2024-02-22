@@ -1,7 +1,7 @@
 "use client";
 import MindMap from "@/components/tasks/mindMap/MindMap";
 
-const page = () => {
+const Page = () => {
   return (
     <div className="flex-1">
       <MindMap />
@@ -9,4 +9,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -21,9 +21,9 @@ export interface TimelineSectionObj {
   };
 }
 
-const page = ({ params }: { params: { projectId: string } }) => {
+const Page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject } = useGlobalContext();
   return <Timeline paramProjectId={params.projectId} project={activeProject} />;
 };
 
-export default page;
+export default Page;

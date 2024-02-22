@@ -3,7 +3,7 @@ import Board from "@/components/tasks/board/Board";
 import { useGlobalContext } from "@/context/GeneralContext";
 import React from "react";
 
-const page: React.FC<{
+const Page: React.FC<{
   params: { userId: string };
 }> = ({ params }) => {
   console.log(params.userId);
@@ -11,4 +11,4 @@ const page: React.FC<{
   return <Board paramsProjectId={params.userId} project={userProject} />;
 };
 
-export default page;
+export default Page;

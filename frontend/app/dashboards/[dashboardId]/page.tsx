@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const page = () => {
-  return (
-    <div>shows all the report with charts and stuff</div>
-  )
-}
+const Page = () => {
+  return <div>shows all the report with charts and stuff</div>;
+};
 
-export default page
+export default Page;

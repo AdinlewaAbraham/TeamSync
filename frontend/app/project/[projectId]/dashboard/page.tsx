@@ -3,7 +3,7 @@ import DashboardWidgetsComponent from "@/components/dashboard/widgets/DashboardW
 import generateDates from "@/utilis/generateDates";
 import React from "react";
 const months = generateDates(2023, 8);
-const page = () => {
+const Page = () => {
   return (
     <div className="relative flex-1 ">
       <div className="absolute inset-0 overflow-auto">
@@ -13,4 +13,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

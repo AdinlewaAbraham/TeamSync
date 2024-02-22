@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const page = () => {
-  return (
-    <div>maybe redirect to project board </div>
-  )
-}
+const Page = () => {
+  return <div>maybe redirect to project board </div>;
+};
 
-export default page
+export default Page;

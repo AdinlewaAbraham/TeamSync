@@ -14,7 +14,7 @@ import ProjectPrivacyComponent from "@/components/project/home/projectPrivacy/Pr
 import WYSIWYGEditor from "@/components/editor/RichTextEditor";
 import { fetchWithAuth } from "@/app/api/fetchWithAuth";
 import Project from "@/interfaces/project";
-const page = ({ params }: { params: { projectId: string } }) => {
+const Page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject, activeWorkspace } =
     useGlobalContext();
 
@@ -125,4 +125,4 @@ const page = ({ params }: { params: { projectId: string } }) => {
   );
 };
 
-export default page;
+export default Page;

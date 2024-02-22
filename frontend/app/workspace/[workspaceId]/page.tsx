@@ -5,7 +5,7 @@ import fetchUser from "@/helpers/user/fetchUser";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-const page = () => {
+const Page = () => {
   const { user, setUser } = useGlobalContext();
   const router = useRouter();
   useEffect(() => {
@@ -23,4 +23,4 @@ const page = () => {
   return <LoadingComponent />;
 };
 
-export default page;
+export default Page;

@@ -2,8 +2,8 @@
 import MainLayout from "@/components/others/MainLayout";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   return <>redirect to default</>;
 };
 
-export default page;
+export default Page;

@@ -14,6 +14,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import ProjectNode from "./nodeTypes/ProjectNode";
+import "@/styles/tree.css";
 
 const MindMap = () => {
   const initialNodes: Node[] = [
@@ -42,7 +43,13 @@ const MindMap = () => {
   const nodeTypes = { projectNode: ProjectNode };
 
   const initialEdges: Edge[] = [
-    { id: "e1-2", source: "1", target: "2", type: "new",  },
+    {
+      id: "e1-2",
+      source: "1",
+      target: "2",
+      type: "simplebezier",
+      style: { width: 5 },
+    },
     { id: "e2-3", source: "2", target: "3", animated: true },
   ];
 

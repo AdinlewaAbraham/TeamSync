@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 export type ProjectViewType = "board" | "calendar" | "timeline" | "table";
 
-const page = () => {
+const Page = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDefaultView, setProjectDefaultView] =
     useState<ProjectViewType>("board");
@@ -42,4 +42,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

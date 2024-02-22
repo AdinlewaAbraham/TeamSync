@@ -25,10 +25,10 @@ import {
 import Task from "@/interfaces/task";
 import Table from "@/components/tasks/table/Table";
 
-const page = ({ params }: { params: { projectId: string } }) => {
+const Page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
 
   return <Table paramsProjectId={params.projectId} project={activeProject} />;
 };
 
-export default page;
+export default Page;

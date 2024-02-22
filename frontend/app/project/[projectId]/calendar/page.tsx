@@ -13,7 +13,7 @@ import Task from "@/interfaces/task";
 import CalendarRow from "@/components/tasks/calendar/CalendarRow";
 import Calendar from "@/components/tasks/calendar/Calendar";
 
-const page = ({ params }: { params: { projectId: string } }) => {
+const Page = ({ params }: { params: { projectId: string } }) => {
   const { activeProject, setActiveProject } = useGlobalContext();
 
   useEffect(() => {
@@ -37,11 +37,8 @@ const page = ({ params }: { params: { projectId: string } }) => {
   }, []);
 
   return (
-    <Calendar
-      paramsProjectId={params.projectId}
-      project={activeProject}
-    />
+    <Calendar paramsProjectId={params.projectId} project={activeProject} />
   );
 };
 
-export default page;
+export default Page;

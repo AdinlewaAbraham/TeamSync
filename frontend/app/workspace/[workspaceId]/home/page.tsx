@@ -6,7 +6,7 @@ import { useGlobalContext } from "@/context/GeneralContext";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-const page = ({ params }: { params: { workspaceId: string } }) => {
+const Page = ({ params }: { params: { workspaceId: string } }) => {
   const { activeWorkspace, user } = useGlobalContext();
 
   const router = useRouter();
@@ -17,7 +17,7 @@ const page = ({ params }: { params: { workspaceId: string } }) => {
   }, [user?.activeWorkspaceId]);
 
   return (
-    <div className="absolute inset-0 h-auto overflow-y-auto flex flex-1 justify-center gap-4 p-6 min-h-0 flex-grow">
+    <div className="absolute inset-0 flex h-auto min-h-0 flex-1 flex-grow justify-center gap-4 overflow-y-auto p-6">
       <div className="flex w-[70%] max-w-[600px] flex-col gap-4">
         <WorkspaceMembersComponent />
         <WorkspaceProjectComponent />
@@ -29,4 +29,4 @@ const page = ({ params }: { params: { workspaceId: string } }) => {
   );
 };
 
-export default page;
+export default Page;

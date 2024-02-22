@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const pages = () => {
-  return (
-    <div>show all the fies for the project</div>
-  )
-}
+const Pages = () => {
+  return <div>show all the fies for the project</div>;
+};
 
-export default pages
+export default Pages;
