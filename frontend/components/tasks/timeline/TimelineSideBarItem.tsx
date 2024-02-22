@@ -13,24 +13,24 @@ const TimelineSideBarItem = ({
   timelineSectionObj: TimelineSectionObj | undefined;
   setTimelineSectionObj: (c: TimelineSectionObj) => void;
 }) => {
-  if (typeof section !== "object") return;
   const [sectionDateObj, setSectionDateObj] = useState({
     showComponent: false,
     componentHeight: 52,
   });
-
+  const sectionId = typeof section === "object" ? section._id : section;
   useEffect(() => {
-    if (timelineSectionObj) {
+    if (timelineSectionObj && typeof section === "object") {
       const sectionDate = timelineSectionObj[section._id];
       if (sectionDate) {
         setSectionDateObj(sectionDate);
       }
     }
-  }, [timelineSectionObj, section._id]);
+  }, [timelineSectionObj, sectionId]);
 
   const handleTextSave = (text: string) => {
     console.log(text);
   };
+  if (typeof section !== "object") return <></>;
   return (
     <div
       key={section._id}

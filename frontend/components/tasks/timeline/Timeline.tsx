@@ -247,6 +247,7 @@ const Timeline = ({
                       section={section}
                       timelineSectionObj={timelineSectionObj}
                       setTimelineSectionObj={setTimelineSectionObj}
+                      key={typeof section === "string" ? section : section._id}
                     />
                   ))}
                 </div>

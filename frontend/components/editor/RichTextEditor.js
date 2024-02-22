@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Draft from "draft-js";
 import "./rich.css";
 import {
@@ -35,7 +35,6 @@ export default class WYSIWYGEditor extends React.Component {
         : EditorState.createEmpty(),
       isFocused: false,
     };
-    this.focus = () => this.refs.editor.focus();
     this.onChange = (editorState) => this.setState({ editorState });
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
     this.mapKeyToEditorCommand = this._mapKeyToEditorCommand.bind(this);
@@ -84,6 +83,8 @@ export default class WYSIWYGEditor extends React.Component {
         className += " RichEditor-hidePlaceholder";
       }
     }
+    const editorRef = useRef(null);
+    const focus = () => editorRef.current.focus();
 
     const editorContent = editorState.getCurrentContent();
     const contentStateJSON = convertToRaw(editorContent);
@@ -111,9 +112,8 @@ export default class WYSIWYGEditor extends React.Component {
         ${
           !turnOffBorders && (isFocused ? "border-white" : "border-transparent")
         } ${!turnOffBorders && "rounded-lg border"} bg-bg-secondary`}
-        onClick={this.focus}
+        onClick={focus}
       >
-        
         <div className={`${this.props.editorClasses} ${className} max-w-full`}>
           <Editor
             blockStyleFn={getBlockStyle}
@@ -123,7 +123,7 @@ export default class WYSIWYGEditor extends React.Component {
             keyBindingFn={this.mapKeyToEditorCommand}
             onChange={this.onChange}
             placeholder={this.props.placeholder}
-            ref="editor"
+            ref={editorRef}
             spellCheck={true}
             onBlur={handleBlur}
             onFocus={handleFocus}

@@ -193,6 +193,7 @@ const Sidebar = () => {
                       menuName={SidebarComponentObj.menuName}
                       redirectLink={SidebarComponentObj.redirectLink}
                       iconComp={SidebarComponentObj.icon}
+                      key={SidebarComponentObj.menuName}
                     />
                   ))}
                 </div>

@@ -107,12 +107,14 @@ const WidgetComponents = ({
     >
       {widgetsArray.map((WidgetRenderSettings) => (
         <WidgetDraggableWrapper
-          children={renderWidget(WidgetRenderSettings)}
           WidgetRenderSettings={WidgetRenderSettings}
           widgetsArray={widgetsArray}
           setWidgetsArray={setWidgetsArray}
           isMouseDownOnSidebarWidget={isMouseDownOnSidebarWidget}
-        />
+          key={WidgetRenderSettings.type}
+        >
+          {renderWidget(WidgetRenderSettings)}
+        </WidgetDraggableWrapper>
       ))}
     </div>
   );

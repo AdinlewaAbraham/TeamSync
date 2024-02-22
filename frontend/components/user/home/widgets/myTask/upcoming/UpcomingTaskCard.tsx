@@ -7,10 +7,11 @@ const UpcomingTaskCard = ({ task }: { task: Task }) => {
   return (
     <TaskCardWrapper
       task={task}
-      children={<>hello</>}
       key={task._id + task.rowNumber + task.projectId + "Jesus loves you"}
       alwaysShowChild={false}
-    />
+    >
+      <>hello</>
+    </TaskCardWrapper>
   );
 };
 

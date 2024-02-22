@@ -47,6 +47,7 @@ const ProjectVisualizerComponent = ({
                 const isActiveNavItem = navitem === projectDefaultView;
                 return (
                   <div
+                    key={navitem}
                     className={`${
                       isActiveNavItem
                         ? "navbarBorderB text-"

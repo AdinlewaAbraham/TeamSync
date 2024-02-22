@@ -48,10 +48,9 @@ const SubLayoutReusableNavbar = ({
         >
           <div className="ml-4 flex flex-col">
             <div className="flex h-full items-center">
-              <div
-                className="mr-2 flex h-12 w-12 items-center justify-center rounded-lg bg-[#4573d2] text-3xl"
-                children={<FcCalendar />}
-              />
+              <div className="mr-2 flex h-12 w-12 items-center justify-center rounded-lg bg-[#4573d2] text-3xl">
+                <FcCalendar />
+              </div>
               <div>
                 <div className="flex">
                   <h1 className="">

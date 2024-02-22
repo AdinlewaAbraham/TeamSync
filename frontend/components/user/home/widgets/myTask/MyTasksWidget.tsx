@@ -44,6 +44,7 @@ const MyTasksWidget = () => {
                       : "navbarBorderBHover"
                   } ml-2 px-2 py-1 text-sm text-muted-dark first:ml-0`}
                   onClick={() => setactiveComponent(navItem)}
+                  key={navItem}
                 >
                   {navItem}
                 </li>

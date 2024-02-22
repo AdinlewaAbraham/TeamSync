@@ -34,9 +34,9 @@ const TableDropdown = ({
   );
   const [showAddTaskComponent, setShowAddTaskComponent] = useState(false);
 
-  if (typeof localSection === "string") return <>loading component</>;
   const [taskName, setTaskName] = useState<string>("");
   const addTask = async () => {
+    if (typeof localSection === "string") return;
     setShowAddTaskComponent(false);
     if (!projectId || !taskName) return;
 
@@ -76,7 +76,8 @@ const TableDropdown = ({
   }, [taskName]);
 
   const hanldeToggleMainComponent = (e: MouseEvent) => {
-    if (typeof localStorage !== "object") return;
+    if (typeof localSection === "string" || typeof localStorage !== "object")
+      return;
 
     const clickTarget = e.target as HTMLElement;
     if (clickTarget.closest(".tableHeader")) return;
@@ -103,6 +104,7 @@ const TableDropdown = ({
     console.log(text);
   };
 
+  if (typeof localSection === "string") return <>loading component</>;
   return (
     <div
       key={typeof section === "string" ? section : section._id}

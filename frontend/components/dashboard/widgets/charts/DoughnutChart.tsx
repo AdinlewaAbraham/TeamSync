@@ -26,10 +26,9 @@ const DoughnutChart = () => {
   };
   return (
     <div>
-      <Doughnut
-        data={data}
-        children={<div className="text-[30px]">12</div>}
-      />
+      <Doughnut data={data}>
+        <div className="text-[30px]">12</div>
+      </Doughnut>
     </div>
   );
 };

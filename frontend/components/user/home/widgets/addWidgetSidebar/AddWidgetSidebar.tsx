@@ -79,13 +79,14 @@ const AddWidgetSidebar = ({
             </div>
             {widgetTypes.map((widgetType) => (
               <SidebarWidgetDraggableComponentWrapper
-                children={widgetType}
                 widgetType={widgetType}
                 key={widgetType}
                 widgetTypes={widgetTypes}
                 setWidgetTypes={setWidgetTypes}
                 setIsMouseDownOnSidebarWidget={setIsMouseDownOnSidebarWidget}
-              />
+              >
+                {widgetType}
+              </SidebarWidgetDraggableComponentWrapper>
             ))}
           </div>
         </div>

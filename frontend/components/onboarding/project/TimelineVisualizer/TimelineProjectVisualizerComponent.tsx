@@ -124,7 +124,10 @@ const TimelineProjectVisualizerComponent = () => {
     <div className="relative flex flex-1">
       <div className="absolute inset-0 grid max-h-full flex-1 grid-flow-col grid-cols-5 overflow-hidden">
         {Array.from({ length: 5 }).map((undefined, ColumnIndex) => (
-          <div className="border-r border-border-default ">
+          <div
+            className="border-r border-border-default "
+            key={"visual" + ColumnIndex}
+          >
             <TaskRowVisualizerComponent
               key={ColumnIndex}
               ColumnIndex={ColumnIndex}
