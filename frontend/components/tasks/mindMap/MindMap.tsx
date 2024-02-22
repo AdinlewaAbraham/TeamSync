@@ -11,6 +11,9 @@ import ReactFlow, {
   addEdge,
   Node,
   Edge,
+  NodeChange,
+  EdgeChange,
+  Connection,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import ProjectNode from "./nodeTypes/ProjectNode";
@@ -57,15 +60,17 @@ const MindMap = () => {
   const [edges, setEdges] = useState(initialEdges);
 
   const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    (changes: NodeChange[]) =>
+      setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes],
   );
   const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    (changes: EdgeChange[]) =>
+      setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges],
   );
   const onConnect = useCallback(
-    (connection) => {
+    (connection: Edge | Connection) => {
       console.log(connection);
       setEdges((eds) => addEdge(connection, eds));
     },

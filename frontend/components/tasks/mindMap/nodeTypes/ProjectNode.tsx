@@ -11,9 +11,9 @@ type Props = {
 const ProjectNode: React.FC<Props> = ({ data, isConnectable }) => {
   console.log(data, isConnectable);
 
-  const onChange = useCallback((evt) => {
-    console.log(evt.target.value);
-  }, []);
+  // const onChange = useCallback((evt) => {
+  //   console.log(evt.target.value);
+  // }, []);
 
   const { orientation } = useMindMapStore();
   return (
