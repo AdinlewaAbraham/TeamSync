@@ -11,7 +11,7 @@ import {
 } from "next/navigation";
 import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 
-const layout = ({
+const Layout = ({
   children,
   params,
 }: {
@@ -71,4 +71,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;

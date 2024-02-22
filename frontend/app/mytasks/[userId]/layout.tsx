@@ -6,7 +6,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { BiSolidBarChartAlt2 } from "react-icons/bi";
 import { FaChartLine, FaRegCalendar, FaRegListAlt } from "react-icons/fa";
 
-const layout: React.FC<{
+const Layout: React.FC<{
   params: { userId: string };
   children: ReactNode;
 }> = ({ params, children }) => {
@@ -60,4 +60,4 @@ const layout: React.FC<{
   );
 };
 
-export default layout;
+export default Layout;

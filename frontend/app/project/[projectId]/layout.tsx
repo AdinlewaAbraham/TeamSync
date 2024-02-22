@@ -14,7 +14,7 @@ import Project from "@/interfaces/project";
 import { fetchAndHelpRedirect } from "@/helpers/redirect";
 import LayoutHeaderSideComponent from "@/components/project/LayoutHeaderSideComponent";
 
-const layout = ({
+const Layout = ({
   params,
   children,
 }: {
@@ -171,4 +171,4 @@ const layout = ({
   );
 };
 
-export default layout;
+export default Layout;
