@@ -58,6 +58,7 @@ const Layout = ({
           },
         ]}
         showNavbar={showNavbar}
+        hanldeTextSave={(text)=>{console.log(text)}}
       />
 
       <button
