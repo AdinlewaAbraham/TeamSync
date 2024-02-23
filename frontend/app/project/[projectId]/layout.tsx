@@ -33,6 +33,7 @@ const Layout = ({
   useEffect(() => {
     const getProject = async () => {
       const response = await fetchProject(params.projectId);
+      console.log(response?.status)
       if (!response) {
         console.log("something went wrong ");
         return;
