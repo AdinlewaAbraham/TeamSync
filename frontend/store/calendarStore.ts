@@ -1,12 +1,11 @@
+import Task from "@/interfaces/task";
 import { create } from "zustand";
 
-export type CalendarInputBoxObjectType = {
-  taskName: string;
-  startDate: Date;
+export type InputTaskPropObject = {
+  _id: string;
   dueDate: Date;
+  dateToStart: Date;
 };
- type CalendarInputBoxObject = CalendarInputBoxObjectType | null;
-
 type CalendarState = {
   showWeekend: boolean;
   setShowWeekend: (c: boolean) => void;
@@ -14,10 +13,12 @@ type CalendarState = {
   setCurrentMonth: (c: number) => void;
   currentYear: number;
   setCurrentYear: (c: number) => void;
-  calendarInputBoxObject: CalendarInputBoxObject;
-  setCalendarInputBoxObject: (c: CalendarInputBoxObject) => void;
   newTaskDuration: number;
   setNewTaskDuration: (c: number) => void;
+  taskWithDateRange: (Task | InputTaskPropObject)[];
+  setTaskWithDateRange: (c: (Task | InputTaskPropObject)[]) => void;
+  newTaskName: string;
+  setNewTaskName: (c: string) => void;
 };
 
 const currentDate = new Date();
@@ -31,11 +32,12 @@ export const useAuth = create<CalendarState>((set, get) => ({
   setCurrentMonth: (currentMonth) => set({ currentMonth }),
   currentYear: cY,
   setCurrentYear: (currentYear) => set({ currentYear }),
-  calendarInputBoxObject: null,
-  setCalendarInputBoxObject: (calendarInputBoxObject) =>
-    set({ calendarInputBoxObject }),
   newTaskDuration: 3,
   setNewTaskDuration: (newTaskDuration) => set({ newTaskDuration }),
+  taskWithDateRange: [],
+  setTaskWithDateRange: (taskWithDateRange) => set({ taskWithDateRange }),
+  newTaskName: "",
+  setNewTaskName: (newTaskName) => set({ newTaskName }),
 }));
 
 export function useCalendarStore() {

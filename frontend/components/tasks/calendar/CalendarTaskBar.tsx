@@ -13,36 +13,39 @@ import {
   hideWeekendDayWidth,
   properlyIndexedDays,
 } from "@/constants/calendar";
-import { useCalendarStore } from "@/store/calendarStore";
+import { InputTaskPropObject, useCalendarStore } from "@/store/calendarStore";
 import { calculateTop } from "@/utilis/calculateTop";
 import { taskbarHeight } from "@/constants/taskBar";
 import { isSameDay } from "@/utilis/isSameDay";
+import CalendarBoxInput from "./CalendarBoxInput";
+import Project from "@/interfaces/project";
+import { Timeframe } from "@/interfaces/timeframe";
+import doDateFallWithinTimeframe from "@/utilis/doDateFallWithinTimeframe";
+import { isWeekend } from "@/utilis/isWeekend";
 
 type Props = {
   index: number;
   task: Task;
   isLast: boolean;
   calendarBoxDate: Date;
-  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame: number;
-  calendarIndex: number;
-  rowKey: string;
   boxWidth: number;
-  tasksThatStartOnDay: (Task | undefined | string)[];
-  tasksInRow: Task[];
+  tasksInRow: (Task | InputTaskPropObject)[];
   calendarRowTaskPositionObject: CalendarRowTaskPositionObject;
+  projectId: string;
+  project: Project | null;
+  rowTimeframe: Timeframe;
 };
 const CalendarTaskBar: React.FC<Props> = ({
   index,
   task,
   isLast,
   calendarBoxDate,
-  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame,
-  calendarIndex,
-  rowKey,
   boxWidth,
-  tasksThatStartOnDay,
   tasksInRow,
   calendarRowTaskPositionObject,
+  projectId,
+  project,
+  rowTimeframe,
 }) => {
   const {
     setTaskHoverStatusObj,
@@ -59,6 +62,8 @@ const CalendarTaskBar: React.FC<Props> = ({
   const taskDueDate = new Date(task.dueDate);
 
   const doesNotStartOnDay = !isSameDay(taskDateToStart, calendarBoxDate);
+
+  const isInput = task._id === "input";
 
   const dateIndex = properlyIndexedDays.findIndex(
     (day) =>
@@ -100,15 +105,13 @@ const CalendarTaskBar: React.FC<Props> = ({
 
   const tasksInRowDateMapping = useMemo(
     () =>
-      tasksInRow
-        .sort((a, b) => a.taskName.localeCompare(b.taskName))
-        .map((task) => {
-          if (typeof task !== "object") return task;
-          return {
-            dueDate: task?.dueDate,
-            dateToStart: task?.dateToStart,
-          };
-        }),
+      tasksInRow.map((task) => {
+        if (typeof task !== "object") return task;
+        return {
+          dueDate: task?.dueDate,
+          dateToStart: task?.dateToStart,
+        };
+      }),
     [JSON.stringify(tasksInRow)],
   );
 
@@ -138,6 +141,7 @@ const CalendarTaskBar: React.FC<Props> = ({
   ]);
 
   const handleMouseEnter = () => {
+    if (isInput) return;
     calendarTaskbarHoverStatusObj[task._id] = true;
     setShowCheckMark(true);
     if (doesTaskRunThrough || hasOverflowToRight || doesNotStartOnDay) {
@@ -145,6 +149,7 @@ const CalendarTaskBar: React.FC<Props> = ({
     }
   };
   const handleMouseLeave = () => {
+    if (isInput) return;
     calendarTaskbarHoverStatusObj[task._id] = false;
     setShowCheckMark(false);
     if (doesTaskRunThrough || hasOverflowToRight || doesNotStartOnDay) {
@@ -210,13 +215,39 @@ const CalendarTaskBar: React.FC<Props> = ({
   const doesTaskStartAndEndOnWeekend =
     taskDateToStart.getDay() === 0 && taskDueDate.getDay() === 6;
 
+  const findWeekendOverlapCount = () => {
+    const taskTimeframe = {
+      dateToStart: calendarBoxDate,
+      dueDate:
+        taskDueDate.getTime() < new Date(rowTimeframe.dueDate).getTime()
+          ? taskDueDate
+          : rowTimeframe.dueDate,
+    };
+    const weekendDatesInrowTimeframe = [];
+
+    for (
+      let date = new Date(rowTimeframe.dateToStart);
+      date.getTime() <= new Date(rowTimeframe.dueDate).getTime();
+      date.setDate(date.getDate() + 1)
+    ) {
+      if (isWeekend(date)) {
+        weekendDatesInrowTimeframe.push(new Date(date));
+      }
+    }
+
+    let overlapCount = 0;
+
+    for (const date of weekendDatesInrowTimeframe) {
+      if (doDateFallWithinTimeframe(taskTimeframe, date)) {
+        overlapCount++;
+      }
+    }
+
+    return overlapCount;
+  };
+
   const weekendBoxCutoffWidth =
-    (doesTaskStartAndEndOnWeekend && numOfDaysInTaskDateRange === 7) ||
-    (doesNotStartOnDay && daysRemainingFromSpillOver >= 7)
-      ? (boxWidth - hideWeekendDayWidth) * 2
-      : doesTaskStartOrEndOnWeekend || hasOverflowToRight || doesNotStartOnDay
-        ? boxWidth - hideWeekendDayWidth
-        : 0;
+    (boxWidth - hideWeekendDayWidth) * findWeekendOverlapCount();
 
   const taskbarContainerAdditionalClasses = [
     hasOverflowToRight && !doesNotStartOnDay && "pr-0",
@@ -230,6 +261,7 @@ const CalendarTaskBar: React.FC<Props> = ({
     doesTaskRunThrough && "border-r-0",
     doesTaskRunThrough && "rounded-r-none",
     doesNotStartOnDay && "rounded-l-none border-l-0",
+    !isInput && "px-3 py-1 hover:border-accent-blue",
     taskHoverStatusObj?.[task._id]
       ? "border-accent-blue"
       : "border-border-default",
@@ -238,8 +270,9 @@ const CalendarTaskBar: React.FC<Props> = ({
   return (
     <div
       onClick={() => {
+        findWeekendOverlapCount();
         console.log(noOfDaysToEnd);
-        console.log(boxWidth);
+        console.log(hasOverflowToRight);
         console.log(showWeekend ? 0 : weekendBoxCutoffWidth);
       }}
       className="taskBar" // do not remove classname "taskbar"
@@ -261,7 +294,7 @@ const CalendarTaskBar: React.FC<Props> = ({
         <div
           key={task._id}
           className={` group z-50 flex w-full cursor-pointer items-center rounded-lg 
-          border-2 bg-bg-secondary px-3 py-1 text-xs transition-colors duration-150 hover:border-accent-blue
+          border-2 bg-bg-secondary text-xs transition-colors duration-150 
           ${taskbarAdditionalClasses.join(" ")}`}
           style={{
             height: taskbarHeight,
@@ -271,32 +304,43 @@ const CalendarTaskBar: React.FC<Props> = ({
           draggable
           onDragStart={dragStart}
         >
-          <AnimatePresence>
-            {showCheckMark && (
-              <motion.div
-                initial={{ x: -20 }}
-                animate={{ x: 0 }}
-                exit={{ x: 20 }}
-                transition={{ duration: 0.15 }}
-                className="mr-1 hidden items-center justify-center overflow-hidden text-[22px] text-gray-500
+          {isInput ? (
+            <CalendarBoxInput
+              autoFocus={isSameDay(calendarBoxDate, task.dateToStart)}
+              projectId={projectId}
+              task={task}
+              project={project}
+            />
+          ) : (
+            <>
+              <AnimatePresence>
+                {showCheckMark && (
+                  <motion.div
+                    initial={{ x: -20 }}
+                    animate={{ x: 0 }}
+                    exit={{ x: 20 }}
+                    transition={{ duration: 0.15 }}
+                    className="mr-1 hidden items-center justify-center overflow-hidden text-[22px] text-gray-500
                 group-hover:flex hover:text-accent-green "
-              >
-                <BiCheckCircle />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="flex-1 truncate whitespace-nowrap">
-            {task.taskName}
-          </div>
+                  >
+                    <BiCheckCircle />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className="flex-1 truncate whitespace-nowrap">
+                {task.taskName}
+              </div>
 
-          {/* <div className="flex [&>button]:mx-4 [&>button]:border [&>button]:px-4">
-            <button onClick={() => setTop(0)}>reset top</button>
-            <button onClick={handleUpdateTask}>change name</button>
-            <button onClick={handleTaskDateChange}>change date</button>
-          </div> */}
-          <i onClick={handleDeleteTask} className="px-4 hover:border">
-            <AiOutlineDelete />
-          </i>
+              {/* <div className="flex [&>button]:mx-4 [&>button]:border [&>button]:px-4">
+                <button onClick={() => setTop(0)}>reset top</button>
+                <button onClick={handleUpdateTask}>change name</button>
+                <button onClick={handleTaskDateChange}>change date</button>
+              </div> */}
+              <i onClick={handleDeleteTask} className="px-4 hover:border">
+                <AiOutlineDelete />
+              </i>
+            </>
+          )}
         </div>
       </div>
     </div>

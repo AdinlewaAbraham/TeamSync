@@ -19,7 +19,6 @@ type Props = {
   projectId: string;
   monthIndex: number;
   rowIndex: number;
-  taskWithDateRange: (string | Task | undefined)[];
 };
 const CalendarRow: React.FC<Props> = ({
   project,
@@ -27,10 +26,14 @@ const CalendarRow: React.FC<Props> = ({
   projectId,
   monthIndex,
   rowIndex,
-  taskWithDateRange,
 }) => {
-  const { currentMonth, currentYear, setCurrentMonth, setCurrentYear } =
-    useCalendarStore();
+  const {
+    currentMonth,
+    currentYear,
+    setCurrentMonth,
+    setCurrentYear,
+    taskWithDateRange,
+  } = useCalendarStore();
 
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
@@ -81,6 +84,11 @@ const CalendarRow: React.FC<Props> = ({
       }),
     [JSON.stringify(taskWithDateRange)],
   );
+
+  const rowTimeframe = {
+    dateToStart: dateArr[0],
+    dueDate: dateArr[dateArr.length - 1],
+  };
   return (
     <ul
       className="relative flex"
@@ -102,13 +110,12 @@ const CalendarRow: React.FC<Props> = ({
           }
           monthIndex={monthIndex}
           rowIndex={rowIndex}
-          calendarBoxIndex={index}
-          taskWithDateRange={taskWithDateRange}
-          tasksInRow={tasksInRow as Task[]}
+          tasksInRow={tasksInRow}
           key={index + new Date(date).getMonth()}
           rowKey={rowKey}
           rowWidth={rowWidth}
           calendarRowTaskPositionObject={calendarRowTaskPositionObject}
+          rowTimeframe={rowTimeframe}
         />
       ))}
     </ul>

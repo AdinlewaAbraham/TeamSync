@@ -22,40 +22,39 @@ import {
   months,
   properlyIndexedDays,
 } from "@/constants/calendar";
-import { useCalendarStore } from "@/store/calendarStore";
+import { InputTaskPropObject, useCalendarStore } from "@/store/calendarStore";
 import { calculateTop } from "@/utilis/calculateTop";
 import calculateDaysBetweenDates from "@/utilis/calculateDaysBetweenDates";
 import { isSameDay } from "@/utilis/isSameDay";
 import doDateFallWithinTimeframe from "@/utilis/doDateFallWithinTimeframe";
 import CalendarBoxInput from "./CalendarBoxInput";
+import { Timeframe } from "@/interfaces/timeframe";
 
 type Props = {
   project: Project | null;
   calendarBoxDate: Date;
   projectId: string;
   highlight: boolean;
-  calendarBoxIndex: number;
   monthIndex: number;
   rowIndex: number;
-  taskWithDateRange: (string | Task | undefined)[];
-  tasksInRow: Task[];
+  tasksInRow: (Task | InputTaskPropObject)[];
   rowKey: string;
   rowWidth: number;
   calendarRowTaskPositionObject: CalendarRowTaskPositionObject;
+  rowTimeframe: Timeframe;
 };
 const CalendarBox: React.FC<Props> = ({
   project,
   calendarBoxDate,
   projectId,
   highlight,
-  calendarBoxIndex,
   monthIndex,
   rowIndex,
-  taskWithDateRange,
   tasksInRow,
   rowKey,
   rowWidth,
   calendarRowTaskPositionObject,
+  rowTimeframe,
 }) => {
   const {
     currentMonth,
@@ -63,8 +62,9 @@ const CalendarBox: React.FC<Props> = ({
     setCurrentMonth,
     setCurrentYear,
     showWeekend,
-    setCalendarInputBoxObject,
     newTaskDuration,
+    setTaskWithDateRange,
+    taskWithDateRange,
   } = useCalendarStore();
 
   const [taskName, setTaskName] = useState<string>("");
@@ -119,27 +119,9 @@ const CalendarBox: React.FC<Props> = ({
     (day) => days[calendarBoxDate.getDay()] === day,
   );
 
-  const numberOfTasksThatStartOnDay = useMemo(
-    () =>
-      taskWithDateRange.filter((task) => {
-        if (typeof task !== "object") return false;
-
-        const taskDateToStart = new Date(task.dateToStart);
-        if (
-          taskDateToStart.getMonth() === calendarBoxDate.getMonth() &&
-          taskDateToStart.getDate() === calendarBoxDate.getDate() &&
-          taskDateToStart.getFullYear() === calendarBoxDate.getFullYear()
-        ) {
-          return true;
-        }
-        return false;
-      }).length,
-    [taskWithDateRange],
-  );
-
   const tasksThatStartOnDay = useMemo(
     () =>
-      taskWithDateRange.filter((task) => {
+      tasksInRow.filter((task) => {
         if (typeof task !== "object") return false;
 
         const taskDateToStart = new Date(task.dateToStart);
@@ -158,20 +140,8 @@ const CalendarBox: React.FC<Props> = ({
 
         return false;
       }),
-    [taskWithDateRange],
+    [tasksInRow],
   ) as Task[];
-
-  const noOfDaysThatDoesNotStartOnDayButFallInTimeFrame =
-    taskWithDateRange.filter((task) => {
-      if (typeof task !== "object") return false;
-      const taskDueDate = new Date(task.dueDate);
-      const taskDateToStart = new Date(task.dateToStart);
-      return (
-        calendarBoxDate <= taskDueDate &&
-        calendarBoxDate >= taskDateToStart &&
-        !isSameDay(taskDateToStart, calendarBoxDate)
-      );
-    }).length;
 
   const handleCalendarClick = (e: MouseEvent) => {
     const clickTarget = e.target as HTMLElement;
@@ -181,11 +151,15 @@ const CalendarBox: React.FC<Props> = ({
     ) {
       console.log("you just clicked on taskbar");
     } else {
-      setCalendarInputBoxObject({
-        dueDate: newTaskDueDate,
-        startDate: calendarBoxDate,
-        taskName: "",
-      });
+      setTaskWithDateRange([
+        ...taskWithDateRange,
+        { _id: "input", dueDate: newTaskDueDate, dateToStart: calendarBoxDate },
+      ]);
+      // setCalendarInputBoxObject({
+      //   dueDate: newTaskDueDate,
+      //   startDate: calendarBoxDate,
+      //   taskName: "",
+      // });
     }
   };
 
@@ -277,27 +251,16 @@ const CalendarBox: React.FC<Props> = ({
                 task={task}
                 isLast={isLast}
                 calendarBoxDate={calendarBoxDate}
-                noOfDaysThatDoesNotStartOnDayButFallInTimeFrame={
-                  noOfDaysThatDoesNotStartOnDayButFallInTimeFrame
-                }
-                calendarIndex={dateIndex}
-                rowKey={rowKey}
                 boxWidth={boxWidth}
-                tasksThatStartOnDay={tasksThatStartOnDay}
                 key={task._id}
                 calendarRowTaskPositionObject={calendarRowTaskPositionObject}
                 tasksInRow={tasksInRow}
+                projectId={projectId}
+                project={project}
+                rowTimeframe={rowTimeframe}
               />
             );
           })}
-        <CalendarBoxInput
-          projectId={projectId}
-          boxWidth={boxWidth}
-          calendarBoxDate={calendarBoxDate}
-          calendarRowTaskPositionObject={calendarRowTaskPositionObject}
-          tasksThatStartOnDayLength={tasksThatStartOnDay.length}
-          project={project}
-        />
       </div>
     </li>
   );

@@ -43,6 +43,7 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
     setCurrentYear,
     newTaskDuration,
     setNewTaskDuration,
+    setTaskWithDateRange,
   } = useCalendarStore();
 
   const filledFourMonths = useRef(
@@ -208,14 +209,18 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
       .flat(1);
   }, [project?.sections]);
 
-  const taskWithDateRange = useMemo(
+  const taskWithDateRangeDefault = useMemo(
     () =>
       allTasks.filter((task) => {
-        if (typeof task !== "object") return;
-        return task?.dateToStart && task.dueDate;
+        if (typeof task !== "object") return false;
+        return task?.dateToStart && task?.dueDate;
       }),
     [allTasks],
-  );
+  ) as Task[];
+
+  useEffect(() => {
+    setTaskWithDateRange(taskWithDateRangeDefault);
+  }, [taskWithDateRangeDefault]);
 
   if (!project) return <>loading</>;
 
@@ -258,7 +263,7 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
           {/* <div>month view</div>
           <div>filter</div>
           <div>color</div> */}
-          
+
           {newTaskDuration}
           <input
             type="number"
@@ -331,7 +336,6 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
                       monthIndex={monthIndex}
                       rowIndex={rowIndex}
                       projectId={paramsProjectId}
-                      taskWithDateRange={taskWithDateRange}
                       key={rowKey}
                     />
                   );

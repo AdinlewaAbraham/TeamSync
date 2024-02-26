@@ -1,8 +1,7 @@
+import { Timeframe } from "@/interfaces/timeframe";
+
 export default function doDateFallWithinTimeframe(
-  timeframe: {
-    dateToStart: Date;
-    dueDate: Date;
-  },
+  timeframe: Timeframe,
   date: Date,
 ): boolean {
   const dateToStart = new Date(timeframe.dateToStart);
