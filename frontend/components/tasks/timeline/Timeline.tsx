@@ -7,6 +7,7 @@ import TimelineSideBarItem from "@/components/tasks/timeline/TimelineSideBarItem
 import TimelineMonthComponent from "@/components/tasks/timeline/TimelineMonthComponent";
 import { TimelineSectionObj } from "@/app/project/[projectId]/timeline/page";
 import generateDatesMonths from "@/utilis/generateDatesMonths";
+import TimelineSideBar from "./TimelineSideBar";
 
 const Timeline = ({
   paramProjectId,
@@ -237,21 +238,12 @@ const Timeline = ({
           <div className="h-full w-[200px]">
             <div className="flex h-full flex-1 flex-col">
               <div className="h-[50px] w-full border-b border-border-default" />
-              <div className="relative h-full flex-1 overflow-y-hidden border-r border-border-default">
-                <div
-                  className="absolute inset-0 flex-1 overflow-y-hidden"
-                  ref={sidebarRef}
-                >
-                  {project.sections.map((section) => (
-                    <TimelineSideBarItem
-                      section={section}
-                      timelineSectionObj={timelineSectionObj}
-                      setTimelineSectionObj={setTimelineSectionObj}
-                      key={typeof section === "string" ? section : section._id}
-                    />
-                  ))}
-                </div>
-              </div>
+              <TimelineSideBar
+                sections={project.sections}
+                sidebarRef={sidebarRef}
+                timelineSectionObj={timelineSectionObj}
+                setTimelineSectionObj={setTimelineSectionObj}
+              />
             </div>
           </div>
           <div className="relative flex-1">

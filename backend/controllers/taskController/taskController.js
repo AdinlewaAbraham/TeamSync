@@ -37,20 +37,9 @@ const updateTask = asyncHandler(async (req, res) => {
 const createTask = asyncHandler(async (req, res) => {
   const { taskName, projectId, sectionId, dueDate, dateToStart, rowNumber } =
     await req.body;
-  if (
-    !taskName ||
-    !projectId ||
-    (dueDate && dateToStart && !rowNumber && rowNumber !== 0)
-  ) {
+  if (!taskName || !projectId) {
     console.log("bad request");
-    console.log(
-      taskName,
-      projectId,
-      sectionId,
-      dateToStart,
-      dueDate,
-      rowNumber
-    );
+    console.log(taskName, projectId, sectionId, dateToStart, dueDate);
     return res.status(403).json({ message: "bad request" });
   }
   console.log(taskName, projectId, sectionId, dateToStart, dueDate);

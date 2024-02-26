@@ -16,8 +16,10 @@ import {
   days,
   daysWithoutWeekend,
   hideWeekendDayWidth,
+  months,
 } from "@/constants/calendar";
 import Project from "@/interfaces/project";
+import { useCalendarStore } from "@/store/calendarStore";
 
 type Props = {
   paramsProjectId: string;
@@ -32,49 +34,24 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
   const prevMonth = cM === 0 ? 11 : cM - 1;
   const prevYear = cM === 0 ? cY - 1 : cY;
 
+  const {
+    showWeekend,
+    setShowWeekend,
+    currentMonth,
+    currentYear,
+    setCurrentMonth,
+    setCurrentYear,
+    newTaskDuration,
+    setNewTaskDuration,
+  } = useCalendarStore();
+
   const filledFourMonths = useRef(
     fillMonthsDates(generateDatesMonths(prevYear, prevMonth, 4), null),
   ).current;
 
-  const [currentMonth, setCurrentMonth] = useState<number>(cM);
-  const [currentYear, setCurrentYear] = useState<number>(cY);
-  const setCurrentMonthCallback = useCallback(
-    (value: number) => setCurrentMonth(value),
-    [],
-  );
-
-  const [showWeekend, setShowWeekend] = useState(false);
-
-  const setCurrentYearCallback = useCallback(
-    (value: number) => setCurrentYear(value),
-    [],
-  );
-
   const [filledMonthsDates, setFilledMonthsDates] = useState(filledFourMonths);
 
   const calendarBoxScollParent = useRef(null);
-
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  function isSameDay(date1: Date, date2: Date) {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  }
 
   const addNextMonth = () => {
     const lastMonthInFilledMonthsDates =
@@ -84,30 +61,22 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
       (month) =>
         month.toLowerCase() === lastMonthInFilledMonthsDates.name.toLowerCase(),
     );
-    const lastMonthYear = lastMonthInFilledMonthsDates.year;
     if (lastMonthIndex !== -1) {
-      const isLastMonthInYear = lastMonthIndex === 11;
-      const getDateMonth = isLastMonthInYear ? 0 : lastMonthIndex + 1;
-      const getDateYear = isLastMonthInYear ? lastMonthYear + 1 : lastMonthYear;
-
       let generateDatesYear = lastMonthInFilledMonthsDates.year;
-      let generateDatesMonth =
-        months.findIndex(
-          (month) =>
-            month.toLowerCase() ===
-            lastMonthInFilledMonthsDates.name.toLowerCase(),
-        ) + 1;
+      let generateDatesMonth = lastMonthIndex + 1;
 
       if (generateDatesMonth >= 12) {
         generateDatesMonth = 0;
         generateDatesYear++;
       }
-      console.log(generateDatesYear, generateDatesMonth);
+
+      const DatesArrInLastMonthInFilledMonthsDates =
+        lastMonthInFilledMonthsDates.dates.flat();
 
       const newFilledMonthsDates = fillMonthsDates(
         generateDatesMonths(generateDatesYear, generateDatesMonth, 3),
-        lastMonthInFilledMonthsDates.dates.flat()[
-          lastMonthInFilledMonthsDates.dates.flat().length - 1
+        DatesArrInLastMonthInFilledMonthsDates[
+          DatesArrInLastMonthInFilledMonthsDates.length - 1
         ],
       );
 
@@ -130,18 +99,12 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
       const firstDateInFilledMonthsDate = filledMonthsDates[0].dates.flat()[0];
 
       let generateDatesYear = filledMonthsDates[0].year;
-      let generateDatesMonth =
-        months.findIndex(
-          (month) =>
-            month.toLowerCase() === filledMonthsDates[0].name.toLowerCase(),
-        ) - 3;
+      let generateDatesMonth = firstMonthIndex - 3;
 
       if (generateDatesMonth < 0) {
         generateDatesMonth += 12;
         generateDatesYear--;
       }
-
-      console.log(generateDatesMonth, generateDatesYear);
 
       const newFilledMonthsDates = fillMonthsDatesReverse(
         generateDatesMonths(generateDatesYear, generateDatesMonth, 3),
@@ -212,13 +175,17 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
 
   const handleSCroll = () => {
     if (!calendarBoxScollParent.current) return;
+
     const threshold = 192;
+
     const calendarBoxScollParentElement =
       calendarBoxScollParent.current as HTMLElement;
+
     const isNearBottom =
       calendarBoxScollParentElement.scrollHeight -
         calendarBoxScollParentElement.scrollTop <=
       calendarBoxScollParentElement.clientHeight + threshold;
+
     const isNearTop = calendarBoxScollParentElement.scrollTop <= threshold;
 
     if (isNearTop) {
@@ -291,6 +258,13 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
           {/* <div>month view</div>
           <div>filter</div>
           <div>color</div> */}
+          
+          {newTaskDuration}
+          <input
+            type="number"
+            value={newTaskDuration}
+            onChange={(e) => setNewTaskDuration(parseInt(e.target.value))}
+          />
           {JSON.stringify(showWeekend)}
           <input
             type="checkbox"
@@ -308,7 +282,7 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
             ${
               showWeekend
                 ? "[&>li]:w-[calc(100%/7)]"
-                : `[&>li]:w-[calc(100%-${88}px/5)]`
+                : `[&>li]:w-[calc(100%/5)]`
             }
             `}
             style={{
@@ -321,6 +295,9 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
                 className={`border- border-border-default text-xs font-medium ${
                   index === days.length ? "" : ""
                 } `}
+                style={{
+                  width: `calc(100% - ${hideWeekendDayWidth * 2}px )`,
+                }}
                 key={index}
               >
                 {day.toUpperCase()}
@@ -333,7 +310,7 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
             className="absolute inset-0 h-full overflow-y-auto overflow-x-hidden"
             id="calendarBoxScollParent"
             ref={calendarBoxScollParent}
-            // onScroll={handleSCroll}
+            onScroll={handleSCroll}
           >
             {filledMonthsDates.map((month, monthIndex) => (
               <li
@@ -355,12 +332,7 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
                       rowIndex={rowIndex}
                       projectId={paramsProjectId}
                       taskWithDateRange={taskWithDateRange}
-                      currentMonth={currentMonth}
-                      currentYear={currentYear}
-                      setCurrentMonth={setCurrentMonthCallback}
-                      setCurrentYear={setCurrentYearCallback}
                       key={rowKey}
-                      showWeekend={showWeekend}
                     />
                   );
                 })}

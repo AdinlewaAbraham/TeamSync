@@ -11,6 +11,7 @@ import Task from "@/interfaces/task";
 import Project from "@/interfaces/project";
 import CalendarRowTaskPositionObject from "@/interfaces/calendarRowTaskPositionObject";
 import doTimeFramesOverlap from "@/utilis/doTimeFramesOverlap";
+import { useCalendarStore } from "@/store/calendarStore";
 
 type Props = {
   project: Project | null;
@@ -19,11 +20,6 @@ type Props = {
   monthIndex: number;
   rowIndex: number;
   taskWithDateRange: (string | Task | undefined)[];
-  currentMonth: number;
-  currentYear: number;
-  setCurrentMonth: (c: number) => void;
-  setCurrentYear: (c: number) => void;
-  showWeekend: boolean;
 };
 const CalendarRow: React.FC<Props> = ({
   project,
@@ -31,13 +27,11 @@ const CalendarRow: React.FC<Props> = ({
   projectId,
   monthIndex,
   rowIndex,
-  currentMonth,
-  currentYear,
   taskWithDateRange,
-  setCurrentMonth,
-  setCurrentYear,
-  showWeekend,
 }) => {
+  const { currentMonth, currentYear, setCurrentMonth, setCurrentYear } =
+    useCalendarStore();
+
   const dateArrLastElementDate = new Date(dateArr[dateArr.length - 1]);
   const rowKey = `${dateArrLastElementDate.getFullYear()}${dateArrLastElementDate.getMonth()}${dateArrLastElementDate.getDate()}${rowIndex}  `;
 
@@ -100,7 +94,7 @@ const CalendarRow: React.FC<Props> = ({
       {dateArr.map((date, index) => (
         <CalendarBox
           project={project}
-          date={new Date(date)}
+          calendarBoxDate={new Date(date)}
           projectId={projectId}
           highlight={
             new Date(date).getMonth() === currentMonth &&
@@ -108,18 +102,13 @@ const CalendarRow: React.FC<Props> = ({
           }
           monthIndex={monthIndex}
           rowIndex={rowIndex}
-          index={index}
+          calendarBoxIndex={index}
           taskWithDateRange={taskWithDateRange}
           tasksInRow={tasksInRow as Task[]}
           key={index + new Date(date).getMonth()}
-          currentMonth={currentMonth}
-          currentYear={currentYear}
-          setCurrentMonth={setCurrentMonth}
-          setCurrentYear={setCurrentYear}
           rowKey={rowKey}
           rowWidth={rowWidth}
           calendarRowTaskPositionObject={calendarRowTaskPositionObject}
-          showWeekend={showWeekend}
         />
       ))}
     </ul>

@@ -35,10 +35,10 @@ const TimelineSideBarItem = ({
     <div
       key={section._id}
       style={{ height: sectionDateObj.componentHeight }}
-      className="overflow-hidden border-b border-border-default"
+      className=" overflow-hidden border-b border-border-default"
       onClick={() => console.log(sectionDateObj.componentHeight)}
     >
-      <div className="sticky top-0 flex h-[52px] items-center">
+      <div className=" flex h-[52px] items-center">
         <i
           className={`cursor-pointer p-2 ${
             sectionDateObj.showComponent ? "rotate-0" : "rotate-[-90deg]"
