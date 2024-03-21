@@ -15,7 +15,7 @@ import {
 import errorHandlerAxiosInstance from "@/utilis/api/client/ErrorHandlerAxios";
 import { useRouter } from "next/navigation";
 
-const login = () => {
+const Login = () => {
   const router = useRouter();
   const handleLogin = async (googleData: CredentialResponse) => {
     console.log(googleData);
@@ -102,4 +102,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;
