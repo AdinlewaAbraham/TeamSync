@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const url = process.env.API_HOST + "/auth/google/";
+    console.log(url)
     const { data, status } = await axios.post(url, await req.json());
 
     const cookieStore = cookies();

@@ -39,7 +39,7 @@ app.use(
   })
 ); 
 const corsOptions = {
-  origin: "http://yourfrontenddomain.com",
+  origin: "https://team-sync-five.vercel.app",
   credentials: true,
 };
 
