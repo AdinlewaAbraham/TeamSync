@@ -17,6 +17,7 @@ const serializeUser = (user) => {
 const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
+    console.log(token)
     if (!token) {
       return res.status(401).json({ message: "include token" });
     }
