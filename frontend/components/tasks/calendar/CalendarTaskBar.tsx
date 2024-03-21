@@ -22,6 +22,7 @@ import Project from "@/interfaces/project";
 import { Timeframe } from "@/interfaces/timeframe";
 import doDateFallWithinTimeframe from "@/utilis/doDateFallWithinTimeframe";
 import { isWeekend } from "@/utilis/isWeekend";
+import { getWeekendCountInTaskTimrframe } from "@/utilis/getWeekendCountInTaskTimrframe";
 
 type Props = {
   index: number;
@@ -57,6 +58,7 @@ const CalendarTaskBar: React.FC<Props> = ({
 
   const [top, setTop] = useState(0);
   const [showCheckMark, setShowCheckMark] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const taskDateToStart = new Date(task.dateToStart);
   const taskDueDate = new Date(task.dueDate);
@@ -82,8 +84,8 @@ const CalendarTaskBar: React.FC<Props> = ({
   const noOfDaysToEnd = 7 - dateIndex;
   const hasOverflowToRight = numOfDaysInTaskDateRange > noOfDaysToEnd;
   const widthForTasksWithOverflowToRight = hasOverflowToRight
-    ? noOfDaysToEnd * boxWidth
-    : numOfDaysInTaskDateRange * boxWidth;
+    ? Math.max(noOfDaysToEnd, 1)
+    : Math.max(numOfDaysInTaskDateRange, 1);
 
   const daysRemainingFromSpillOver = useMemo(
     () =>
@@ -95,9 +97,10 @@ const CalendarTaskBar: React.FC<Props> = ({
   );
 
   const doesTaskRunThrough = daysRemainingFromSpillOver > 7; // if tasks spans through the week
-  console.log(boxWidth);
-  const widthForTasksThatDoesNotStartOnDay =
-    boxWidth * Math.min(7, daysRemainingFromSpillOver);
+  const widthForTasksThatDoesNotStartOnDay = Math.min(
+    7,
+    daysRemainingFromSpillOver,
+  );
 
   const isInFirstDayInDaysArr =
     days[0].substring(0, 3).toLowerCase() ===
@@ -116,8 +119,6 @@ const CalendarTaskBar: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    console.log("i am in an infinity loop");
-
     const newTop = calculateTop(
       task,
       index,
@@ -134,27 +135,45 @@ const CalendarTaskBar: React.FC<Props> = ({
     return () => {
       delete calendarRowTaskPositionObject[task._id];
     };
-  }, [
-    tasksInRow.length,
-    JSON.stringify(tasksInRowDateMapping),
-    JSON.stringify(calendarRowTaskPositionObject),
-  ]);
+  }, [tasksInRow.length, JSON.stringify(tasksInRowDateMapping)]);
+
+  useEffect(() => {
+    const handleMouseTaskbarEnter = () => {
+      setIsHovered(true);
+    };
+    const handleMouseTaskbarLeave = () => {
+      setIsHovered(false);
+    };
+    document.addEventListener("mouseEnter" + task._id, handleMouseTaskbarEnter);
+    document.addEventListener("mouseLeave" + task._id, handleMouseTaskbarLeave);
+
+    return () => {
+      document.removeEventListener(
+        "mouseEnter" + task._id,
+        handleMouseTaskbarEnter,
+      );
+      document.removeEventListener(
+        "mouseLeave" + task._id,
+        handleMouseTaskbarLeave,
+      );
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     if (isInput) return;
-    calendarTaskbarHoverStatusObj[task._id] = true;
+
+    const taskbarMouseEnterEvent = new CustomEvent("mouseEnter" + task._id, {});
+    document.dispatchEvent(taskbarMouseEnterEvent);
+
     setShowCheckMark(true);
-    if (doesTaskRunThrough || hasOverflowToRight || doesNotStartOnDay) {
-      setTaskHoverStatusObj({ [task._id]: true });
-    }
   };
   const handleMouseLeave = () => {
     if (isInput) return;
-    calendarTaskbarHoverStatusObj[task._id] = false;
+
+    const taskbarMouseLeaveEvent = new CustomEvent("mouseLeave" + task._id, {});
+    document.dispatchEvent(taskbarMouseLeaveEvent);
+
     setShowCheckMark(false);
-    if (doesTaskRunThrough || hasOverflowToRight || doesNotStartOnDay) {
-      setTaskHoverStatusObj({ [task._id]: false });
-    }
   };
 
   const handleDeleteTask = async () => {
@@ -203,51 +222,13 @@ const CalendarTaskBar: React.FC<Props> = ({
     }
   };
 
-  const doesTaskStartOnSunday = taskDateToStart.getDay() === 0;
-  const doesTaskEndOnSaturday = taskDueDate.getDay() === 6;
-
-  const doesTaskStartOrEndOnWeekend =
-    taskDateToStart.getDay() === 0 ||
-    taskDateToStart.getDay() === 6 ||
-    taskDueDate.getDay() === 0 ||
-    taskDueDate.getDay() === 6;
-
-  const doesTaskStartAndEndOnWeekend =
-    taskDateToStart.getDay() === 0 && taskDueDate.getDay() === 6;
-
-  const findWeekendOverlapCount = () => {
-    const taskTimeframe = {
-      dateToStart: calendarBoxDate,
-      dueDate:
-        taskDueDate.getTime() < new Date(rowTimeframe.dueDate).getTime()
-          ? taskDueDate
-          : rowTimeframe.dueDate,
-    };
-    const weekendDatesInrowTimeframe = [];
-
-    for (
-      let date = new Date(rowTimeframe.dateToStart);
-      date.getTime() <= new Date(rowTimeframe.dueDate).getTime();
-      date.setDate(date.getDate() + 1)
-    ) {
-      if (isWeekend(date)) {
-        weekendDatesInrowTimeframe.push(new Date(date));
-      }
-    }
-
-    let overlapCount = 0;
-
-    for (const date of weekendDatesInrowTimeframe) {
-      if (doDateFallWithinTimeframe(taskTimeframe, date)) {
-        overlapCount++;
-      }
-    }
-
-    return overlapCount;
+  const taskTimeframe = {
+    dateToStart: calendarBoxDate,
+    dueDate:
+      taskDueDate.getTime() < new Date(rowTimeframe.dueDate).getTime()
+        ? taskDueDate
+        : rowTimeframe.dueDate,
   };
-
-  const weekendBoxCutoffWidth =
-    (boxWidth - hideWeekendDayWidth) * findWeekendOverlapCount();
 
   const taskbarContainerAdditionalClasses = [
     hasOverflowToRight && !doesNotStartOnDay && "pr-0",
@@ -262,15 +243,26 @@ const CalendarTaskBar: React.FC<Props> = ({
     doesTaskRunThrough && "rounded-r-none",
     doesNotStartOnDay && "rounded-l-none border-l-0",
     !isInput && "px-3 py-1 hover:border-accent-blue",
-    taskHoverStatusObj?.[task._id]
-      ? "border-accent-blue"
-      : "border-border-default",
+    isHovered ? "border-accent-blue" : "border-border-default",
   ].filter(Boolean);
 
+  const widthMultiplier = doesNotStartOnDay
+    ? widthForTasksThatDoesNotStartOnDay
+    : widthForTasksWithOverflowToRight;
+
+  const taskbarWidth = widthMultiplier * boxWidth;
+
+  const WeekendCountInTaskTimrframe = useMemo(
+    () => getWeekendCountInTaskTimrframe(taskTimeframe),
+    [JSON.stringify(taskTimeframe)],
+  );
+
+  const weekendBoxCutoffWidth =
+    (boxWidth - hideWeekendDayWidth) * WeekendCountInTaskTimrframe;
+  const weekendWidthReducer = showWeekend ? 0 : weekendBoxCutoffWidth;
   return (
     <div
       onClick={() => {
-        findWeekendOverlapCount();
         console.log(noOfDaysToEnd);
         console.log(hasOverflowToRight);
         console.log(showWeekend ? 0 : weekendBoxCutoffWidth);
@@ -280,11 +272,7 @@ const CalendarTaskBar: React.FC<Props> = ({
       <div
         key={task._id + index}
         style={{
-          width:
-            (doesNotStartOnDay
-              ? widthForTasksThatDoesNotStartOnDay
-              : widthForTasksWithOverflowToRight) -
-            (showWeekend ? 0 : weekendBoxCutoffWidth),
+          width: `calc(${taskbarWidth}px - ${weekendWidthReducer}px)`,
           ...(top > 192 - 36 ? { color: "red", top: top } : { top: top }),
         }}
         className={`absolute z-50 px-2 ${taskbarContainerAdditionalClasses.join(
@@ -321,7 +309,7 @@ const CalendarTaskBar: React.FC<Props> = ({
                     exit={{ x: 20 }}
                     transition={{ duration: 0.15 }}
                     className="mr-1 hidden items-center justify-center overflow-hidden text-[22px] text-gray-500
-                group-hover:flex hover:text-accent-green "
+                    group-hover:flex hover:text-accent-green "
                   >
                     <BiCheckCircle />
                   </motion.div>

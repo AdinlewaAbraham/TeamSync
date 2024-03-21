@@ -1,23 +1,40 @@
+import getTokenExpiration from "@/utilis/getTokenExpiration";
+import axios from "axios";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const dataSource = "http://localhost:5001/auth/google";
-export async function GET(req: NextRequest, res: Response) {
+export async function POST(req: NextRequest) {
   try {
-    // Redirect user to your Express.js backend's Google authentication endpoint
-    // window.open(dataSource);
-    // window.open("http://localhost:5001/auth/google", "_self");
+    const url = process.env.API_HOST + "/auth/google/";
+    const { data, status } = await axios.post(url, await req.json());
 
-    // return NextResponse.redirect("http://localhost:5001/auth/google");
+    const cookieStore = cookies();
+    if (status === 200) {
+      const tokens = data.tokens;
 
-    return NextResponse.json({
-      data: { randomtuf: "oinreb" },
-      error: "REDIRECT TO LOGIN",
-    });
+      const setCookie = (key: string, value: string) => {
+        const expirationDate = getTokenExpiration(value);
+
+        cookieStore.set(key, value, {
+          secure: true,
+          httpOnly: true,
+          sameSite: "strict",
+          ...(expirationDate ? { expires: expirationDate } : {}),
+        });
+      };
+
+      setCookie("access_token", tokens.access);
+      setCookie("refresh_token", tokens.refresh);
+    }
+
+    const returnData = status === 200 ? data.user : data;
+    return NextResponse.json(returnData, { status });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

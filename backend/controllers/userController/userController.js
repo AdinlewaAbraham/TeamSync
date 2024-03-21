@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const { User } = require("../../models/userModel");
 const { PrivateNote } = require("../../models/privateNote");
 const { Project } = require("../../models/projectModel");
-const { db } = require("../../sever");
+const { db } = require("../../server");
 const { Section } = require("../../models/sectionModel");
 const getUser = asyncHandler(async (req, res) => {
   const authUser = req.user;

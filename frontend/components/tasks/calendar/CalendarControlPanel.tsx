@@ -1,7 +1,16 @@
+import { months } from "@/constants/calendar";
+import { useCalendarStore } from "@/store/calendarStore";
 import React from "react";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
-const CalendarControlPanel = () => {
+type Props = { goToPrevMonth: () => void; goToNextMonth: () => void };
+const CalendarControlPanel: React.FC<Props> = ({
+  goToPrevMonth,
+  goToNextMonth,
+}) => {
+  const { showWeekend, currentMonth, currentYear, setShowWeekend } =
+    useCalendarStore();
+
   return (
     <nav className="flex items-center justify-between border-y border-border-default px-8 py-2 text-sm">
       <div

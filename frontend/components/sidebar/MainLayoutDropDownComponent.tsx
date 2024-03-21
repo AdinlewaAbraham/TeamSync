@@ -59,7 +59,7 @@ const MainLayoutDropDownComponent = ({
           >
             <IoMdArrowDropdown />
           </i>
-          <h3 className="font-medium">{title}</h3>
+          <h3 className="text-sm font-medium text-white">{title}</h3>
         </div>
         {sidebarIconComponent}
       </header>

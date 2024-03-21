@@ -2,6 +2,7 @@ import Task from "@/interfaces/task";
 import doTimeFramesOverlap from "./doTimeFramesOverlap";
 import CalendarRowTaskPositionObject from "@/interfaces/calendarRowTaskPositionObject";
 import { spacingBtwTaskbar, taskbarHeight } from "@/constants/taskBar";
+import { Timeframe } from "@/interfaces/timeframe";
 
 type TaskDetails = { _id: string; dateToStart: Date; dueDate: Date };
 export const calculateTop = (
@@ -22,8 +23,8 @@ export const calculateTop = (
     return 0;
   }
 
-  const taskTimeFrame = {
-    startDate: task.dateToStart,
+  const taskTimeFrame: Timeframe = {
+    dateToStart: task.dateToStart,
     dueDate: task.dueDate,
   };
 
@@ -32,8 +33,8 @@ export const calculateTop = (
 
     for (const key in calendarRowTaskPositionObject) {
       const taskPositionObj = calendarRowTaskPositionObject[key];
-      const currentTaskTimeFrame = {
-        startDate: taskPositionObj.dateToStart,
+      const currentTaskTimeFrame: Timeframe = {
+        dateToStart: taskPositionObj.dateToStart,
         dueDate: taskPositionObj.dueDate,
       };
 

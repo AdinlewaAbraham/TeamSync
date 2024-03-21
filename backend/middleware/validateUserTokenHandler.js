@@ -5,6 +5,9 @@ const validateToken = asyncHandler(async (req, res, next) => {
   let token;
   let authHeader = req.headers.Authorization || req.headers.authorization;
 
+  const consoleToken = req.cookies?.["userToken"];
+
+  console.log(consoleToken);
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1];
 

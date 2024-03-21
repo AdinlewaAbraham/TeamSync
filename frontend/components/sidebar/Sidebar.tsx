@@ -39,13 +39,13 @@ const SidebarComponent = ({
         h-9 w-full items-center 
         justify-start overflow-hidden
          whitespace-nowrap rounded-lg px-4 py-2
-         text-sm font-medium shadow-sm transition-colors hover:bg-menuItem-hover focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none
+         shadow-sm transition-colors hover:bg-menuItem-hover focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none
           disabled:opacity-50 ${
             pathname.startsWith(redirectLink) && "bg-menuItem-active"
           }`}
       >
-        <i className="mr-2 text-icon-default">{iconComp}</i>
-        <p className="font-medium">{menuName}</p>
+        <i className="mr-2 text-lg text-icon-default">{iconComp}</i>
+        <p className="text-sm">{menuName}</p>
       </div>
     </Link>
   );
@@ -225,12 +225,12 @@ const Sidebar = () => {
                         )}
                       </div>
                       <div>
-                          <Link href={"/project/new"}>
-                            <SidebarIconComponent
-                              icon={<IoMdAdd />}
-                              toolTipText={"Add project"}
-                            />
-                          </Link>
+                        <Link href={"/project/new"}>
+                          <SidebarIconComponent
+                            icon={<IoMdAdd />}
+                            toolTipText={"Add project"}
+                          />
+                        </Link>
                       </div>
                     </div>
                   }

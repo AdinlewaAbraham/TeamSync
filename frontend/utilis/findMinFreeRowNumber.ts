@@ -1,7 +1,12 @@
 import Task from "@/interfaces/task";
+import { Timeframe } from "@/interfaces/timeframe";
 // remember that rows does not have to be unique it just needs to be unique only if there are two or more task within the same timeframe
+
+interface TaskTimeframeObj extends Timeframe {
+  rowNumber: number;
+}
 export default function findMinFreeRowNumber(
-  allTasks: (Task | string | undefined)[],
+  allTasks: (TaskTimeframeObj | string | undefined)[],
   startDate: Date,
   dueDate: Date,
   currentRowNumber: number,

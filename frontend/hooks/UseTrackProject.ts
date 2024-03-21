@@ -72,7 +72,7 @@ const useTrackProject = (
 
       // task controllers
       const handleTaskAdded = (task: Task) => {
-        console.log("this is my function");
+        console.log("task added", task);
         const deepProjectCopy: Project = JSON.parse(JSON.stringify(project));
         const NewSections = deepProjectCopy.sections.map((section) => {
           if (typeof section === "string" || section._id !== task.sectionId) {
@@ -80,7 +80,6 @@ const useTrackProject = (
           }
           return { ...section, tasks: [...section.tasks, task] };
         }) as Section[];
-        // localStorage.removeItem("localTaskPositionObject");
         setProject({ ...deepProjectCopy, sections: NewSections });
       };
 

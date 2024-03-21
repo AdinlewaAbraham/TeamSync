@@ -1,6 +1,9 @@
+import { days, daysWithoutWeekend, hideWeekendDayWidth } from "@/constants/calendar";
+import { useCalendarStore } from "@/store/calendarStore";
 import React from "react";
 
 const CalendarHeader = () => {
+  const { showWeekend } = useCalendarStore();
   return (
     <header>
       <ul

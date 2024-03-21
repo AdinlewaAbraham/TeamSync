@@ -152,7 +152,7 @@ const WorkspacePicker = () => {
           >
             <div className="mr-2 flex flex-1 flex-row  items-center truncate whitespace-nowrap ">
               <div className="mr-3 h-8 w-8 flex-shrink-0 rounded-full bg-slate-400" />
-              <p className="flex-1 truncate text-ellipsis ">
+              <p className="flex-1 truncate text-ellipsis font-medium">
                 {activeWorkspace?.name}
               </p>
             </div>

@@ -34,11 +34,7 @@ type Props = {
   project: Project | null;
   calendarBoxDate: Date;
   projectId: string;
-  highlight: boolean;
-  monthIndex: number;
-  rowIndex: number;
   tasksInRow: (Task | InputTaskPropObject)[];
-  rowKey: string;
   rowWidth: number;
   calendarRowTaskPositionObject: CalendarRowTaskPositionObject;
   rowTimeframe: Timeframe;
@@ -47,11 +43,7 @@ const CalendarBox: React.FC<Props> = ({
   project,
   calendarBoxDate,
   projectId,
-  highlight,
-  monthIndex,
-  rowIndex,
   tasksInRow,
-  rowKey,
   rowWidth,
   calendarRowTaskPositionObject,
   rowTimeframe,
@@ -201,6 +193,20 @@ const CalendarBox: React.FC<Props> = ({
         : rowWidth / 7;
 
   console.log("i rendered");
+
+  const calendarBoxAdditionalClasses = [
+    calendarBoxDate.getDate() === 1 &&
+      newDate.getMonth() === calendarBoxDate.getMonth() &&
+      newDate.getFullYear() === calendarBoxDate.getFullYear() &&
+      "currentMonthFirstDate",
+    isToday && "today",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const highlight =
+    new Date(calendarBoxDate).getMonth() === currentMonth &&
+    new Date(calendarBoxDate).getFullYear() === currentYear;
   return (
     <li
       id={
@@ -208,17 +214,7 @@ const CalendarBox: React.FC<Props> = ({
         `${calendarBoxDate.getMonth()}` +
         calendarBoxDate.getFullYear()
       }
-      className={`relative box-border h-48 cursor-cell border border-b-0 border-border-default
-      ${
-        calendarBoxDate.getDate() === 1 &&
-        newDate.getMonth() === calendarBoxDate.getMonth() &&
-        newDate.getFullYear() === calendarBoxDate.getFullYear() &&
-        "currentMonthFirstDate"
-      } 
-      ${isToday && "today"}  
-      ${!isFirstDayInDaysArr && "border-l"} 
-      ${monthIndex === 0 && rowIndex === 0 ? "border-t-0" : "border-t"}
-      border-0 `}
+      className={`relative box-border h-48 cursor-cell border border-b-0 border-r-0 border-t border-border-default ${calendarBoxAdditionalClasses}`}
       ref={boxRef}
       onClick={handleCalendarClick}
       onDragOver={allowDrop}

@@ -333,7 +333,6 @@ const Calendar: React.FC<Props> = ({ paramsProjectId, project }) => {
                     <CalendarRow
                       project={project}
                       dateArr={dateArr}
-                      monthIndex={monthIndex}
                       rowIndex={rowIndex}
                       projectId={paramsProjectId}
                       key={rowKey}

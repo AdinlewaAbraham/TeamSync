@@ -40,6 +40,7 @@ const CalendarBoxInput: React.FC<Props> = ({
     );
     setNewTaskName("")
   };
+
   const addTask = async () => {
     if (!projectId || !newTaskName) {
       removeInput();
@@ -68,6 +69,7 @@ const CalendarBoxInput: React.FC<Props> = ({
 
     removeInput();
     if (_response.ok) {
+      console.log("added task successfully")
       // update localtasks
     } else {
       console.log("something went wrong");

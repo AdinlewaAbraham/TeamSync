@@ -3,6 +3,7 @@ const { Task } = require("../../models/taskModel");
 const { Section } = require("../../models/sectionModel");
 const { Project } = require("../../models/projectModel");
 const { sendMessage } = require("../../utils/socket-io");
+const { findMinFreeRowNumber } = require("../../utils/findMinFreeRowNumber");
 
 const getTask = asyncHandler(async (req, res) => {
   const task = await Task.findById(req.params.id);
@@ -35,15 +36,47 @@ const updateTask = asyncHandler(async (req, res) => {
 });
 
 const createTask = asyncHandler(async (req, res) => {
-  const { taskName, projectId, sectionId, dueDate, dateToStart, rowNumber } =
-    await req.body;
+  const {
+    taskName,
+    projectId,
+    sectionId,
+    dueDate,
+    dateToStart,
+    currentRowNumber,
+  } = await req.body;
+
   if (!taskName || !projectId) {
     console.log("bad request");
     console.log(taskName, projectId, sectionId, dateToStart, dueDate);
     return res.status(403).json({ message: "bad request" });
   }
+
   console.log(taskName, projectId, sectionId, dateToStart, dueDate);
-  const project = await Project.findById(projectId);
+
+  const taskQuery = {
+    $and: [
+      { dateToStart: { $exists: true } },
+      { dueDate: { $exists: true } },
+      { sectionId },
+    ],
+  };
+
+  const taskProjection = { dateToStart: 1, dueDate: 1, rowNumber: 1 };
+
+  const [project, tasksInSection] = await Promise.all([
+    Project.findById(projectId),
+    sectionId ? Task.find(taskQuery, taskProjection) : [],
+  ]);
+
+  const rowNumber = findMinFreeRowNumber(
+    tasksInSection,
+    dateToStart,
+    dueDate,
+    currentRowNumber ? currentRowNumber : 0
+  );
+
+  console.log(rowNumber);
+
   const task = new Task({
     taskName: taskName,
     projectId: projectId,

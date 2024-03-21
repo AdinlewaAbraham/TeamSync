@@ -3,54 +3,96 @@
 import Link from "next/link";
 import React from "react";
 import { AiOutlineGoogle } from "react-icons/ai";
+import axios from "axios";
+import {
+  GoogleLogin,
+  UseGoogleLoginOptionsAuthCodeFlow,
+  GoogleCredentialResponse,
+  GoogleOAuthProvider,
+  CredentialResponse,
+  useGoogleLogin,
+} from "@react-oauth/google";
+import errorHandlerAxiosInstance from "@/utilis/api/client/ErrorHandlerAxios";
+import { useRouter } from "next/navigation";
+
 const login = () => {
-  const authWithGoogle = async () => {
-    try {
-      window.open(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, "_self");
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const router = useRouter();
+  const handleLogin = async (googleData: CredentialResponse) => {
+    console.log(googleData);
+    const { data, status } = await errorHandlerAxiosInstance.post(
+      "/auth/google",
+      {
+        token: googleData.credential,
+      },
+    );
+    console.log(data);
+    router.push("/home");
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      console.log(codeResponse);
+    },
+    onError: () => {
+      console.error("Google login failed");
+    },
+    flow: "auth-code",
+  });
+  const onFail = () => {
+    console.error("Login Failed:");
+  };
+
+  const onTest = async () => {
+    const res = await errorHandlerAxiosInstance.get("/user");
+    console.log(res);
   };
   return (
-    <div className="flex flex-col justify-center items-center text-white h-[calc(100vh-0px)]">
-      <h1 className="text-2xl font-semibold mb-4">Log into TeamSync</h1>
-      <div className="flex flex-col justify-center items-center space-y-4 sm:w-[350px] w-[200px]">
+    <div className="flex h-[calc(100vh-0px)] flex-col items-center justify-center text-white">
+      <button onClick={onTest} className="fixed left-48 top-48 bg-red-500 p-4">
+        test
+      </button>
+      <h1 className="mb-4 text-2xl font-semibold">Log into TeamSync</h1>
+      <div className="flex w-[200px] flex-col items-center justify-center space-y-4 sm:w-[350px]">
         <button
-          onClick={authWithGoogle}
-          className="w-full whitespace-nowrap flex items-center justify-center rounded-lg text-sm font-medium 
-        transition-colors focus:outline-none  
-        disabled:pointer-events-none disabled:opacity-50 border border-border-default 
-        bg-transparent shadow-sm hover:bg-[#27272a] hover:text-accent-foreground h-9 px-4 py-2"
+          onClick={
+            googleLogin
+            // authWithGoogle
+          }
+          className="hover:text-accent-foreground flex h-9 w-full items-center justify-center whitespace-nowrap rounded-lg 
+          border border-border-default  
+          bg-transparent px-4 py-2 text-sm 
+          font-medium shadow-sm transition-colors hover:bg-[#27272a] focus:outline-none disabled:pointer-events-none disabled:opacity-50"
         >
           <i className="mr-3">
             <AiOutlineGoogle />
           </i>
           Continue with Google
         </button>
-        <span className="text-gray-300 text-xs">or</span>
-        <div className="w-full grid gap-y-2">
+        <GoogleLogin onSuccess={handleLogin} onError={onFail} useOneTap />
+        <span className="text-xs text-gray-300">or</span>
+        <div className="grid w-full gap-y-2">
           <label
             htmlFor="email"
-            className="block text-xs font-medium leading-none text-start peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="block text-start text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Email address
           </label>
           <input
             type="text"
             id="email"
-            className=" w-full text-input"
+            className=" text-input w-full"
             placeholder="example@gmail.com"
           />
         </div>
         <button
-          className=" accent-color w-full inline-flex items-center justify-center rounded-lg text-sm font-medium 
-        transition-colors focus:outline-none disabled:pointer-events-none
-        disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 button-default"
+          className=" accent-color bg-primary text-primary-foreground hover:bg-primary/90 button-default inline-flex w-full items-center 
+        justify-center rounded-lg text-sm
+        font-medium shadow transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50"
         >
           Continue
         </button>
       </div>
-      <p className="text-gray-300 mt-4 text-sm">
+      <p className="mt-4 text-sm text-gray-300">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-blue-200 hover:underline">
           Sign up

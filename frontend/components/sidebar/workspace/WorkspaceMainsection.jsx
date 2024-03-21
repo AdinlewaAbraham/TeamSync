@@ -12,7 +12,7 @@ const WorkspaceMainsection = () => {
     <div>
       {activeWorkspace ? (
         <Link href={"/workspace/" + activeWorkspace._id + "/home"}>
-          <div className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-sm font-medium hover:bg-menuItem-hover ">
+          <div className="flex cursor-pointer items-center justify-between rounded-lg px-4 py-2 text-sm hover:bg-menuItem-hover ">
             <div className="flex items-center">
               <i className="mr-2 text-lg text-icon-default">
                 <MdGroup />

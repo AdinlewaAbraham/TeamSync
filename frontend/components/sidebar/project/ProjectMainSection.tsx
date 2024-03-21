@@ -30,11 +30,11 @@ const ProjectMainSection = () => {
                   key={project._id}
                 >
                   <li
-                    className=" flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm font-medium hover:bg-menuItem-hover "
+                    className=" flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm hover:bg-menuItem-hover "
                     key={project._id}
                   >
                     <div className="mr-2 h-5 w-5 rounded-md bg-slate-500" />
-                    <span className="flex-1 truncate text-ellipsis">
+                    <span className="flex-1 truncate text-ellipsis ">
                       {project.projectName}
                     </span>
                   </li>
