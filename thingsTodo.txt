@@ -21,7 +21,6 @@ timeline
 calendar 
 1. 
 
-
 messages  
 1. last read message marker 
 2. 
