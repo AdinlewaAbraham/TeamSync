@@ -1,176 +1,131 @@
+import { useEffect } from "react";
 import socket from "@/config/WebSocketManager";
 import { useGlobalContext } from "@/context/GeneralContext";
 import Project from "@/interfaces/project";
 import Section from "@/interfaces/section";
 import Task from "@/interfaces/task";
-import { useEffect } from "react";
 
 const useTrackProject = (
   paramProjectId: string,
   project: Project | null,
-  setProject: (c: Project | null) => void,
+  setProject: (project: Project | null) => void
 ) => {
-  const { setActiveWorkspace, activeWorkspace } = useGlobalContext();
-  useEffect(() => {
-    if (project?._id !== paramProjectId && project) {
+  const { setActiveWorkspace } = useGlobalContext();
+ 
+  const updateProjectState = (updatedProject: Partial<Project>) => {
+    if (!project) return;
+    setProject({ ...project, ...updatedProject });
+  };
+ 
+  const handleProjectUpdated = (updatedProject: Project) => {
+    console.debug("Project updated", updatedProject);
+    updateProjectState({
+      ...updatedProject,
+      sections: project.sections,
+      members: project.members,
+    });
+  };
+
+  const handleProjectDeleted = (projectId: string) => {
+    if (projectId === project?._id) {
+      console.warn(`Project ${projectId} was deleted`);
       setProject(null);
     }
+  };
+
+  const handleSectionAdded = (section: Section) => {
+    console.debug("Section added", section);
+    updateProjectState({ sections: [...(project?.sections || []), section] });
+  };
+
+  const handleSectionUpdated = (updatedSection: Section) => {
+    const updatedSections = project?.sections.map((section) =>
+      typeof section === "object" && section._id === updatedSection._id
+        ? { ...updatedSection, tasks: section.tasks }
+        : section
+    );
+    updateProjectState({ sections: updatedSections });
+  };
+
+  const handleSectionDeleted = (sectionId: string) => {
+    const filteredSections = project?.sections.filter(
+      (section) => typeof section !== "object" || section._id !== sectionId
+    );
+    updateProjectState({ sections: filteredSections });
+  };
+
+  const handleTaskAdded = (task: Task) => {
+    console.debug("Task added", task);
+    const updatedSections = project?.sections.map((section) =>
+      typeof section === "object" && section._id === task.sectionId
+        ? { ...section, tasks: [...section.tasks, task] }
+        : section
+    );
+    updateProjectState({ sections: updatedSections });
+  };
+
+  const handleTaskUpdated = (task: Task) => {
+    const updatedSections = project?.sections.map((section) => {
+      if (typeof section !== "object" || section._id !== task.sectionId) return section;
+      const updatedTasks = section.tasks.map((t) =>
+        typeof t === "object" && t._id === task._id ? task : t
+      );
+      return { ...section, tasks: updatedTasks };
+    });
+    updateProjectState({ sections: updatedSections });
+  };
+
+  const handleTaskDeleted = (taskId: string, sectionId: string, taskRowNumber: number) => {
+    const updatedSections = project?.sections.map((section) => {
+      if (typeof section !== "object" || section._id !== sectionId) return section;
+      const filteredTasks = section.tasks
+        .filter((task) => typeof task === "object" && task._id !== taskId)
+        .map((task) =>
+          typeof task === "object" && task.rowNumber > taskRowNumber
+            ? { ...task, rowNumber: task.rowNumber - 1 }
+            : task
+        );
+      return { ...section, tasks: filteredTasks };
+    });
+    updateProjectState({ sections: updatedSections });
+  };
+
+  useEffect(() => {
+    if (!paramProjectId || project?._id === paramProjectId) return;
+
     if (project) {
-      // join websocket project room
-      socket.emit("join_room", `project_${paramProjectId}`);
-
-      // project controllers
-      const handleProjectUpdated = (updatedProject: Project) => {
-        console.log("i have received project update");
-        console.log(updatedProject);
-        setProject({
-          ...updatedProject,
-          sections: project.sections,
-          members: project.members,
-        });
-      };
-
-      const handleProjectAdded = (project: Project) => {};
-
-      const handleProjectDeleted = (projectId: string) => {
-        if (projectId === project._id) {
-        }
-      };
-
-      // section controllers
-      const handleSectionAdded = (section: Section) => {
-        const newProject = {
-          ...project,
-          sections: [...project.sections, section],
-        };
-        setProject(newProject);
-      };
-
-      const handleSectionUpdated = (section: Section) => {
-        const newSections: (Section | string)[] = project.sections.map(
-          (_section) => {
-            if (typeof _section !== "object" || _section._id !== section._id) {
-              return _section;
-            }
-            return { ...section, tasks: _section.tasks };
-          },
-        );
-        const newProject: Project = { ...project, sections: newSections };
-        setProject(newProject);
-      };
-
-      const handleSectionDeleted = (sectionId: string) => {
-        const filteredSections = project.sections.filter(
-          (section) => typeof section === "object" && section._id !== sectionId,
-        );
-        const newProject = {
-          ...project,
-          sections: filteredSections,
-        };
-        setProject(newProject);
-      };
-
-      // task controllers
-      const handleTaskAdded = (task: Task) => {
-        console.log("task added", task);
-        const deepProjectCopy: Project = JSON.parse(JSON.stringify(project));
-        const NewSections = deepProjectCopy.sections.map((section) => {
-          if (typeof section === "string" || section._id !== task.sectionId) {
-            return section;
-          }
-          return { ...section, tasks: [...section.tasks, task] };
-        }) as Section[];
-        setProject({ ...deepProjectCopy, sections: NewSections });
-      };
-
-      const handleTaskUpdated = (task: Task) => {
-        const updatedSections = project.sections.map((section) => {
-          if (typeof section === "string" || section._id !== task.sectionId) {
-            return section as Section;
-          }
-
-          const updatedTasks = section.tasks.map((_task) =>
-            typeof _task !== "object" || _task._id !== task._id ? _task : task,
-          );
-
-          return { ...section, tasks: updatedTasks } as Section;
-        });
-
-        setProject({ ...project, sections: updatedSections });
-      };
-
-      const handleTaskDeleted = (
-        taskId: string,
-        sectionId: string,
-        taskRowNumber: number,
-      ) => {
-        const deepProjectCopy: Project = JSON.parse(JSON.stringify(project));
-        const newSections: (Section | string)[] = deepProjectCopy.sections.map(
-          (section) => {
-            if (typeof section !== "object" || section._id !== sectionId) {
-              return section;
-            }
-            const newTasks = [];
-            for (let i = 0; i < section.tasks.length; i++) {
-              const currentTask = section.tasks[i];
-              if (
-                typeof currentTask !== "string" &&
-                currentTask._id !== taskId
-              ) {
-                if (currentTask.rowNumber > taskRowNumber) {
-                  newTasks.push({
-                    ...currentTask,
-                    rowNumber: currentTask.rowNumber - 1,
-                  });
-                } else {
-                  newTasks.push(currentTask);
-                }
-              }
-            }
-
-            const newSection: Section = { ...section, tasks: newTasks };
-            return newSection;
-          },
-        );
-        const newProject: Project = {
-          ...deepProjectCopy,
-          sections: newSections,
-        };
-        // localStorage.removeItem("localTaskPositionObject");
-        setProject(newProject);
-      };
-
-      // add project event
-      socket.on("project_updated", handleProjectUpdated);
-      socket.on("project_deleted", handleProjectDeleted);
-
-      // add section event
-      socket.on("section_added", handleSectionAdded);
-      socket.on("section_updated", handleSectionUpdated);
-      socket.on("section_deleted", handleSectionDeleted);
-
-      // add task event
-      socket.on("task_added", handleTaskAdded);
-      socket.on("task_updated", handleTaskUpdated);
-      socket.on("task_deleted", handleTaskDeleted);
-
-      return () => {
-        // remove project event
-        socket.off("project_updated", handleProjectUpdated);
-        socket.off("project_deleted", handleProjectDeleted);
-
-        // remove section event
-        socket.off("section_added", handleSectionAdded);
-        socket.off("section_updated", handleSectionUpdated);
-        socket.off("section_deleted", handleSectionDeleted);
-
-        // remove task event
-        socket.off("task_added", handleTaskAdded);
-        socket.off("task_updated", handleTaskUpdated);
-        socket.off("task_deleted", handleTaskDeleted);
-      };
+      setProject(null);
     }
-  }, [project, paramProjectId]);
+
+    // Join project room
+    socket.emit("join_room", `project_${paramProjectId}`);
+    console.info(`Joined room project_${paramProjectId}`);
+
+    // Register socket event listeners
+    const eventHandlers = [
+      ["project_updated", handleProjectUpdated],
+      ["project_deleted", handleProjectDeleted],
+      ["section_added", handleSectionAdded],
+      ["section_updated", handleSectionUpdated],
+      ["section_deleted", handleSectionDeleted],
+      ["task_added", handleTaskAdded],
+      ["task_updated", handleTaskUpdated],
+      ["task_deleted", handleTaskDeleted],
+    ];
+
+    eventHandlers.forEach(([event, handler]) => {
+      socket.on(event, handler as (...args: any[]) => void);
+    });
+ 
+    return () => {
+      eventHandlers.forEach(([event, handler]) => {
+        socket.removeListener(event, handler as (...args: any[]) => void);
+      });
+      console.info(`Left room project_${paramProjectId}`);
+    };
+  }, [paramProjectId, project]);
+
+  return { activeWorkspace }; 
 };
 
 export default useTrackProject;
